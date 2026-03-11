@@ -3,16 +3,18 @@ import { RouterOutlet, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MockAuthService } from './core/services/mock-auth.service';
 import { ToastComponent } from './core/components/toast/toast.component';
+import { FooterComponent } from './core/components/footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterModule, CommonModule, ToastComponent],
+  imports: [RouterOutlet, RouterModule, CommonModule, ToastComponent, FooterComponent],
   template: `
     <header class="bg-surface-card border-b border-border shadow-sm p-4 sticky top-0 z-50">
       <div class="max-w-5xl mx-auto flex justify-between items-center">
         <a routerLink="/" class="text-xl font-bold text-primary">CompSci Talks</a>
         <div class="flex gap-4 items-center">
+          <a routerLink="/schedule" class="text-sm font-medium text-text-muted hover:text-primary transition-colors">Schedule</a>
           <a routerLink="/archive" class="text-sm font-medium text-text-muted hover:text-primary transition-colors">Archive</a>
           
           <ng-container *ngIf="auth.currentUser$ | async as user; else guestLinks">
@@ -32,9 +34,7 @@ import { ToastComponent } from './core/components/toast/toast.component';
       <router-outlet></router-outlet>
     </main>
 
-    <footer class="bg-surface-card border-t border-border mt-12 py-8 text-center text-text-muted text-sm relative bottom-0 w-full">
-      &copy; 2026 Faculty of Science. 
-    </footer>
+    <app-footer></app-footer>
     <app-toast></app-toast>
   `
 })

@@ -1,19 +1,188 @@
-<div class="max-w-5xl mx-auto px-4 py-8">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-        <div>
-            <h1 class="text-3xl font-bold text-text-main mb-2">Upcoming Seminars</h1>
-            <p class="text-text-muted">Discover and RSVP to the latest talks from our community.</p>
+<!-- Hero Section -->
+<section class="relative overflow-hidden bg-surface text-text-main py-24 sm:py-32">
+    <!-- Decorative background elements -->
+    <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+        <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-primary to-accent opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+            style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)">
         </div>
-        <a href="/archive" class="btn btn-outline">View Previous Talks</a>
     </div>
 
-    <ng-container *ngIf="upcomingSeminars$ | async as seminars">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <app-seminar-card *ngFor="let sem of seminars" [seminar]="sem"></app-seminar-card>
+    <div class="mx-auto max-w-7xl px-6 lg:px-8 text-center pt-10 pb-16">
+        <div class="mx-auto max-w-3xl">
+            <div class="hidden sm:mb-8 sm:flex sm:justify-center">
+                <div
+                    class="relative rounded-full px-4 py-1.5 text-sm leading-6 text-text-muted ring-1 ring-border hover:ring-primary/50 transition-all duration-300 backdrop-blur-sm bg-surface-card/30">
+                    Faculty of Science • Ain Shams University <a href="/about"
+                        class="font-semibold text-primary ml-2"><span class="absolute inset-0"
+                            aria-hidden="true"></span> Read more <span aria-hidden="true">&rarr;</span></a>
+                </div>
+            </div>
+            <h1 class="text-5xl font-extrabold tracking-tight sm:text-7xl mb-8">
+                <span class="block text-text-main">The Future of Tech,</span>
+                <span
+                    class="block bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent pb-2 mt-2">Decoded
+                    Here.</span>
+            </h1>
+            <p class="mt-6 text-lg leading-8 text-text-muted mb-10 max-w-2xl mx-auto">
+                Join our premier platform for knowledge exchange. Discover cutting-edge research, industry insights, and
+                engage in academic discussions with leading experts in Computer Science.
+            </p>
+            <div class="mt-10 flex items-center justify-center gap-x-6">
+                <a routerLink="/schedule"
+                    class="rounded-lg bg-primary px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-primary/30 hover:bg-primary-hover hover:-translate-y-1 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    View Upcoming Seminars
+                </a>
+                <a routerLink="/archive"
+                    class="text-sm font-semibold leading-6 text-text-main hover:text-primary transition-colors duration-200">
+                    Browse Archive <span aria-hidden="true">→</span>
+                </a>
+            </div>
         </div>
+    </div>
+</section>
 
-        <div *ngIf="seminars.length === 0" class="card p-12 text-center text-text-muted">
-            No upcoming seminars found. Check back later!
+<!-- Stats/Features Section -->
+<section class="py-20 bg-surface-card border-y border-border" id="features">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="grid grid-cols-1 gap-y-16 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-0 text-center">
+
+            <div
+                class="group p-8 rounded-2xl bg-surface border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5">
+                <div
+                    class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold tracking-tight text-text-main mb-3">Expert Speakers</h3>
+                <p class="text-text-muted leading-relaxed">Learn directly from distinguished professors, researchers,
+                    and tech industry leaders.</p>
+            </div>
+
+            <div
+                class="group p-8 rounded-2xl bg-surface border border-border hover:border-accent/50 transition-all duration-300 hover:shadow-xl hover:shadow-accent/5">
+                <div
+                    class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent/10 mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold tracking-tight text-text-main mb-3">Cutting-Edge Topics</h3>
+                <p class="text-text-muted leading-relaxed">Stay ahead of the curve with seminars on AI, Machine
+                    Learning, Cybersecurity, and more.</p>
+            </div>
+
+            <div
+                class="group p-8 rounded-2xl bg-surface border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5">
+                <div
+                    class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold tracking-tight text-text-main mb-3">Discussion & Comments</h3>
+                <p class="text-text-muted leading-relaxed">Engage directly with speakers through our live platform,
+                    leaving comments and discussing with presenters.</p>
+            </div>
+
         </div>
-    </ng-container>
-</div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="py-24 bg-surface overflow-hidden">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div
+            class="mx-auto grid max-w-2xl grid-cols-1 gap-x-16 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-center">
+
+            <div class="lg:pr-8 lg:pt-4">
+                <div class="lg:max-w-lg">
+                    <h2 class="text-base font-semibold leading-7 text-primary tracking-wide uppercase">Foster Innovation
+                    </h2>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-text-main sm:text-4xl">Building Egypt's Tech
+                        Ecosystem</p>
+                    <p class="mt-6 text-lg leading-8 text-text-muted">
+                        Our seminars serve as a premier gathering point for minds eager to push the boundaries of what's
+                        possible in computer science.
+                    </p>
+
+                    <dl class="mt-10 max-w-xl space-y-8 text-base leading-7 text-text-muted lg:max-w-none">
+                        <div class="relative pl-9">
+                            <dt class="inline font-semibold text-text-main">
+                                <svg class="absolute left-1 top-1 h-5 w-5 text-primary" viewBox="0 0 20 20"
+                                    fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Networking Opportunities.
+                            </dt>
+                            <dd class="inline">Connect with peers, professors, and industry professionals.</dd>
+                        </div>
+                        <div class="relative pl-9">
+                            <dt class="inline font-semibold text-text-main">
+                                <svg class="absolute left-1 top-1 h-5 w-5 text-primary" viewBox="0 0 20 20"
+                                    fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Accessible Campus.
+                            </dt>
+                            <dd class="inline">Attend in person at our state-of-the-art
+                                auditoriums.</dd>
+                        </div>
+                        <div class="relative pl-9">
+                            <dt class="inline font-semibold text-text-main">
+                                <svg class="absolute left-1 top-1 h-5 w-5 text-primary" viewBox="0 0 20 20"
+                                    fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Resource Library.
+                            </dt>
+                            <dd class="inline">Access past presentations, slides, and recordings in our comprehensive
+                                archive.</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="relative group mt-10 lg:mt-0">
+                <div
+                    class="absolute -inset-2 rounded-2xl bg-gradient-to-r from-primary to-accent opacity-20 blur-lg group-hover:opacity-40 transition duration-500">
+                </div>
+                <div
+                    class="relative rounded-2xl bg-surface-card border border-border p-2 shadow-2xl overflow-hidden aspect-[4/3] flex items-center justify-center">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent z-10"></div>
+                    <div
+                        class="w-full h-full bg-surface relative flex flex-col items-center justify-center px-8 text-center rounded-xl overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent"></div>
+                        <svg class="w-24 h-24 text-primary/80 mb-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M14.25 9.75 16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
+                        </svg>
+                        <h4 class="text-2xl font-bold text-text-main mb-2">Platform Engine v1.0</h4>
+                        <p class="text-text-muted text-sm">Empowering seamless knowledge transfer.</p>
+
+                        <!-- Decorative decorative code lines -->
+                        <div class="mt-8 w-full max-w-sm space-y-2 opacity-50">
+                            <div class="h-2 bg-border rounded w-3/4 mx-auto"></div>
+                            <div class="h-2 bg-border rounded w-1/2 mx-auto"></div>
+                            <div class="h-2 bg-border rounded w-5/6 mx-auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

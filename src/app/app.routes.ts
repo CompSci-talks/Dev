@@ -11,6 +11,10 @@ export const routes: Routes = [
         loadComponent: () => import('./portal/pages/archive/archive.component').then(m => m.ArchiveComponent)
     },
     {
+        path: 'schedule',
+        loadComponent: () => import('./portal/pages/schedule/schedule.component').then(m => m.ScheduleComponent)
+    },
+    {
         path: 'seminar/:id',
         loadComponent: () => import('./portal/pages/seminar-detail/seminar-detail.component').then(m => m.SeminarDetailComponent)
     },
