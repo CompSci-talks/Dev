@@ -4,19 +4,18 @@
     </div>
 
     <ng-container *ngIf="!isLoading">
-        <div *ngIf="questions.length === 0"
+        <div *ngIf="comments.length === 0"
             class="text-center py-8 text-text-muted italic border border-dashed border-border rounded-lg bg-surface-muted">
-            No questions yet. Be the first to ask!
+            No comments yet. Be the first to start the discussion!
         </div>
 
-        <div *ngFor="let q of questions"
+        <div *ngFor="let c of comments"
             class="bg-surface-card border border-border rounded-lg p-4 shadow-sm animate-fade-in text-left">
-            <!-- We don't have display names loaded into the question model directly unless joined, using placeholder or email split -->
             <div class="flex justify-between items-start mb-2">
                 <span class="font-medium text-sm text-primary">Attendee</span>
-                <span class="text-xs text-text-muted">{{ q.created_at | date:'shortTime' }}</span>
+                <span class="text-xs text-text-muted">{{ c.created_at | date:'shortTime' }}</span>
             </div>
-            <p class="text-text-main whitespace-pre-line text-sm">{{ q.content }}</p>
+            <p class="text-text-main whitespace-pre-line text-sm">{{ c.text }}</p>
         </div>
     </ng-container>
 </div>

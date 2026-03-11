@@ -9,12 +9,12 @@ import { SeminarStatusPipe } from '../../../core/pipes/seminar-status.pipe';
 import { VideoPlayerComponent } from '../../../seminar-room/components/video-player/video-player.component';
 import { SlideViewerComponent } from '../../../seminar-room/components/slide-viewer/slide-viewer.component';
 import { RsvpButtonComponent } from '../../components/rsvp-button/rsvp-button.component';
-import { QaContainerComponent } from '../../../seminar-room/components/qa-container/qa-container.component';
+import { CommentsContainerComponent } from '../../../seminar-room/components/comments-container/comments-container.component';
 
 @Component({
     selector: 'app-seminar-detail',
     standalone: true,
-    imports: [CommonModule, RouterModule, SeminarStatusPipe, VideoPlayerComponent, SlideViewerComponent, RsvpButtonComponent, QaContainerComponent],
+    imports: [CommonModule, RouterModule, SeminarStatusPipe, VideoPlayerComponent, SlideViewerComponent, RsvpButtonComponent, CommentsContainerComponent],
     templateUrl: './seminar-detail.component.html'
 })
 export class SeminarDetailComponent implements OnInit {

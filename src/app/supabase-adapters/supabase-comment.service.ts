@@ -1,17 +1,17 @@
 import { Injectable, inject, OnDestroy } from '@angular/core';
 import { Observable, BehaviorSubject, from, map, switchMap, timeout } from 'rxjs';
-import { IQaService } from '../core/contracts/qa.interface';
-import { Question } from '../core/models/question.model';
+import { ICommentService } from '../core/contracts/comment.interface';
+import { Comment } from '../core/models/comment.model';
 import { SupabaseService } from '../core/supabase.service';
 import { SupabaseAuthService } from './supabase-auth.service';
 
 @Injectable({ providedIn: 'root' })
-export class SupabaseQaService implements IQaService, OnDestroy {
+export class SupabaseCommentService implements ICommentService, OnDestroy {
     private supabase = inject(SupabaseService);
     private auth = inject(SupabaseAuthService);
 
     // We manage local subject state to merge realtime updates into
-    private questionsSubject = new BehaviorSubject<Question[]>([]);
+    private commentsSubject = new BehaviorSubject<Comment[]>([]);
     private currentSeminarId?: string;
     private channel?: any;
 
@@ -20,55 +20,55 @@ export class SupabaseQaService implements IQaService, OnDestroy {
         this.unsubscribeFromRealtime();
     }
 
-    getQuestionsForSeminar$(seminarId: string): Observable<Question[]> {
+    getCommentsForSeminar$(seminarId: string): Observable<Comment[]> {
         this.currentSeminarId = seminarId;
-        this.questionsSubject.next([]); // reset
-        this.fetchInitialQuestions(seminarId);
+        this.commentsSubject.next([]); // reset
+        this.fetchInitialComments(seminarId);
         this.subscribeToRealtime(seminarId);
 
-        return this.questionsSubject.asObservable();
+        return this.commentsSubject.asObservable();
     }
 
-    submitQuestion(seminarId: string, content: string): Observable<Question> {
+    submitComment(seminarId: string, text: string): Observable<Comment> {
         return this.auth.currentUser$.pipe(
             switchMap(user => {
-                if (!user) throw new Error('Unauthenticated user cannot ask questions');
+                if (!user) throw new Error('Unauthenticated user cannot leave comments');
 
-                const query = this.supabase.client.from('questions').insert({
+                const query = this.supabase.client.from('comments').insert({
                     seminar_id: seminarId,
                     author_id: user.id,
-                    content: content
+                    text: text
                 }).select().single();
 
                 return from(query).pipe(
                     map(response => {
                         if (response.error) throw response.error;
-                        const q = {
+                        const c = {
                             ...response.data,
                             created_at: new Date(response.data.created_at)
-                        } as Question;
+                        } as Comment;
 
                         // Note: Postgres Realtime should also pick this up, but optionally we can insert it instantly here
-                        return q;
+                        return c;
                     })
                 );
             })
         );
     }
 
-    private fetchInitialQuestions(seminarId: string) {
+    private fetchInitialComments(seminarId: string) {
         this.supabase.client
-            .from('questions')
+            .from('comments')
             .select('*')
             .eq('seminar_id', seminarId)
             .eq('is_hidden', false)
             .order('created_at', { ascending: false })
             .then(response => {
                 if (!response.error && response.data) {
-                    const qs = response.data.map((d: any) => ({
+                    const cs = response.data.map((d: any) => ({
                         ...d, created_at: new Date(d.created_at)
-                    })) as Question[];
-                    this.questionsSubject.next(qs);
+                    })) as Comment[];
+                    this.commentsSubject.next(cs);
                 }
             });
     }
@@ -76,16 +76,16 @@ export class SupabaseQaService implements IQaService, OnDestroy {
     private subscribeToRealtime(seminarId: string) {
         this.unsubscribeFromRealtime();
 
-        this.channel = this.supabase.client.channel('public:questions')
+        this.channel = this.supabase.client.channel('public:comments')
             .on('postgres_changes', {
                 event: 'INSERT',
                 schema: 'public',
-                table: 'questions',
+                table: 'comments',
                 filter: `seminar_id=eq.${seminarId}`
             }, payload => {
                 if (payload.new && !payload.new['is_hidden']) {
-                    const newQ = { ...payload.new, created_at: new Date(payload.new['created_at']) } as Question;
-                    this.questionsSubject.next([newQ, ...this.questionsSubject.value]);
+                    const newC = { ...payload.new, created_at: new Date(payload.new['created_at']) } as Comment;
+                    this.commentsSubject.next([newC, ...this.commentsSubject.value]);
                 }
             })
             .subscribe();

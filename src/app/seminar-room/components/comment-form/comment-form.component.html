@@ -1,0 +1,11 @@
+<form (ngSubmit)="onSubmit()" class="mt-4 flex flex-col gap-2 relative">
+    <textarea [(ngModel)]="newCommentText" name="commentText" rows="3"
+        placeholder="Leave a comment or ask a question..." class="input-field resize-none w-full" required
+        [disabled]="isSubmitting">
+  </textarea>
+    <div class="flex justify-end">
+        <button type="submit" class="btn btn-primary" [disabled]="!newCommentText.trim() || isSubmitting">
+            {{ isSubmitting ? 'Posting...' : 'Post Comment' }}
+        </button>
+    </div>
+</form>
