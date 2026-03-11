@@ -124,7 +124,7 @@ As an authenticated user, I want a personal dashboard that shows my RSVP'd semin
 
 ### Functional Requirements
 
-- **FR-001**: The system MUST display a public schedule of upcoming seminars (date, time, title, speaker) accessible to all visitors without authentication.
+- **FR-001**: The system MUST display a public schedule of upcoming seminars (date, time, title, speaker,tag, where is it held) accessible to all visitors without authentication.
 - **FR-002**: The system MUST display a list of previous talks (title, speaker, date) accessible to all visitors without authentication.
 - **FR-003**: The system MUST support user registration and login via email and password.
 - **FR-004**: The system MUST protect seminar materials (videos, slides) behind authentication — only logged-in users may view them.
@@ -145,10 +145,12 @@ As an authenticated user, I want a personal dashboard that shows my RSVP'd semin
 ### Key Entities
 
 - **User**: A person who interacts with the platform. Key attributes: display name, email, authentication status (guest vs. authenticated). A user can have zero or many RSVPs.
-- **Seminar**: A single talk event. Key attributes: title, speaker name, date/time, abstract/description, status (upcoming/past). A seminar has zero or one video, zero or one presentation, and zero or many questions.
+- **Seminar**: A single talk event. Key attributes: title, speaker reference(s), tag reference(s), date/time, location, abstract/description (supports Rich Text/Markdown). Status (upcoming/past) is dynamically derived based on the current date/time. A seminar has zero or one video, zero or one presentation, and zero or many questions. RSVPs for a seminar are unlimited (no capacity constraints).
+- **Speaker**: A person presenting a seminar. Key attributes: name, bio, profile image URL, affiliation.
+- **Tag**: A categorization label for seminars (e.g., "AI", "Algorithms", "Career"). Key attributes: name, color code.
 - **Material**: A video recording or presentation file associated with a seminar. Key attributes: type (video or presentation), external storage reference ID. Materials are viewable only by authenticated users.
 - **RSVP**: A record linking a user to an upcoming seminar. Key attributes: user reference, seminar reference, timestamp of RSVP. Automatically invalidated when the seminar date passes.
-- **Question**: A user-submitted question tied to a specific seminar. Key attributes: question text, author (user reference), seminar reference, submission timestamp, visibility status.
+- **Question**: A user-submitted question/comment tied to a specific seminar. Key attributes: question text, author (user reference), seminar reference, submission timestamp, visibility status. Questions are displayed as a general flat list (not tied to video playback timestamps) and can be submitted even after the seminar date has passed.
 
 ---
 
@@ -175,3 +177,10 @@ As an authenticated user, I want a personal dashboard that shows my RSVP'd semin
 - Q&A is a simple flat list of questions — threaded replies, upvoting, and moderation are deferred to Phase 2.
 - The personal dashboard shows only RSVP'd upcoming seminars; viewing history or bookmarking past talks is out of scope for Phase 1.
 - The system runs entirely serverless with zero custom backend — all data access happens client-side through the backend-as-a-service provider's SDK, abstracted through interfaces per the project constitution.
+
+## Clarifications
+### Session 2026-03-11
+- Q: How is the 'status' (upcoming vs past) of a seminar determined? → A: Status is derived dynamically based on the time the seminar is held relative to the current time, not stored as a separate database field.
+- Q: Does the abstract/description text need to support rich text formatting? → A: Yes, Rich Text (Markdown/HTML).
+- Q: Are Q&A questions tied to specific timestamps in the video, or just a general flat list? → A: General flat list, acting as comments that can be submitted even after the time of the seminar.
+- Q: Are there any maximum attendee caps for seminars? → A: No, unlimited RSVPs.
