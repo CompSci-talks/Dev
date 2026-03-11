@@ -20,9 +20,13 @@ As an unauthenticated visitor, I want to browse the upcoming seminar schedule an
 **Acceptance Scenarios**:
 
 1. **Given** I am an unauthenticated user, **When** I navigate to the home page, **Then** I see a list of upcoming seminars with their date, time, title, and speaker name.
-2. **Given** I am an unauthenticated user, **When** I navigate to the "Previous Talks" section, **Then** I see a chronological list of past seminars with their title, speaker, and date.
-3. **Given** I am an unauthenticated user, **When** I click on any specific seminar (upcoming or past), **Then** I see the seminar detail page with public metadata (title, speaker, abstract, date/time) but **no** embedded video, slides, or interactive features.
-4. **Given** I am an unauthenticated user on a seminar detail page, **When** I attempt to access materials or interactive features, **Then** I am prompted to log in or register.
+2. **Given** I am an unauthenticated user, **When** I navigate to the "Previous Talks" section, **Then** I see a chronological list of past seminars with their title, speaker, date, and a representative thumbnail image.
+3. **Given** a seminar has no uploaded thumbnail, **When** it is displayed in any list or card view, **Then** a visually appealing default placeholder image is shown.
+4. **Given** I am viewing the "Previous Talks" list, **When** I click a specific Tag (e.g., "AI") or Speaker name, **Then** I am routed to a dedicated Search/Archive page pre-filtered to display only seminars matching that Tag or Speaker.
+5. **Given** I am an unauthenticated user, **When** I navigate directly to the Search/Archive page, **Then** I can manually search by keyword, tag, or speaker to find previous seminars.
+6. **Given** I am an unauthenticated user, **When** I click on any specific seminar (upcoming or past), **Then** I see the seminar detail page with public metadata (title, speaker, abstract, date/time) but **no** embedded video, slides, or interactive features.
+7. **Given** I am an unauthenticated user on a seminar detail page, **When** I attempt to access materials or interactive features, **Then** I am prompted to log in or register.
+8. **Given** a seminar is starting within 15 minutes or is currently active, **When** I view the schedule, **Then** the seminar displays a visual "Live Now" or "Starting Soon" badge.
 
 ---
 
@@ -71,9 +75,10 @@ As an authenticated user, I want to mark myself as attending an upcoming seminar
 **Acceptance Scenarios**:
 
 1. **Given** I am an authenticated user viewing an upcoming seminar, **When** I click "Mark as Attending," **Then** the button state changes to indicate I am attending, and this seminar appears on my personal dashboard.
-2. **Given** I am an authenticated user who has already RSVP'd, **When** I click the attending button again, **Then** my RSVP is removed and the seminar disappears from my personal dashboard.
-3. **Given** I am an authenticated user, **When** I navigate to my personal dashboard, **Then** I see a list of all upcoming seminars I have RSVP'd to.
-4. **Given** I am an unauthenticated user, **When** I attempt to click "Mark as Attending," **Then** I am prompted to log in first.
+2. **Given** I have just marked myself as attending, **When** the RSVP confirms, **Then** I am presented with an option to "Add to Google Calendar" or download an `.ics` file.
+3. **Given** I am an authenticated user who has already RSVP'd, **When** I click the attending button again, **Then** my RSVP is removed and the seminar disappears from my personal dashboard.
+4. **Given** I am an authenticated user, **When** I navigate to my personal dashboard, **Then** I see a list of all upcoming seminars I have RSVP'd to.
+5. **Given** I am an unauthenticated user, **When** I attempt to click "Mark as Attending," **Then** I am prompted to log in first.
 
 ---
 
@@ -138,14 +143,18 @@ As an authenticated user, I want a personal dashboard that shows my RSVP'd semin
 - **FR-012**: The system MUST display submitted questions (with author display name and timestamp) to all authenticated users viewing the same seminar.
 - **FR-013**: The system MUST allow unauthenticated users to view existing Q&A questions but not submit new ones.
 - **FR-014**: The system MUST classify seminars as "upcoming" or "past" based on their date relative to the current date.
-- **FR-015**: The system MUST validate that question submissions are not empty before accepting them.
-- **FR-016**: The system MUST display a clear placeholder when seminar materials are not yet available.
-- **FR-017**: The system MUST display a user-friendly error message when embedded materials fail to load from the external storage service.
+- **FR-015**: The system MUST visually highlight seminars that are currently active or starting within 15 minutes with a "Live Now" or "Starting Soon" badge.
+- **FR-016**: The system MUST provide a dedicated Search/Archive page where users can search or filter past seminars by Tag, Speaker, or Keyword.
+- **FR-017**: The system MUST display a thumbnail image for seminars on schedule and archive pages, falling back to a default placeholder if none exists.
+- **FR-018**: The system MUST provide an "Add to Calendar" (.ics download or Google Calendar link) option when a user RSVPs for an upcoming seminar.
+- **FR-019**: The system MUST validate that question submissions are not empty before accepting them.
+- **FR-020**: The system MUST display a clear placeholder when seminar materials are not yet available.
+- **FR-021**: The system MUST display a user-friendly error message when embedded materials fail to load from the external storage service.
 
 ### Key Entities
 
 - **User**: A person who interacts with the platform. Key attributes: display name, email, authentication status (guest vs. authenticated). A user can have zero or many RSVPs.
-- **Seminar**: A single talk event. Key attributes: title, speaker reference(s), tag reference(s), date/time, location, abstract/description (supports Rich Text/Markdown). Status (upcoming/past) is dynamically derived based on the current date/time. A seminar has zero or one video, zero or one presentation, and zero or many questions. RSVPs for a seminar are unlimited (no capacity constraints).
+- **Seminar**: A single talk event. Key attributes: title, speaker reference(s), tag reference(s), date/time, location, abstract/description (supports Rich Text/Markdown), thumbnail image URL. Status (upcoming/past) is dynamically derived based on the current date/time. A seminar has zero or one video, zero or one presentation, and zero or many questions. RSVPs for a seminar are unlimited (no capacity constraints).
 - **Speaker**: A person presenting a seminar. Key attributes: name, bio, profile image URL, affiliation.
 - **Tag**: A categorization label for seminars (e.g., "AI", "Algorithms", "Career"). Key attributes: name, color code.
 - **Material**: A video recording or presentation file associated with a seminar. Key attributes: type (video or presentation), external storage reference ID. Materials are viewable only by authenticated users.
@@ -184,3 +193,4 @@ As an authenticated user, I want a personal dashboard that shows my RSVP'd semin
 - Q: Does the abstract/description text need to support rich text formatting? → A: Yes, Rich Text (Markdown/HTML).
 - Q: Are Q&A questions tied to specific timestamps in the video, or just a general flat list? → A: General flat list, acting as comments that can be submitted even after the time of the seminar.
 - Q: Are there any maximum attendee caps for seminars? → A: No, unlimited RSVPs.
+- Q: Should we add low-effort, high-impact contextual features to Phase 1? → A: Yes, added Add to Calendar logic on RSVP, a dedicated Search/Archive page for filtering by Tag/Speaker on past talks, and Live Status badges. All handled fully client-side.
