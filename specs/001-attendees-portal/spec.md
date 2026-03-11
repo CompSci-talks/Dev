@@ -194,3 +194,4 @@ As an authenticated user, I want a personal dashboard that shows my RSVP'd semin
 - Q: Are Q&A questions tied to specific timestamps in the video, or just a general flat list? → A: General flat list, acting as comments that can be submitted even after the time of the seminar.
 - Q: Are there any maximum attendee caps for seminars? → A: No, unlimited RSVPs.
 - Q: Should we add low-effort, high-impact contextual features to Phase 1? → A: Yes, added Add to Calendar logic on RSVP, a dedicated Search/Archive page for filtering by Tag/Speaker on past talks, and Live Status badges. All handled fully client-side.
+- Q: What styling framework and design approach should be used? → A: Use Tailwind CSS with Theme Customization, specifically setting up a centralized Custom Color Palette. Reusable components must be extracted immediately whenever possible.

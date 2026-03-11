@@ -19,9 +19,9 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Initialize Angular 17 project `compsci-talks` with routing and SCSS in `.`
-- [ ] T002 [P] Configure environment variables structure in `src/environments/`
-- [ ] T003 [P] Configure application layout and base styles in `src/styles.scss` and `src/index.html`
+- [x] T001 Initialize Angular 19 project `compsci-talks` with routing and SCSS in `.`
+- [x] T002 Configure environment variables structure in `src/environments/`
+- [x] T003 Configure application layout and base Tailwind styles with semantic palette in `src/styles.scss`
 
 ---
 
@@ -30,11 +30,11 @@
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Copy interface definitions to `src/app/core/contracts/`
-- [ ] T005 [P] Implement core generic data models (User, Seminar, Speaker, Tag, Question, RSVP) in `src/app/core/models/`
-- [ ] T006 [P] Implement Supabase client initialization in `src/app/core/supabase.service.ts`
-- [ ] T007 Initialize feature modules / standalone app routes in `src/app/app.routes.ts` (portal, auth, seminar-room, dashboard)
-- [ ] T008 Provide mock service configuration explicitly for local development in `src/app/app.config.ts`
+- [x] T004 Copy interface definitions to `src/app/core/contracts/`
+- [x] T005 [P] Implement core generic data models (User, Seminar, Speaker, Tag, Question, RSVP) in `src/app/core/models/`
+- [x] T006 [P] Implement Supabase client initialization in `src/app/core/supabase.service.ts`
+- [x] T007 Initialize feature modules / standalone app routes in `src/app/app.routes.ts` (portal, auth, seminar-room, dashboard)
+- [x] T008 Provide mock service configuration explicitly for local development in `src/app/app.config.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
