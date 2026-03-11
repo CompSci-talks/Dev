@@ -47,13 +47,13 @@
 
 ### Implementation for User Story 1
 
-- [ ] T009 [P] [US1] Create mock implementation for `ISeminarService` in `src/app/core/services/mock-seminar.service.ts`
-- [ ] T010 [P] [US1] Create Supabase implementation for `ISeminarService` in `src/app/supabase-adapters/supabase-seminar.service.ts`
-- [ ] T011 [P] [US1] Create Presentational Seminar Card component in `src/app/portal/components/seminar-card/`
-- [ ] T012 [P] [US1] Create Date/Status Utility pipe (Live Now badge logic) in `src/app/core/pipes/seminar-status.pipe.ts`
-- [ ] T013 [US1] Create Public Home Page (Schedule) Smart component in `src/app/portal/pages/home/`
-- [ ] T014 [US1] Create Search/Archive Page Smart component in `src/app/portal/pages/archive/`
-- [ ] T015 [US1] Create Public Seminar Detail view component in `src/app/portal/pages/seminar-detail/` (hiding materials layer)
+- [x] T009 [P] [US1] Create mock implementation for `ISeminarService` in `src/app/core/services/mock-seminar.service.ts`
+- [x] T010 [P] [US1] Create Supabase implementation for `ISeminarService` in `src/app/supabase-adapters/supabase-seminar.service.ts`
+- [x] T011 [P] [US1] Create Presentational Seminar Card component in `src/app/portal/components/seminar-card/`
+- [x] T012 [P] [US1] Create Date/Status Utility pipe (Live Now badge logic) in `src/app/core/pipes/seminar-status.pipe.ts`
+- [x] T013 [US1] Create Public Home Page (Schedule) Smart component in `src/app/portal/pages/home/`
+- [x] T014 [US1] Create Search/Archive Page Smart component in `src/app/portal/pages/archive/`
+- [x] T015 [US1] Create Public Seminar Detail view component in `src/app/portal/pages/seminar-detail/` (hiding materials layer)
 
 **Checkpoint**: User Story 1 functional. Visitors can browse empty/mocked schedules and details.
 
@@ -68,10 +68,10 @@
 
 - [ ] T016 [P] [US2] Create mock implementation for `IAuthService` in `src/app/core/services/mock-auth.service.ts`
 - [ ] T017 [P] [US2] Create Supabase implementation for `IAuthService` in `src/app/supabase-adapters/supabase-auth.service.ts`
-- [ ] T018 [P] [US2] Implement Auth Route Guard in `src/app/core/guards/auth.guard.ts`
-- [ ] T019 [US2] Create Login Page component in `src/app/auth/pages/login/`
-- [ ] T020 [US2] Create Register Page component in `src/app/auth/pages/register/`
-- [ ] T021 [US2] Create global navigation header displaying Login/Logout state in `src/app/core/components/header/`
+- [x] T018 [P] [US2] Implement Auth Route Guard in `src/app/core/guards/auth.guard.ts`
+- [x] T019 [US2] Create Login Page component in `src/app/auth/pages/login/`
+- [x] T020 [US2] Create Register Page component in `src/app/auth/pages/register/`
+- [x] T021 [US2] Create global navigation header displaying Login/Logout state in `src/app/core/components/header/`
 
 **Checkpoint**: Authentication flows work. Protected routes block guests.
 
@@ -84,10 +84,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T022 [P] [US3] Create Safe IFrame Pipe in `src/app/core/pipes/safe-url.pipe.ts`
-- [ ] T023 [US3] Create Video Player presentation component in `src/app/seminar-room/components/video-player/`
-- [ ] T024 [US3] Create Slide Viewer presentation component in `src/app/seminar-room/components/slide-viewer/`
-- [ ] T025 [US3] Update Seminar Detail Smart component `src/app/portal/pages/seminar-detail/` to lazy load `seminar-room` materials if user is authenticated.
+- [x] T022 [P] [US3] Create Safe IFrame Pipe in `src/app/core/pipes/safe-url.pipe.ts`
+- [x] T023 [US3] Create Video Player presentation component in `src/app/seminar-room/components/video-player/`
+- [x] T024 [US3] Create Slide Viewer presentation component in `src/app/seminar-room/components/slide-viewer/`
+- [x] T025 [US3] Update Seminar Detail Smart component `src/app/portal/pages/seminar-detail/` to lazy load `seminar-room` materials if user is authenticated.
 
 **Checkpoint**: Locked video/slides become viewable when logged in.
 
@@ -100,11 +100,11 @@
 
 ### Implementation for User Story 4
 
-- [ ] T026 [P] [US4] Create mock implementation for `IRsvpService` in `src/app/core/services/mock-rsvp.service.ts`
-- [ ] T027 [P] [US4] Create Supabase implementation for `IRsvpService` in `src/app/supabase-adapters/supabase-rsvp.service.ts`
-- [ ] T028 [US4] Create Calendar Link generation utility in `src/app/core/utils/calendar.util.ts`
-- [ ] T029 [US4] Create RSVP Button presentation component in `src/app/portal/components/rsvp-button/`
-- [ ] T030 [US4] Integrate RSVP button into Seminar Detail page `src/app/portal/pages/seminar-detail/`
+- [x] T026 [P] [US4] Create mock implementation for `IRsvpService` in `src/app/core/services/mock-rsvp.service.ts`
+- [x] T027 [P] [US4] Create Supabase implementation for `IRsvpService` in `src/app/supabase-adapters/supabase-rsvp.service.ts`
+- [x] T028 [US4] Create Calendar Link generation utility in `src/app/core/utils/calendar.util.ts`
+- [x] T029 [US4] Create RSVP Button presentation component in `src/app/portal/components/rsvp-button/`
+- [x] T030 [US4] Integrate RSVP button into Seminar Detail page `src/app/portal/pages/seminar-detail/`
 
 **Checkpoint**: RSVP system processes database insertions and emits ICS links.
 
@@ -117,11 +117,11 @@
 
 ### Implementation for User Story 5
 
-- [ ] T031 [P] [US5] Create mock implementation for `IQaService` in `src/app/core/services/mock-qa.service.ts`
-- [ ] T032 [P] [US5] Create Supabase implementation for `IQaService` in `src/app/supabase-adapters/supabase-qa.service.ts`
-- [ ] T033 [US5] Create Q&A List presentation component in `src/app/seminar-room/components/qa-list/`
-- [ ] T034 [US5] Create Q&A Submit Form component in `src/app/seminar-room/components/qa-form/`
-- [ ] T035 [US5] Integrate Q&A smart container into Seminar Detail page `src/app/portal/pages/seminar-detail/`
+- [x] T031 [P] [US5] Create mock implementation for `IQaService` in `src/app/core/services/mock-qa.service.ts`
+- [x] T032 [P] [US5] Create Supabase implementation for `IQaService` in `src/app/supabase-adapters/supabase-qa.service.ts`
+- [x] T033 [US5] Create Q&A List presentation component in `src/app/seminar-room/components/qa-list/`
+- [x] T034 [US5] Create Q&A Submit Form component in `src/app/seminar-room/components/qa-form/`
+- [x] T035 [US5] Integrate Q&A smart container into Seminar Detail page `src/app/portal/pages/seminar-detail/`
 
 **Checkpoint**: Real-time Q&A stream is active.
 
@@ -134,8 +134,8 @@
 
 ### Implementation for User Story 6
 
-- [ ] T036 [US6] Create Dashboard Smart component in `src/app/dashboard/pages/dashboard/`
-- [ ] T037 [US6] Update navigation header to include Dashboard link if authenticated.
+- [x] T036 [US6] Create Dashboard Smart component in `src/app/dashboard/pages/dashboard/`
+- [x] T037 [US6] Update navigation header to include Dashboard link if authenticated.
 
 **Checkpoint**: Personal tracking is functional. All user stories complete!
 
@@ -145,9 +145,9 @@
 
 **Purpose**: UI enhancements and error state coverage.
 
-- [ ] T038 Handle global RxJS error interceptions / Toast Notifications in `src/app/core/services/toast.service.ts`
-- [ ] T039 Apply loading skeleton states across all Smart components
-- [ ] T040 Verify "Anti-Download" restriction on Google Drive iframe logic
+- [x] T038 Handle global RxJS error interceptions / Toast Notifications in `src/app/core/services/toast.service.ts`
+- [x] T039 Apply loading skeleton states across all Smart components
+- [x] T040 Verify "Anti-Download" restriction on Google Drive iframe logic
 
 ---
 

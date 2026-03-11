@@ -1,0 +1,19 @@
+<div class="max-w-5xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-text-main mb-2">Upcoming Seminars</h1>
+            <p class="text-text-muted">Discover and RSVP to the latest talks from our community.</p>
+        </div>
+        <a href="/archive" class="btn btn-outline">View Previous Talks</a>
+    </div>
+
+    <ng-container *ngIf="upcomingSeminars$ | async as seminars">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <app-seminar-card *ngFor="let sem of seminars" [seminar]="sem"></app-seminar-card>
+        </div>
+
+        <div *ngIf="seminars.length === 0" class="card p-12 text-center text-text-muted">
+            No upcoming seminars found. Check back later!
+        </div>
+    </ng-container>
+</div>

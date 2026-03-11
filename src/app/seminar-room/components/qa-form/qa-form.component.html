@@ -1,0 +1,10 @@
+<form (ngSubmit)="onSubmit()" class="mt-4 flex flex-col gap-2 relative">
+    <textarea [(ngModel)]="newQuestionText" name="questionText" rows="3" placeholder="Type your question here..."
+        class="input-field resize-none w-full" required [disabled]="isSubmitting">
+  </textarea>
+    <div class="flex justify-end">
+        <button type="submit" class="btn btn-primary" [disabled]="!newQuestionText.trim() || isSubmitting">
+            {{ isSubmitting ? 'Sending...' : 'Ask Question' }}
+        </button>
+    </div>
+</form>

@@ -7,11 +7,11 @@
 
 ## Summary
 
-The Attendees Portal (Phase 1) provides unauthenticated users with a public schedule and past seminar archive, while allowing authenticated users to RSVP, submit Q&A questions, and view protected seminar materials (videos/PPTs). The architecture adheres strictly to a zero-cost, serverless model using Angular 17+ and Supabase/Firebase adapters.
+The Attendees Portal (Phase 1) provides unauthenticated users with a public schedule and past seminar archive, while allowing authenticated users to RSVP, submit Q&A questions, and view protected seminar materials (videos/PPTs). The architecture adheres strictly to a zero-cost, serverless model using Angular 19 and Supabase/Firebase adapters.
 
 ## Technical Context
 
-**Language/Version**: TypeScript 5.x (Angular 17+)
+**Language/Version**: TypeScript 5.x (Angular 19)
 **Primary Dependencies**: Angular Core/Common/Router/Forms, RxJS
 **Storage**: Supabase (PostgreSQL) + Google Drive (File Storage)
 **Testing**: Jasmine/Karma (Angular Defaults)
