@@ -99,7 +99,7 @@
 - [x] T022 Document testing results and implementation details in `walkthrough.md`
 - [ ] T029 Capture end-to-end browser recording testing User Story 3 (Authenticated user replying to a comment and verifying single-level nesting)
 - [ ] T030 Document User Story 3 testing results and implementation details in `walkthrough.md`
-- [ ] T031 Refactor `comment-list.component.html` and `.scss` to enforce maximum height and line-clamping logic for extremely long comments (Edge Case U1).
+- [x] T031 Refactor `comment-list.component.html` and `.scss` to enforce maximum height and line-clamping logic for extremely long comments (Edge Case U1).
 
 ## Dependencies & Execution Order
 
@@ -110,3 +110,15 @@
 - **User Stories (Phase 3-4)**: Complete
 - **User Story 5 (Phase 5)**: Depends on Phase 3 and 4 completion. The mock/adapter service updates (T024, T025) MUST be completed and verified before binding UI component updates (T026-T028) per the Interface-first constitution rule.
 - **Polish (Final Phase)**: Depends on Phase 5 completion. T031 acts independently on CSS structure and can be handled concurrently with T029.
+- **Author Names (Phase 7)**: Follow-up request to display actual names instead of placeholders.
+
+---
+
+## Phase 7: Author Names in Comments
+
+**Purpose**: Display the actual name of the commenter instead of hardcoded "Attendee".
+
+- [x] T032 [P] Update `Comment` interface in `src/app/core/models/comment.model.ts` to include `author_name: string`
+- [x] T033 [P] Update `MockCommentService` to populate `author_name` in mock data and on submission
+- [x] T034 [P] Update `SupabaseCommentService` to fetch author names via table join
+- [x] T035 [P] Update `CommentListComponent` template to display `c.author_name`

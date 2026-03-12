@@ -9,6 +9,7 @@
 
 ### Session 2026-03-12
 - Q: How deep can comment threads go? → A: Single level nesting (Replies can only be made to top-level comments. You cannot reply to a reply).
+- Q: How should long comments be handled to prevent UI breakage? → A: Truncation with "See More" expansion logic.
 
 ## User Scenarios & Testing
 
@@ -60,7 +61,7 @@ As a user (including speakers), I want to reply directly to a specific comment s
 
 ### Edge Cases
 
-- What happens if a user submits a very long comment? (e.g., UI should truncate or scroll gracefully to prevent layout breakage).
+- What happens if a user submits a very long comment? → UI follows "See More" truncation logic to maintain feed readability.
 - How does the system handle rapid, repeated comment submissions (spam prevention)? 
 - If a user deletes their account, what happens to their comments? (Assuming display name falls back to "Deleted User" or is retained conditionally).
 
@@ -77,6 +78,7 @@ As a user (including speakers), I want to reply directly to a specific comment s
 - **FR-007**: The system MUST replace all frontend terminology from "Q&A" / "Questions" to "Comments" across the seminar detail view.
 - **FR-008**: The system MUST allow authenticated users to submit replies to top-level comments.
 - **FR-009**: The system MUST restrict replies to a single level of nesting (i.e., a reply cannot have sub-replies).
+- **FR-010**: The system MUST truncate long comments using line-clamping and provide a "See More" button to reveal the full content.
 
 ### Key Entities
 

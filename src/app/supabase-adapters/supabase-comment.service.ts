@@ -43,18 +43,21 @@ export class SupabaseCommentService implements ICommentService, OnDestroy {
                     payload.parent_id = parentId;
                 }
 
-                const query = this.supabase.client.from('comments').insert(payload).select().single();
+                const query = this.supabase.client
+                    .from('comments')
+                    .insert(payload)
+                    .select('*, users!author_id(display_name)')
+                    .single();
 
                 return from(query).pipe(
                     map(response => {
                         if (response.error) throw response.error;
-                        const c = {
-                            ...response.data,
-                            created_at: new Date(response.data.created_at)
+                        const data = response.data;
+                        return {
+                            ...data,
+                            created_at: new Date(data.created_at),
+                            author_name: data.users?.display_name || 'User'
                         } as Comment;
-
-                        // Note: Postgres Realtime should also pick this up, but optionally we can insert it instantly here
-                        return c;
                     })
                 );
             })
@@ -64,16 +67,16 @@ export class SupabaseCommentService implements ICommentService, OnDestroy {
     private fetchInitialComments(seminarId: string) {
         this.supabase.client
             .from('comments')
-            .select('*')
+            .select('*, users!author_id(display_name)')
             .eq('seminar_id', seminarId)
             .eq('is_hidden', false)
-            .order('created_at', { ascending: true }) // Chronological order so older items render first, and replies cluster
+            .order('created_at', { ascending: true })
             .then(response => {
                 if (!response.error && response.data) {
                     const cs = response.data.map((d: any) => ({
                         ...d,
                         created_at: new Date(d.created_at),
-                        parent_id: d.parent_id
+                        author_name: d.users?.display_name || 'User'
                     })) as Comment[];
                     this.commentsSubject.next(cs);
                 }
@@ -89,12 +92,19 @@ export class SupabaseCommentService implements ICommentService, OnDestroy {
                 schema: 'public',
                 table: 'comments',
                 filter: `seminar_id=eq.${seminarId}`
-            }, payload => {
+            }, async payload => {
                 if (payload.new && !payload.new['is_hidden']) {
+                    // Realtime payload doesn't include joins. Fetch user separately.
+                    const { data: userData } = await this.supabase.client
+                        .from('users')
+                        .select('display_name')
+                        .eq('id', payload.new['author_id'])
+                        .single();
+
                     const newC = {
                         ...payload.new,
                         created_at: new Date(payload.new['created_at']),
-                        parent_id: payload.new['parent_id']
+                        author_name: userData?.display_name || 'User'
                     } as Comment;
 
                     // Always append chronologically so the reply flow behaves correctly in feed

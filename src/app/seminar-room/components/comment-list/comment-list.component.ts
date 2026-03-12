@@ -25,4 +25,18 @@ export class CommentListComponent {
     getReplies(parentId: string) {
         return this.comments.filter(c => c.parent_id === parentId);
     }
+
+    private expandedComments = new Set<string>();
+
+    toggleExpand(commentId: string) {
+        if (this.expandedComments.has(commentId)) {
+            this.expandedComments.delete(commentId);
+        } else {
+            this.expandedComments.add(commentId);
+        }
+    }
+
+    isExpanded(commentId: string): boolean {
+        return this.expandedComments.has(commentId);
+    }
 }
