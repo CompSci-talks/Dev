@@ -64,6 +64,52 @@ export class SupabaseCommentService implements ICommentService, OnDestroy {
         );
     }
 
+    getAllComments(): Observable<Comment[]> {
+        const query = this.supabase.client
+            .from('comments')
+            .select('*, users!author_id(display_name)')
+            .order('created_at', { ascending: false });
+
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
+                return (response.data || []).map((d: any) => ({
+                    ...d,
+                    created_at: new Date(d.created_at),
+                    author_name: d.users?.display_name || 'User'
+                })) as Comment[];
+            })
+        );
+    }
+
+    deleteComment(commentId: string): Observable<void> {
+        const query = this.supabase.client
+            .from('comments')
+            .delete()
+            .eq('id', commentId);
+
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
+                return;
+            })
+        );
+    }
+
+    updateCommentStatus(commentId: string, isHidden: boolean): Observable<void> {
+        const query = this.supabase.client
+            .from('comments')
+            .update({ is_hidden: isHidden })
+            .eq('id', commentId);
+
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
+                return;
+            })
+        );
+    }
+
     private fetchInitialComments(seminarId: string) {
         this.supabase.client
             .from('comments')

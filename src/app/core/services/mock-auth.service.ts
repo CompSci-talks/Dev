@@ -5,20 +5,41 @@ import { User, UserRole } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class MockAuthService implements IAuthService {
-    private userSubject = new BehaviorSubject<User | null>(null);
+    private userSubject = new BehaviorSubject<User | null>(this.loadUser());
     currentUser$ = this.userSubject.asObservable();
 
+    private loadUser(): User | null {
+        const stored = localStorage.getItem('mock_user');
+        if (stored) {
+            try {
+                const user = JSON.parse(stored);
+                return { ...user, created_at: new Date(user.created_at) };
+            } catch (e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private saveUser(user: User | null) {
+        if (user) {
+            localStorage.setItem('mock_user', JSON.stringify(user));
+        } else {
+            localStorage.removeItem('mock_user');
+        }
+        this.userSubject.next(user);
+    }
+
     signIn(email: string, password: string): Observable<User> {
-        // Basic mock logic: accepts 'password' as the valid password
         if (password === 'password') {
             const user: User = {
                 id: 'mock-user-123',
                 email,
                 display_name: email.split('@')[0],
-                role: 'authenticated' as UserRole,
+                role: (email.includes('admin') ? 'admin' : 'authenticated') as UserRole,
                 created_at: new Date()
             };
-            this.userSubject.next(user);
+            this.saveUser(user);
             return of(user).pipe(delay(500));
         }
         return throwError(() => new Error('Invalid credentials. Hint: use "password"'));
@@ -32,12 +53,12 @@ export class MockAuthService implements IAuthService {
             role: 'authenticated' as UserRole,
             created_at: new Date()
         };
-        this.userSubject.next(user);
+        this.saveUser(user);
         return of(user).pipe(delay(500));
     }
 
     signOut(): Observable<void> {
-        this.userSubject.next(null);
+        this.saveUser(null);
         return of(undefined).pipe(delay(200));
     }
 }

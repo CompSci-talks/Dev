@@ -18,3 +18,6 @@ export interface ISeminarService {
     /** CRUD: Delete a seminar */
     deleteSeminar(id: string): Observable<void>;
 }
+
+import { InjectionToken } from '@angular/core';
+export const SEMINAR_SERVICE = new InjectionToken<ISeminarService>('SEMINAR_SERVICE');

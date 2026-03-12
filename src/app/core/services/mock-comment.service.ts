@@ -70,6 +70,20 @@ export class MockCommentService implements ICommentService {
         );
     }
 
+    updateCommentStatus(commentId: string, isHidden: boolean): Observable<void> {
+        const currentStore = this.store$.value;
+        const newStore: Record<string, Comment[]> = {};
+
+        Object.keys(currentStore).forEach(sId => {
+            newStore[sId] = currentStore[sId].map(c =>
+                c.id === commentId ? { ...c, is_hidden: isHidden } : c
+            );
+        });
+
+        this.store$.next(newStore);
+        return of(undefined).pipe(delay(200));
+    }
+
     deleteComment(commentId: string): Observable<void> {
         const currentStore = this.store$.value;
         const newStore: Record<string, Comment[]> = {};

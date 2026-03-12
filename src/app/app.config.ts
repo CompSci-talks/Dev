@@ -8,8 +8,11 @@ import { AUTH_SERVICE } from './core/contracts/auth.interface';
 import { SEMESTER_SERVICE } from './core/contracts/semester.interface';
 import { SPEAKER_SERVICE } from './core/contracts/speaker.interface';
 import { TAG_SERVICE } from './core/contracts/tag.interface';
+import { SEMINAR_SERVICE } from './core/contracts/seminar.interface';
 import { MockSpeakerService } from './core/services/mock-speaker.service';
 import { MockTagService } from './core/services/mock-tag.service';
+import { MockCommentService } from './core/services/mock-comment.service';
+import { COMMENT_SERVICE } from './core/contracts/comment.interface';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,9 +20,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     // Core Mock Service Injection
     { provide: SEMESTER_SERVICE, useClass: MockSemesterService },
-    { provide: 'ISeminarService', useClass: MockSeminarService },
+    { provide: SEMINAR_SERVICE, useClass: MockSeminarService },
     { provide: AUTH_SERVICE, useClass: MockAuthService },
     { provide: SPEAKER_SERVICE, useClass: MockSpeakerService },
     { provide: TAG_SERVICE, useClass: MockTagService },
+    { provide: COMMENT_SERVICE, useClass: MockCommentService },
   ]
 };

@@ -1,8 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SeminarListComponent } from './seminar-list.component';
 import { SeminarFormComponent } from './seminar-form.component';
-import { ISeminarService } from '../../../core/contracts/seminar.interface';
+import { ISeminarService, SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
 import { Seminar } from '../../../core/models/seminar.model';
 import { Observable } from 'rxjs';
 
@@ -42,13 +42,12 @@ import { Observable } from 'rxjs';
   `
 })
 export class SeminarManagerComponent implements OnInit {
-  seminars$: Observable<Seminar[]>;
+  private seminarService = inject(SEMINAR_SERVICE);
+  seminars$ = this.seminarService.getSeminars();
   showForm = false;
   editingSeminar: Seminar | null = null;
 
-  constructor(@Inject('ISeminarService') private seminarService: ISeminarService) {
-    this.seminars$ = this.seminarService.getSeminars();
-  }
+  constructor() { }
 
   ngOnInit() { }
 

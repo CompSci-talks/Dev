@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ICommentService } from '../../../core/contracts/comment.interface';
+import { ICommentService, COMMENT_SERVICE } from '../../../core/contracts/comment.interface';
 import { Comment } from '../../../core/models/comment.model';
 import { Observable } from 'rxjs';
 
@@ -66,18 +66,17 @@ import { Observable } from 'rxjs';
   `
 })
 export class CommentModerationComponent implements OnInit {
-  comments$: Observable<Comment[]>;
+  private commentService = inject(COMMENT_SERVICE);
+  comments$ = this.commentService.getAllComments();
 
-  constructor(@Inject('ICommentService') private commentService: ICommentService) {
-    this.comments$ = this.commentService.getAllComments ? this.commentService.getAllComments() : new Observable<Comment[]>();
-  }
+  constructor() { }
 
   ngOnInit() { }
 
   deleteComment(id: string) {
     if (confirm('Are you sure you want to permanently delete this comment?')) {
       this.commentService.deleteComment(id).subscribe(() => {
-        this.comments$ = this.commentService.getAllComments ? this.commentService.getAllComments() : new Observable<Comment[]>();
+        this.comments$ = this.commentService.getAllComments();
       });
     }
   }

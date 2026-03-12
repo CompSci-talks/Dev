@@ -9,8 +9,14 @@ export interface ICommentService {
     submitComment(seminarId: string, text: string, parentId?: string): Observable<Comment>;
 
     /** Admin: Fetch all comments across all seminars */
-    getAllComments?(): Observable<Comment[]>;
+    getAllComments(): Observable<Comment[]>;
 
     /** Admin: Delete a comment */
     deleteComment(commentId: string): Observable<void>;
+
+    /** Admin: Toggle comment visibility */
+    updateCommentStatus(commentId: string, isHidden: boolean): Observable<void>;
 }
+
+import { InjectionToken } from '@angular/core';
+export const COMMENT_SERVICE = new InjectionToken<ICommentService>('COMMENT_SERVICE');

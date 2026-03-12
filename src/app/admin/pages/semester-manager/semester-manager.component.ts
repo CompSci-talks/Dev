@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SemesterListComponent } from './semester-list.component';
 import { SemesterFormComponent } from './semester-form.component';
@@ -7,10 +7,10 @@ import { Semester } from '../../../core/models/semester.model';
 import { Observable } from 'rxjs';
 
 @Component({
-    selector: 'app-semester-manager',
-    standalone: true,
-    imports: [CommonModule, SemesterListComponent, SemesterFormComponent],
-    template: `
+  selector: 'app-semester-manager',
+  standalone: true,
+  imports: [CommonModule, SemesterListComponent, SemesterFormComponent],
+  template: `
     <div class="max-w-4xl">
       <div class="flex justify-between items-center mb-6">
         <div>
@@ -42,45 +42,44 @@ import { Observable } from 'rxjs';
   `
 })
 export class SemesterManagerComponent implements OnInit {
-    semesters$: Observable<Semester[]>;
-    showForm = false;
-    editingSemester: Semester | null = null;
+  private semesterService = inject(SEMESTER_SERVICE);
+  semesters$ = this.semesterService.getSemesters();
+  showForm = false;
+  editingSemester: Semester | null = null;
 
-    constructor(@Inject(SEMESTER_SERVICE) private semesterService: ISemesterService) {
-        this.semesters$ = this.semesterService.getSemesters();
+  constructor() { }
+
+  ngOnInit() { }
+
+  onCreate() {
+    this.editingSemester = null;
+    this.showForm = true;
+  }
+
+  editSemester(semester: Semester) {
+    this.editingSemester = semester;
+    this.showForm = true;
+  }
+
+  saveSemester(semesterData: Omit<Semester, 'id'>) {
+    if (this.editingSemester) {
+      this.semesterService.updateSemester(this.editingSemester.id, semesterData).subscribe(() => this.refresh());
+    } else {
+      this.semesterService.createSemester(semesterData).subscribe(() => this.refresh());
     }
+  }
 
-    ngOnInit() { }
+  setActive(id: string) {
+    this.semesterService.setActiveSemester(id).subscribe(() => this.refresh());
+  }
 
-    onCreate() {
-        this.editingSemester = null;
-        this.showForm = true;
-    }
+  closeForm() {
+    this.showForm = false;
+    this.editingSemester = null;
+  }
 
-    editSemester(semester: Semester) {
-        this.editingSemester = semester;
-        this.showForm = true;
-    }
-
-    saveSemester(semesterData: Omit<Semester, 'id'>) {
-        if (this.editingSemester) {
-            this.semesterService.updateSemester(this.editingSemester.id, semesterData).subscribe(() => this.refresh());
-        } else {
-            this.semesterService.createSemester(semesterData).subscribe(() => this.refresh());
-        }
-    }
-
-    setActive(id: string) {
-        this.semesterService.setActiveSemester(id).subscribe(() => this.refresh());
-    }
-
-    closeForm() {
-        this.showForm = false;
-        this.editingSemester = null;
-    }
-
-    private refresh() {
-        this.closeForm();
-        this.semesters$ = this.semesterService.getSemesters();
-    }
+  private refresh() {
+    this.closeForm();
+    this.semesters$ = this.semesterService.getSemesters();
+  }
 }
