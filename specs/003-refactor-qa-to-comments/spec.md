@@ -3,7 +3,12 @@
 **Feature Branch**: `003-refactor-qa-to-comments`  
 **Created**: 2026-03-11  
 **Status**: Draft  
-**Input**: User description: "i think we need it to be just comments. not Q&A"
+**Input**: User description: "i think we need it to be just comments. not Q&A", plus follow-up: "the comments should be repliable, so any user, speaker included can reply on any comment"
+
+## Clarifications
+
+### Session 2026-03-12
+- Q: How deep can comment threads go? → A: Single level nesting (Replies can only be made to top-level comments. You cannot reply to a reply).
 
 ## User Scenarios & Testing
 
@@ -37,6 +42,22 @@ As an authenticated user, I want to leave a comment on a seminar so that I can s
 2. **Given** I am an authenticated user, **When** I attempt to submit an empty comment or a comment containing only whitespace, **Then** the submission is blocked and I am shown a validation error.
 3. **Given** I am an authenticated user, **When** my comment submission fails due to a network error, **Then** I am shown a clear error message and my typed text is preserved so I can try again.
 
+---
+
+### User Story 3 - Replying to a Comment (Priority: P1)
+
+As a user (including speakers), I want to reply directly to a specific comment so that I can answer questions or continue a targeted discussion.
+
+**Why this priority**: Replying is a core social feature required for turning a comment wall into an interactive discussion.
+
+**Independent Test**: Can be tested by logging in, finding a top-level comment, clicking "Reply", submitting a response, and verifying it appears nested under the original comment.
+
+**Acceptance Scenarios**:
+
+1. **Given** I am an authenticated user, **When** I view a top-level comment, **Then** I see a "Reply" button.
+2. **Given** I click "Reply" on a top-level comment, **When** I submit my response, **Then** it is visually nested under the original comment.
+3. **Given** I view a nested reply, **When** I look for a "Reply" button, **Then** I do not see one (single-level nesting constraint).
+
 ### Edge Cases
 
 - What happens if a user submits a very long comment? (e.g., UI should truncate or scroll gracefully to prevent layout breakage).
@@ -54,10 +75,12 @@ As an authenticated user, I want to leave a comment on a seminar so that I can s
 - **FR-005**: The system MUST validate that a comment is not empty before submission.
 - **FR-006**: The system MUST display the author's display name, the comment text, and the submission timestamp for each comment.
 - **FR-007**: The system MUST replace all frontend terminology from "Q&A" / "Questions" to "Comments" across the seminar detail view.
+- **FR-008**: The system MUST allow authenticated users to submit replies to top-level comments.
+- **FR-009**: The system MUST restrict replies to a single level of nesting (i.e., a reply cannot have sub-replies).
 
 ### Key Entities
 
-- **Comment**: Replaces the previous "Question" entity. Key attributes: `text` (the comment body), `author_id` (reference to User), `seminar_id` (reference to Seminar), `created_at` (timestamp). Validation constraint: text length > 0.
+- **Comment**: Replaces the previous "Question" entity. Key attributes: `text` (the comment body), `author_id` (reference to User), `seminar_id` (reference to Seminar), `created_at` (timestamp), `parent_id` (optional reference to a parent Comment for replies). Validation constraint: text length > 0.
 - **Seminar**: The subject of the comments.
 - **User**: The author of the comments.
 

@@ -11,18 +11,23 @@ export class MockCommentService implements ICommentService {
     // mock in-memory DB: { seminarId: Comment[] }
     private store$ = new BehaviorSubject<Record<string, Comment[]>>({
         'sem-1': [
-            { id: 'c1', seminar_id: 'sem-1', author_id: 'mock-user-123', text: 'Will the slides be shared after the talk?', created_at: new Date(Date.now() - 1000 * 60 * 5), is_hidden: false }
+            { id: 'c1', seminar_id: 'sem-1', author_id: 'mock-user-123', text: 'Will the slides be shared after the talk?', created_at: new Date(Date.now() - 1000 * 60 * 5), is_hidden: false },
+            { id: 'c2', seminar_id: 'sem-1', author_id: 'mock-speaker-1', text: 'Yes, they will be posted on the faculty portal tomorrow.', created_at: new Date(Date.now() - 1000 * 60 * 4), is_hidden: false, parent_id: 'c1' }
         ]
     });
 
     getCommentsForSeminar$(seminarId: string): Observable<Comment[]> {
         return this.store$.pipe(
             map(store => store[seminarId] || []),
-            map(comments => [...comments].sort((a, b) => b.created_at.getTime() - a.created_at.getTime()))
+            map(comments => {
+                // Return all comments chronologically. Single-level nesting
+                // means we just rely on parent_id in the view to indent them.
+                return [...comments].sort((a, b) => a.created_at.getTime() - b.created_at.getTime());
+            })
         );
     }
 
-    submitComment(seminarId: string, text: string): Observable<Comment> {
+    submitComment(seminarId: string, text: string, parentId?: string): Observable<Comment> {
         return this.auth.currentUser$.pipe(
             switchMap(user => {
                 if (!user) throw new Error("Must be logged in to leave a comment.");
@@ -33,7 +38,8 @@ export class MockCommentService implements ICommentService {
                     author_id: user.id,
                     text,
                     created_at: new Date(),
-                    is_hidden: false
+                    is_hidden: false,
+                    parent_id: parentId // Will naturally be undefined if not a reply
                 };
 
                 const currentStore = this.store$.value;

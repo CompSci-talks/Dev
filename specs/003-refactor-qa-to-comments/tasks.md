@@ -1,4 +1,4 @@
-# Tasks: Refactoring Q&A to Comments
+# Tasks: Refactoring Q&A to Comments (with Replies)
 
 **Input**: Design documents from `/specs/003-refactor-qa-to-comments/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md
@@ -65,7 +65,31 @@
 
 ---
 
-## Phase 5: Polish & Cross-Cutting Concerns
+## Phase 5: User Story 3 - Replying to a Comment (Priority: P1)
+
+**Goal**: As a user (including speakers), I want to reply directly to a specific comment so that I can answer questions or continue a targeted discussion.
+
+**Why this priority**: Replying is a core social feature required for turning a comment wall into an interactive discussion.
+
+**Independent Test**: Can be tested by logging in, finding a top-level comment, clicking "Reply", submitting a response, and verifying it appears nested under the original comment.
+
+### Implementation for User Story 3
+
+- [x] T023 [US3] Update `ICommentService` interface in `src/app/core/contracts/comment.interface.ts` to accept optional `parentId` argument in `submitComment`
+- [x] T024 [P] [US3] Update `MockCommentService` in `src/app/core/services/mock-comment.service.ts` to implement the updated `submitComment` signature and handle reply logic
+- [x] T025 [P] [US3] Update `SupabaseCommentService` in `src/app/supabase-adapters/supabase-comment.service.ts` to implement the updated `submitComment` signature
+
+**Checkpoint**: Adapter services must pass compilation and structural tests before binding UI components.
+
+- [x] T026 [P] [US3] Update `CommentsContainerComponent` in `src/app/seminar-room/components/comments-container/comments-container.component.ts` (and `.html`) to track `activeReplyId` and handle `onReplySubmitted(text, parentId)`
+- [x] T027 [P] [US3] Update `CommentListComponent` in `src/app/seminar-room/components/comment-list/comment-list.component.ts` (and `.html`) to accept `@Input() activeReplyId`, emit `replyClicked`, and render replies directly below parents utilizing designated semantic tailwind spacing tokens (avoid hardcoded classes like `ml-8` inline).
+- [x] T028 [P] [US3] Update `CommentFormComponent` in `src/app/seminar-room/components/comment-form/comment-form.component.ts` (and `.html`) to accept `@Input() isReply` and emit `commentSubmitted` with `parentId`
+
+**Checkpoint**: User Story 3 allows targeted, threaded discussions up to one level deep.
+
+---
+
+## Phase 6: Polish & Cross-Cutting Concerns
 
 **Purpose**: Improvements that affect multiple user stories
 
@@ -73,13 +97,16 @@
 - [x] T020 Capture end-to-end browser recording testing User Story 1 (Guest viewing comments feed and login prompt)
 - [x] T021 Capture end-to-end browser recording testing User Story 2 (Authenticated user submitting comments and validation)
 - [x] T022 Document testing results and implementation details in `walkthrough.md`
+- [ ] T029 Capture end-to-end browser recording testing User Story 3 (Authenticated user replying to a comment and verifying single-level nesting)
+- [ ] T030 Document User Story 3 testing results and implementation details in `walkthrough.md`
+- [ ] T031 Refactor `comment-list.component.html` and `.scss` to enforce maximum height and line-clamping logic for extremely long comments (Edge Case U1).
 
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
 
-- **Setup (Phase 1)**: No dependencies - can start immediately
-- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phase 3+)**: All depend on Foundational phase completion
-  - Phase 3 (US1 - Viewing) provides the base components necessary to embed Phase 4 (US2 - Submitting). They should ideally be implemented sequentially.
-- **Polish (Final Phase)**: Depends on all desired user stories being complete
+- **Setup (Phase 1)**: Complete
+- **Foundational (Phase 2)**: Complete
+- **User Stories (Phase 3-4)**: Complete
+- **User Story 5 (Phase 5)**: Depends on Phase 3 and 4 completion. The mock/adapter service updates (T024, T025) MUST be completed and verified before binding UI component updates (T026-T028) per the Interface-first constitution rule.
+- **Polish (Final Phase)**: Depends on Phase 5 completion. T031 acts independently on CSS structure and can be handled concurrently with T029.

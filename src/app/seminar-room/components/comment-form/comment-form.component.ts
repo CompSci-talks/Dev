@@ -10,13 +10,20 @@ import { FormsModule } from '@angular/forms';
 })
 export class CommentFormComponent {
     @Input() isSubmitting = false;
-    @Output() submitComment = new EventEmitter<string>();
+    @Input() isReply = false;
+    @Input() parentId?: string;
+
+    @Output() submitComment = new EventEmitter<{ text: string; parentId?: string }>();
+    @Output() cancelReply = new EventEmitter<void>();
 
     newCommentText = '';
 
     onSubmit() {
         if (!this.newCommentText.trim() || this.isSubmitting) return;
-        this.submitComment.emit(this.newCommentText.trim());
+        this.submitComment.emit({
+            text: this.newCommentText.trim(),
+            parentId: this.parentId
+        });
         this.newCommentText = '';
     }
 }

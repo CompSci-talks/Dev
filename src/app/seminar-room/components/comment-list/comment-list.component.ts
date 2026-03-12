@@ -1,14 +1,28 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Comment } from '../../../core/models/comment.model';
+import { CommentFormComponent } from '../comment-form/comment-form.component';
 
 @Component({
     selector: 'app-comment-list',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, CommentFormComponent],
     templateUrl: './comment-list.component.html'
 })
 export class CommentListComponent {
     @Input({ required: true }) comments: Comment[] = [];
     @Input() isLoading = false;
+    @Input() activeReplyId: string | null = null;
+
+    @Output() replyClicked = new EventEmitter<string | null>();
+    @Output() replySubmitted = new EventEmitter<{ text: string; parentId?: string }>();
+
+    // Helper to separate top-level comments from replies
+    get topLevelComments() {
+        return this.comments.filter(c => !c.parent_id);
+    }
+
+    getReplies(parentId: string) {
+        return this.comments.filter(c => c.parent_id === parentId);
+    }
 }

@@ -29,16 +29,21 @@ export class SupabaseCommentService implements ICommentService, OnDestroy {
         return this.commentsSubject.asObservable();
     }
 
-    submitComment(seminarId: string, text: string): Observable<Comment> {
+    submitComment(seminarId: string, text: string, parentId?: string): Observable<Comment> {
         return this.auth.currentUser$.pipe(
             switchMap(user => {
                 if (!user) throw new Error('Unauthenticated user cannot leave comments');
 
-                const query = this.supabase.client.from('comments').insert({
+                const payload: any = {
                     seminar_id: seminarId,
                     author_id: user.id,
                     text: text
-                }).select().single();
+                };
+                if (parentId) {
+                    payload.parent_id = parentId;
+                }
+
+                const query = this.supabase.client.from('comments').insert(payload).select().single();
 
                 return from(query).pipe(
                     map(response => {
@@ -62,11 +67,13 @@ export class SupabaseCommentService implements ICommentService, OnDestroy {
             .select('*')
             .eq('seminar_id', seminarId)
             .eq('is_hidden', false)
-            .order('created_at', { ascending: false })
+            .order('created_at', { ascending: true }) // Chronological order so older items render first, and replies cluster
             .then(response => {
                 if (!response.error && response.data) {
                     const cs = response.data.map((d: any) => ({
-                        ...d, created_at: new Date(d.created_at)
+                        ...d,
+                        created_at: new Date(d.created_at),
+                        parent_id: d.parent_id
                     })) as Comment[];
                     this.commentsSubject.next(cs);
                 }
@@ -84,8 +91,14 @@ export class SupabaseCommentService implements ICommentService, OnDestroy {
                 filter: `seminar_id=eq.${seminarId}`
             }, payload => {
                 if (payload.new && !payload.new['is_hidden']) {
-                    const newC = { ...payload.new, created_at: new Date(payload.new['created_at']) } as Comment;
-                    this.commentsSubject.next([newC, ...this.commentsSubject.value]);
+                    const newC = {
+                        ...payload.new,
+                        created_at: new Date(payload.new['created_at']),
+                        parent_id: payload.new['parent_id']
+                    } as Comment;
+
+                    // Always append chronologically so the reply flow behaves correctly in feed
+                    this.commentsSubject.next([...this.commentsSubject.value, newC]);
                 }
             })
             .subscribe();

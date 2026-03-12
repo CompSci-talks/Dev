@@ -1,21 +1,19 @@
-# Research
+# Phase 0: Research for Repliable Comments
 
-## Technical Context Unknowns
+## Unknown: UI Layout for Nested Replies
 
-Based on the feature specification for "Refactoring Q&A to Comments" (003), there are no remaining `NEEDS CLARIFICATION` tags. The requirements are straightforward: transition the existing Q&A UI, logic, and data entities to a simpler "Comments" paradigm.
+- **Decision**: Render sub-replies directly below the parent comment, visibly indented, but without nested `app-comment-list` components if possible to keep performance high.
+- **Rationale**: Single-level nesting means we can simply sort comments such that a parent is followed by all its children chronologically. We don't need deeply recursive component trees. The UI just checks if `comment.parent_id` is truthy, applies an `ml-8` (margin-left) class, and renders it.
+- **Alternatives considered**: Recursive component trees (rejected due to complexity over-indexing for a strict 1-level limit).
 
-## Key Decisions
+## Unknown: Reply State Management
 
-### 1. Renaming Entities
-- **Decision:** Rename all instances of `Question` to `Comment`.
-- **Rationale:** Aligns the frontend codebase semantics with the new user experience, reducing cognitive load and debt. The user explicitly requested "just comments. not Q&A".
-- **Impact:** We will need to map `question.model.ts` to `comment.model.ts` and update the properties (e.g., if there were specific "upvote" or "answered" states in the Question model, they may be removed if not needed for simple comments).
+- **Decision**: The `app-comment-list` component will emit a `replyInitiated` event with the target `parent_id`. The smart `app-comments-container` will capture this and pass the `activeReplyId` down to the `app-comment-list` or specific comment instances, rendering a localized `app-comment-form` for that specific thread.
+- **Rationale**: Keeps the dumb components pure. The container holds the state of "which comment are we currently replying to" and binds it.
+- **Alternatives considered**: Passing a service into `app-comment-list` (rejected due to constitution boundary rules against smart logic in dumb components).
 
-### 2. UI Component Refactoring
-- **Decision:** Rename and refactor `qa-container`, `qa-form`, and `qa-list` to `comments-container`, `comment-form`, and `comment-list`.
-- **Rationale:** Ensures clean vertical slicing and consistency with the new domain terminology.
-- **Alternatives considered:** Leaving the component filenames as `qa-*` but changing the display text. Rejected to adhere to clean architecture and self-documenting code principles defined in the Constitution.
+## Unknown: Real-time Supabase Replication for Replies
 
-### 3. Authentication & Guest Users
-- **Decision:** Authenticated users see the comment input field. Unauthenticated users see a "Log in to comment" prompt instead of the input field, but can still view the feed.
-- **Rationale:** Required by `FR-004`.
+- **Decision**: No structural changes to Postgres Realtime needed. The existing `public:comments` channel listens to all `INSERT` events matching the `seminar_id`. 
+- **Rationale**: The `parent_id` comes down with the payload automatically. The Angular service will simply prepend/append it to the local Subject as normal, and the UI's structural sorting will place it where it belongs.
+- **Alternatives considered**: Dedicated realtime filters for replies (rejected as unnecessary).

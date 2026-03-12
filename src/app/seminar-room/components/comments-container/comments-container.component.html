@@ -12,11 +12,13 @@
 
     <!-- Scrollable List Area -->
     <div class="p-4 h-96 overflow-y-auto">
-        <app-comment-list [comments]="(comments$ | async) || []" [isLoading]="isLoadingComments">
+        <app-comment-list [comments]="(comments$ | async) || []" [isLoading]="isLoadingComments"
+            [activeReplyId]="activeReplyId" (replyClicked)="onReplyInitiated($event)"
+            (replySubmitted)="onCommentSubmitted($event)">
         </app-comment-list>
     </div>
 
-    <!-- Footer / Submit Area -->
+    <!-- Footer / Submit Area (Top-level comments only) -->
     <div class="p-4 border-t border-border bg-surface-muted">
         <ng-container *ngIf="isAuthenticated$ | async; else guestMessage">
             <app-comment-form [isSubmitting]="isSubmitting" (submitComment)="onCommentSubmitted($event)">

@@ -5,4 +5,5 @@ export interface Comment {
   text: string;
   created_at: Date;
   is_hidden: boolean;
+  parent_id?: string;
 }

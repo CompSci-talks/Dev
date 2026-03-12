@@ -24,6 +24,7 @@ export class CommentsContainerComponent implements OnInit {
 
     isLoadingComments = true;
     isSubmitting = false;
+    activeReplyId: string | null = null;
 
     ngOnInit() {
         this.isAuthenticated$ = this.authService.currentUser$.pipe(map(u => !!u));
@@ -33,11 +34,18 @@ export class CommentsContainerComponent implements OnInit {
         setTimeout(() => this.isLoadingComments = false, 500);
     }
 
-    onCommentSubmitted(text: string) {
+    onReplyInitiated(commentId: string | null) {
+        this.activeReplyId = commentId;
+    }
+
+    onCommentSubmitted(event: { text: string; parentId?: string }) {
         this.isSubmitting = true;
-        this.commentService.submitComment(this.seminarId, text).subscribe({
+        this.commentService.submitComment(this.seminarId, event.text, event.parentId).subscribe({
             next: () => {
                 this.isSubmitting = false;
+                if (event.parentId) {
+                    this.activeReplyId = null; // Close reply UI
+                }
             },
             error: (err) => {
                 console.error('Failed to submit comment:', err);

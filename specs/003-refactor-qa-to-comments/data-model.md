@@ -1,20 +1,48 @@
-# Data Model: Comments
+# Phase 1: Data Model & Contracts
 
-## Entities
+## Entity Structure
 
-### Comment
-Replaces the legacy `Question` entity representing user-generated text on a seminar.
+### `Comment`
 
-**Fields:**
-- `id` (string): Unique identifier.
-- `text` (string): The body of the comment.
-- `authorId` (string): Reference to the `User` who posted it.
-- `authorName` (string): Display name of the user for immediate rendering.
-- `seminarId` (string): Reference to the `Seminar` this comment is attached to.
-- `createdAt` (Date | string): Timestamp of submission.
+The domain entity mapping user feedback, questions, and replies to Seminars.
 
-**Validation Rules:**
-- `text` MUST NOT be empty or purely whitespace length > 0 (FR-005).
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | `string` (UUID) | Yes | Primary key |
+| `seminar_id` | `string` (UUID) | Yes | Foreign key reference to the parent Seminar |
+| `author_id` | `string` (UUID) | Yes | Foreign key reference to the creating User |
+| `text` | `string` | Yes | The body of the comment/reply. Must not be empty whitespace. |
+| `created_at` | `Date` (ISO) | Yes | Timestamp of insertion |
+| `is_hidden` | `boolean` | Yes | Moderation flag; defaults to false |
+| `parent_id` | `string` (UUID) | No | **[NEW]** Foreign key reference to another `Comment`. If present, this comment is a reply. |
 
-**Differences from legacy `Question` (Assumed):**
-- Removing concepts like `isAnswered` or `upvotes` if they existed in the Q&A context, as this is a flat comment feed.
+## Interface Contracts
+
+### `ICommentService` Updates
+
+The core service interface requires an update to accept an optional `parentId` argument when submitting a new comment.
+
+```typescript
+export interface ICommentService {
+    getCommentsForSeminar$(seminarId: string): Observable<Comment[]>;
+    
+    // Updated signature:
+    submitComment(seminarId: string, text: string, parentId?: string): Observable<Comment>;
+}
+```
+
+The underlying mock and Supabase adapters must implement this updated signature.
+
+## Component Input/Output Contracts
+
+### `CommentsContainerComponent` (Smart)
+- **State**: Tracks `activeReplyId: string | null`.
+- **Logic**: Injects `ICommentService`. Handles `onReplySubmitted(text, parentId)`.
+
+### `CommentListComponent` (Dumb)
+- **Inputs**: `@Input() comments: Comment[]`, `@Input() activeReplyId: string | null`
+- **Outputs**: `@Output() replyClicked = new EventEmitter<string>()` (emits parent ID).
+
+### `CommentFormComponent` (Dumb)
+- **Inputs**: `@Input() isReply: boolean`, `@Input() parentId?: string`
+- **Outputs**: `@Output() commentSubmitted = new EventEmitter<{text: string, parentId?: string}>()`
