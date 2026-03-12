@@ -1,6 +1,6 @@
-// contracts/auth.interface.ts
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
+import { InjectionToken } from '@angular/core';
 
 export interface IAuthService {
     /** Emits the current user, or null if unauthenticated */
@@ -10,3 +10,5 @@ export interface IAuthService {
     signUp(email: string, password: string, displayName: string): Observable<User>;
     signOut(): Observable<void>;
 }
+
+export const AUTH_SERVICE = new InjectionToken<IAuthService>('AUTH_SERVICE');

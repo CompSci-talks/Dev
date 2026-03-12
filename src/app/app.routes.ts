@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth.guard';
+import { AdminGuard } from './core/admin.guard';
 
 export const routes: Routes = [
     {
@@ -30,6 +31,26 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () => import('./dashboard/pages/dashboard/dashboard.component').then(m => m.DashboardComponent),
         canActivate: [authGuard]
+    },
+    {
+        path: 'admin',
+        canActivate: [AdminGuard],
+        loadComponent: () => import('./admin/components/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
+        children: [
+            { path: '', redirectTo: 'semesters', pathMatch: 'full' },
+            {
+                path: 'semesters',
+                loadComponent: () => import('./admin/pages/semester-manager/semester-manager.component').then(m => m.SemesterManagerComponent)
+            },
+            {
+                path: 'seminars',
+                loadComponent: () => import('./admin/pages/seminar-manager/seminar-manager.component').then(m => m.SeminarManagerComponent)
+            },
+            {
+                path: 'moderation',
+                loadComponent: () => import('./admin/pages/comment-moderation/comment-moderation.component').then(m => m.CommentModerationComponent)
+            }
+        ]
     },
     { path: '**', redirectTo: '' }
 ];

@@ -4,9 +4,9 @@
 
 **Purpose**: Define the data structures and interfaces for administrative capabilities.
 
-- [ ] T001 Create `Semester` model in `src/app/core/models/semester.model.ts`
-- [ ] T003 Create `ISemesterService` contract in `src/app/core/contracts/semester.interface.ts`
-- [ ] T004 Update `ISeminarService` contract in `src/app/core/contracts/seminar.interface.ts` with CRUD methods
+- [x] T001 Create `Semester` model in `src/app/core/models/semester.model.ts`
+- [x] T003 Create `ISemesterService` contract in `src/app/core/contracts/semester.interface.ts`
+- [x] T004 Update `ISeminarService` contract in `src/app/core/contracts/seminar.interface.ts` with CRUD methods
 
 ---
 
@@ -14,11 +14,11 @@
 
 **Purpose**: Implement the business logic and security required for admin access.
 
-- [ ] T005 Implement `MockSemesterService` in `src/app/core/services/mock-semester.service.ts`
-- [ ] T006 Implement `SupabaseSemesterService` in `src/app/supabase-adapters/supabase-semester.service.ts`
-- [ ] T007 Update `MockSeminarService` in `src/app/core/services/mock-seminar.service.ts` for CRUD
-- [ ] T010 Update `SupabaseSeminarService` in `src/app/supabase-adapters/supabase-seminar.service.ts` for CRUD
-- [ ] T011 Create `AdminGuard` in `src/app/core/admin.guard.ts`
+- [x] T005 Implement `MockSemesterService` in `src/app/core/services/mock-semester.service.ts`
+- [x] T006 Implement `SupabaseSemesterService` in `src/app/supabase-adapters/supabase-semester.service.ts`
+- [x] T007 Update `MockSeminarService` in `src/app/core/services/mock-seminar.service.ts` for CRUD
+- [x] T010 Update `SupabaseSeminarService` in `src/app/supabase-adapters/supabase-seminar.service.ts` for CRUD
+- [x] T011 Create `AdminGuard` in `src/app/core/admin.guard.ts`
 
 ---
 
@@ -26,8 +26,8 @@
 
 **Purpose**: Set up the admin routing and layout.
 
-- [ ] T012 Configure `/admin` parent and child routes in `src/app/app.routes.ts`
-- [ ] T013 Create `AdminLayoutComponent` in `src/app/admin/components/admin-layout/`
+- [x] T012 Configure `/admin` parent and child routes in `src/app/app.routes.ts`
+- [x] T013 Create `AdminLayoutComponent` in `src/app/admin/components/admin-layout/`
 
 ---
 
@@ -35,9 +35,9 @@
 
 **Purpose**: Implement the UI for managing academic terms.
 
-- [ ] T014 Create `SemesterListComponent` in `src/app/admin/pages/semester-manager/`
-- [ ] T015 Create `SemesterFormComponent` for Create/Edit operations
-- [ ] T016 Implement "Set as Active" logic and verify date-range filtering in the public portal `SeminarService`
+- [x] T014 Create `SemesterListComponent` in `src/app/admin/pages/semester-manager/`
+- [x] T015 Create `SemesterFormComponent` for Create/Edit operations
+- [x] T016 Implement "Set as Active" logic and verify date-range filtering in the public portal `SeminarService`
 
 ---
 
@@ -45,9 +45,9 @@
 
 **Purpose**: Implement the UI for scheduling and material management.
 
-- [ ] T017 Create `SeminarListComponent` (Admin view with total RSVPs)
-- [ ] T018 Create `SeminarFormComponent` (CRUD)
-- [ ] T019 Implement Hybrid Material management (Upload, Manual Google Drive ID, or URL entry) with progress tracking and iframe/embed adapter support
+- [x] T017 Create `SeminarListComponent` (Admin view with total RSVPs)
+- [x] T018 Create `SeminarFormComponent` (CRUD)
+- [x] T019 Implement Hybrid Material management (Upload, Manual Google Drive ID, or URL entry) with progress tracking and iframe/embed adapter support
 
 ---
 
@@ -55,8 +55,8 @@
 
 **Purpose**: Implement moderation tools for the discussion system.
 
-- [ ] T020 Create `CommentModerationComponent` in `src/app/admin/pages/comment-moderation/`
-- [ ] T021 Implement "Hide" and "Delete" actions for individual comments
+- [x] T020 Create `CommentModerationComponent` in `src/app/admin/pages/comment-moderation/`
+- [x] T021 Implement "Hide" and "Delete" actions for individual comments
 
 ---
 

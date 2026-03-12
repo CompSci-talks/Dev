@@ -1,16 +1,25 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
 import { routes } from './app.routes';
+import { MockSemesterService } from './core/services/mock-semester.service';
+import { MockSeminarService } from './core/services/mock-seminar.service';
+import { MockAuthService } from './core/services/mock-auth.service';
+import { AUTH_SERVICE } from './core/contracts/auth.interface';
+import { SEMESTER_SERVICE } from './core/contracts/semester.interface';
+import { SPEAKER_SERVICE } from './core/contracts/speaker.interface';
+import { TAG_SERVICE } from './core/contracts/tag.interface';
+import { MockSpeakerService } from './core/services/mock-speaker.service';
+import { MockTagService } from './core/services/mock-tag.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    // Core Mock Service Injection (To be updated as mock instances are created)
-    // { provide: 'IAuthService', useClass: MockAuthService },
-    // { provide: 'ISeminarService', useClass: MockSeminarService },
-    // { provide: 'IRsvpService', useClass: MockRsvpService },
-    // { provide: 'IQaService', useClass: MockQaService },
+    // Core Mock Service Injection
+    { provide: SEMESTER_SERVICE, useClass: MockSemesterService },
+    { provide: 'ISeminarService', useClass: MockSeminarService },
+    { provide: AUTH_SERVICE, useClass: MockAuthService },
+    { provide: SPEAKER_SERVICE, useClass: MockSpeakerService },
+    { provide: TAG_SERVICE, useClass: MockTagService },
   ]
 };

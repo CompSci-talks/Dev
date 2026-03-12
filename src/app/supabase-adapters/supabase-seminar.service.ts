@@ -11,15 +11,17 @@ export class SupabaseSeminarService implements ISeminarService {
 
     constructor(private supabase: SupabaseService) { }
 
-    getSeminars(tagId?: string, speakerId?: string): Observable<Seminar[]> {
+    getSeminars(tagId?: string, speakerId?: string, startDate?: Date, endDate?: Date): Observable<Seminar[]> {
         let query = this.supabase.client.from('seminars').select('*').order('date_time', { ascending: false });
 
-        // In Phase 1 we mock the M2M relation filtering using JSONB contains if the backend uses generic arrays
         if (tagId) {
             query = query.contains('tag_ids', [tagId]);
         }
         if (speakerId) {
             query = query.contains('speaker_ids', [speakerId]);
+        }
+        if (startDate && endDate) {
+            query = query.gte('date_time', startDate.toISOString()).lte('date_time', endDate.toISOString());
         }
 
         return from(query).pipe(
@@ -37,12 +39,47 @@ export class SupabaseSeminarService implements ISeminarService {
         const query = this.supabase.client.from('seminars').select('*').eq('id', id).single();
         return from(query).pipe(
             map(response => {
-                if (response.error && response.error.code !== 'PGRST116') throw response.error; // PGRST116: Returns 0 rows
+                if (response.error && response.error.code !== 'PGRST116') throw response.error;
                 if (!response.data) return null;
                 return {
                     ...response.data,
                     date_time: new Date(response.data.date_time)
                 } as Seminar;
+            })
+        );
+    }
+
+    createSeminar(seminar: Omit<Seminar, 'id'>): Observable<Seminar> {
+        const query = this.supabase.client.from('seminars').insert(seminar).select().single();
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
+                return {
+                    ...response.data,
+                    date_time: new Date(response.data.date_time)
+                } as Seminar;
+            })
+        );
+    }
+
+    updateSeminar(id: string, updates: Partial<Seminar>): Observable<Seminar> {
+        const query = this.supabase.client.from('seminars').update(updates).eq('id', id).select().single();
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
+                return {
+                    ...response.data,
+                    date_time: new Date(response.data.date_time)
+                } as Seminar;
+            })
+        );
+    }
+
+    deleteSeminar(id: string): Observable<void> {
+        const query = this.supabase.client.from('seminars').delete().eq('id', id);
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
             })
         );
     }

@@ -7,4 +7,10 @@ export interface ICommentService {
 
     /** Submit a new comment to a seminar, optionally as a reply */
     submitComment(seminarId: string, text: string, parentId?: string): Observable<Comment>;
+
+    /** Admin: Fetch all comments across all seminars */
+    getAllComments?(): Observable<Comment[]>;
+
+    /** Admin: Delete a comment */
+    deleteComment(commentId: string): Observable<void>;
 }

@@ -23,6 +23,7 @@ export interface Seminar {
     tag_ids: string[];
     video_material_id?: string;
     presentation_material_id?: string;
+    is_hidden: boolean;
 }
 
 export type SeminarStatus = 'upcoming' | 'past';

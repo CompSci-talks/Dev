@@ -62,4 +62,23 @@ export class MockCommentService implements ICommentService {
             })
         );
     }
+
+    getAllComments(): Observable<Comment[]> {
+        return this.store$.pipe(
+            map(store => Object.values(store).flat()),
+            map(comments => [...comments].sort((a, b) => b.created_at.getTime() - a.created_at.getTime()))
+        );
+    }
+
+    deleteComment(commentId: string): Observable<void> {
+        const currentStore = this.store$.value;
+        const newStore: Record<string, Comment[]> = {};
+
+        Object.keys(currentStore).forEach(sId => {
+            newStore[sId] = currentStore[sId].filter(c => c.id !== commentId);
+        });
+
+        this.store$.next(newStore);
+        return of(undefined).pipe(delay(200));
+    }
 }
