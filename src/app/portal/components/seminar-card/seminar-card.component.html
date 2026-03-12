@@ -1,0 +1,46 @@
+<a [routerLink]="['/seminar', seminar.id]"
+  class="card flex flex-col hover:shadow-md transition-shadow cursor-pointer w-full h-full relative group">
+  <!-- Thumbnail -->
+  <div class="h-48 w-full bg-surface-muted relative overflow-hidden">
+    <!-- Using a placeholder URL if no thumbnail exists, applying the placeholder image gracefully via error event handling too -->
+    <img [src]="seminar.thumbnail_url || 'https://picsum.photos/seed/placeholder/800/400'" [alt]="seminar.title"
+      class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+      (error)="img.src='https://picsum.photos/seed/placeholder/800/400'" #img />
+
+    <!-- Live / Soon Badges -->
+    <ng-container *ngIf="seminar.date_time | seminarStatus as status">
+      <div *ngIf="status === 'live'"
+        class="absolute top-2 right-2 bg-status-error text-white text-xs font-bold px-2 py-1 rounded animate-pulse shadow-sm">
+        LIVE NOW
+      </div>
+      <div *ngIf="status === 'soon'"
+        class="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+        STARTING SOON
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Content -->
+  <div class="p-4 flex flex-col flex-grow bg-white">
+    <div class="flex items-center gap-2 mb-2">
+      <!-- In a real app we would map tag_ids to Tag names from a Store/Service -->
+      <span *ngFor="let tagId of seminar.tag_ids"
+        class="bg-primary-light text-primary text-xs font-semibold px-2 py-0.5 rounded-full">
+        Tag: {{ tagId }}
+      </span>
+      <span class="text-xs text-text-muted ml-auto">{{ seminar.date_time | date:'mediumDate' }}</span>
+    </div>
+
+    <h3 class="font-bold text-lg text-text-main line-clamp-2 mb-1 min-h-[3.5rem]">{{ seminar.title }}</h3>
+    <!-- Speaker IDs -->
+    <p class="text-sm text-text-muted mb-4">{{ seminar.speaker_ids.join(', ') }}</p>
+
+    <div class="text-xs text-text-muted mt-auto flex items-center">
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      {{ seminar.date_time | date:'shortTime' }} • {{ seminar.location }}
+    </div>
+  </div>
+</a>

@@ -1,0 +1,21 @@
+<div class="max-w-5xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-text-main mb-2">Previous Talks & Archive</h1>
+        <p class="text-text-muted">Browse past seminars and access presentation materials.</p>
+    </div>
+
+    <div class="mb-8">
+        <input type="text" placeholder="Search by keyword, tag, or speaker..." class="input-field max-w-md bg-white"
+            disabled title="Search interaction to be implemented">
+    </div>
+
+    <ng-container *ngIf="pastSeminars$ | async as seminars">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <app-seminar-card *ngFor="let sem of seminars" [seminar]="sem"></app-seminar-card>
+        </div>
+
+        <div *ngIf="seminars.length === 0" class="card p-12 text-center text-text-muted">
+            No past seminars found.
+        </div>
+    </ng-container>
+</div>

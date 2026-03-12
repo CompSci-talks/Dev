@@ -1,0 +1,41 @@
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { MockAuthService } from '../../../core/services/mock-auth.service';
+
+@Component({
+    selector: 'app-login',
+    standalone: true,
+    imports: [CommonModule, FormsModule, RouterModule],
+    templateUrl: './login.component.html'
+})
+export class LoginComponent {
+    authService = inject(MockAuthService);
+    router = inject(Router);
+    route = inject(ActivatedRoute);
+
+    email = '';
+    password = '';
+    errorMessage = '';
+    isLoading = false;
+
+    onSubmit() {
+        if (!this.email || !this.password) return;
+
+        this.isLoading = true;
+        this.errorMessage = '';
+
+        this.authService.signIn(this.email, this.password).subscribe({
+            next: () => {
+                // Redirect to intended URL or home
+                const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+                this.router.navigateByUrl(returnUrl);
+            },
+            error: (err) => {
+                this.errorMessage = err.message || 'Login failed';
+                this.isLoading = false;
+            }
+        });
+    }
+}

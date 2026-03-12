@@ -1,3 +1,12 @@
+<!--
+Sync Impact Report:
+- Version change: 1.0.0 -> 1.1.0
+- Modified principles: None
+- Added sections: XI. Centralized Styling Configuration
+- Removed sections: None
+- Templates requiring updates: None
+- Follow-up TODOs: None
+-->
 # CompSci Talks Platform Constitution
 
 ## Core Principles
@@ -58,6 +67,12 @@
 - Later-phase code **must not** be shipped, imported, or bootstrapped until its phase is active.
 - Feature boundaries are enforced through lazy loading and route-level code splitting.
 
+### XI. Centralized Styling Configuration (NON-NEGOTIABLE)
+- All colors, themes, fonts, and global design tokens **must** be defined in a single source of truth (e.g., `tailwind.config.js`).
+- UI components must rely entirely on the customizable semantic palette configured globally rather than declaring arbitrary values (e.g., `bg-primary` instead of `bg-blue-600`).
+- Hardcoding raw hex/rgb values or using non-semantic generic utility classes directly within components or local stylesheets is strictly forbidden.
+- This ensures the platform's visual identity remains cohesive and can be modified or themed easily from one centralized location.
+
 ## Development Workflow
 
 - **Interface → Mock → UI → Adapter**: This is the mandatory build order for every feature.
@@ -77,4 +92,4 @@
 - Any amendment requires explicit documentation of the rationale, impact analysis, and a migration plan for existing code.
 - All code reviews must verify compliance with these principles before approval.
 
-**Version**: 1.0.0 | **Ratified**: 2026-03-11 | **Last Amended**: 2026-03-11
+**Version**: 1.1.0 | **Ratified**: 2026-03-11 | **Last Amended**: 2026-03-12

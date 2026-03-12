@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-surface-muted text-text-main font-sans antialiased m-0;
+    }
+}
+
+@layer components {
+
+    /* Reusable Button Defaults */
+    .btn {
+        @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+
+    .btn-primary {
+        @apply btn bg-primary text-white hover:bg-primary-hover;
+    }
+
+    .btn-outline {
+        @apply btn border border-border text-text-main hover:bg-surface-muted;
+    }
+
+    /* Reusable Card Layout */
+    .card {
+        @apply bg-surface-card rounded-lg shadow-sm border border-border overflow-hidden;
+    }
+
+    /* Input Fields */
+    .input-field {
+        @apply w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary disabled:bg-surface-muted;
+    }
+}
