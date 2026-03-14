@@ -7,7 +7,8 @@ function Get-RepoRoot {
         if ($LASTEXITCODE -eq 0) {
             return $result
         }
-    } catch {
+    }
+    catch {
         # Git command failed
     }
     
@@ -27,7 +28,8 @@ function Get-CurrentBranch {
         if ($LASTEXITCODE -eq 0) {
             return $result
         }
-    } catch {
+    }
+    catch {
         # Git command failed
     }
     
@@ -35,22 +37,18 @@ function Get-CurrentBranch {
     $repoRoot = Get-RepoRoot
     $specsDir = Join-Path $repoRoot "specs"
     
-    if (Test-Path $specsDir) {
-        $latestFeature = ""
+    if (Test-Path -LiteralPath $specsDir) {
         $highest = 0
-        
-        Get-ChildItem -Path $specsDir -Directory | ForEach-Object {
+        Get-ChildItem -LiteralPath $specsDir -Directory | ForEach-Object {
             if ($_.Name -match '^(\d{3})-') {
                 $num = [int]$matches[1]
-                if ($num -gt $highest) {
-                    $highest = $num
-                    $latestFeature = $_.Name
-                }
+                if ($num -gt $highest) { $highest = $num }
             }
         }
         
-        if ($latestFeature) {
-            return $latestFeature
+        if ($highest -gt 0) {
+            $folder = Get-ChildItem -LiteralPath $specsDir -Directory | Where-Object { $_.Name -match "^$('{0:000}' -f $highest)-" } | Select-Object -First 1
+            if ($folder) { return $folder.Name }
         }
     }
     
@@ -62,7 +60,8 @@ function Test-HasGit {
     try {
         git rev-parse --show-toplevel 2>$null | Out-Null
         return ($LASTEXITCODE -eq 0)
-    } catch {
+    }
+    catch {
         return $false
     }
 }
@@ -99,26 +98,27 @@ function Get-FeaturePathsEnv {
     $featureDir = Get-FeatureDir -RepoRoot $repoRoot -Branch $currentBranch
     
     [PSCustomObject]@{
-        REPO_ROOT     = $repoRoot
+        REPO_ROOT      = $repoRoot
         CURRENT_BRANCH = $currentBranch
-        HAS_GIT       = $hasGit
-        FEATURE_DIR   = $featureDir
-        FEATURE_SPEC  = Join-Path $featureDir 'spec.md'
-        IMPL_PLAN     = Join-Path $featureDir 'plan.md'
-        TASKS         = Join-Path $featureDir 'tasks.md'
-        RESEARCH      = Join-Path $featureDir 'research.md'
-        DATA_MODEL    = Join-Path $featureDir 'data-model.md'
-        QUICKSTART    = Join-Path $featureDir 'quickstart.md'
-        CONTRACTS_DIR = Join-Path $featureDir 'contracts'
+        HAS_GIT        = $hasGit
+        FEATURE_DIR    = $featureDir
+        FEATURE_SPEC   = Join-Path $featureDir 'spec.md'
+        IMPL_PLAN      = Join-Path $featureDir 'plan.md'
+        TASKS          = Join-Path $featureDir 'tasks.md'
+        RESEARCH       = Join-Path $featureDir 'research.md'
+        DATA_MODEL     = Join-Path $featureDir 'data-model.md'
+        QUICKSTART     = Join-Path $featureDir 'quickstart.md'
+        CONTRACTS_DIR  = Join-Path $featureDir 'contracts'
     }
 }
 
 function Test-FileExists {
     param([string]$Path, [string]$Description)
-    if (Test-Path -Path $Path -PathType Leaf) {
+    if (Test-Path -LiteralPath $Path -PathType Leaf) {
         Write-Output "  ✓ $Description"
         return $true
-    } else {
+    }
+    else {
         Write-Output "  ✗ $Description"
         return $false
     }
@@ -126,10 +126,11 @@ function Test-FileExists {
 
 function Test-DirHasFiles {
     param([string]$Path, [string]$Description)
-    if ((Test-Path -Path $Path -PathType Container) -and (Get-ChildItem -Path $Path -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer } | Select-Object -First 1)) {
+    if ((Test-Path -LiteralPath $Path -PathType Container) -and (Get-ChildItem -LiteralPath $Path -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer } | Select-Object -First 1)) {
         Write-Output "  ✓ $Description"
         return $true
-    } else {
+    }
+    else {
         Write-Output "  ✗ $Description"
         return $false
     }

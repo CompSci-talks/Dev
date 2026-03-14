@@ -39,10 +39,10 @@ const MOCK_SEMINARS: Seminar[] = [
     },
     {
         id: 'video-demo',
-        title: 'Modern Web Performance: Deep Dive',
+        title: 'Threading in C++',
         date_time: new Date(Date.now() - 172800000), // 2 days ago (Archive)
         location: 'Main Hall',
-        abstract: 'Learn how to optimize your web applications for the modern era. This session includes recorded demonstrations of profiling tools.',
+        abstract: 'Learn how to optimize your applications for the modern era. This session includes recorded demonstrations of profiling tools.',
         thumbnail_url: 'https://picsum.photos/seed/perf/800/400',
         speaker_ids: ['s2'],
         tag_ids: ['t1', 't2'],
