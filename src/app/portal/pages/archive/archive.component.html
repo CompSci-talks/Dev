@@ -9,7 +9,7 @@
             disabled title="Search interaction to be implemented">
     </div>
 
-    <ng-container *ngIf="pastSeminars$ | async as seminars">
+    <ng-container *ngIf="pastSeminars$ | async as seminars; else loading">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <app-seminar-card *ngFor="let sem of seminars" [seminar]="sem"></app-seminar-card>
         </div>
@@ -18,4 +18,10 @@
             No past seminars found.
         </div>
     </ng-container>
+
+    <ng-template #loading>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <app-skeleton-card *ngFor="let i of [1,2,3,4,5,6]"></app-skeleton-card>
+        </div>
+    </ng-template>
 </div>

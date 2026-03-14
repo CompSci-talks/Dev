@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, delay, BehaviorSubject } from 'rxjs';
 import { ISeminarService } from '../contracts/seminar.interface';
 import { Seminar } from '../models/seminar.model';
+import { Attendee } from '../models/attendance.model';
 
 const MOCK_SEMINARS: Seminar[] = [
     {
@@ -131,5 +132,20 @@ export class MockSeminarService implements ISeminarService {
         const next = current.filter(s => s.id !== id);
         this.saveSeminars(next);
         return of(undefined).pipe(delay(300));
+    }
+
+    getAttendees(seminarId: string): Observable<Attendee[]> {
+        // Mock attendee data implementation
+        const mockAttendees: Attendee[] = [
+            { id: 'u1', email: 'alice@example.com', display_name: 'Alice Johnson', marked_at: new Date(Date.now() - 100000), status: 'attended' },
+            { id: 'u2', email: 'bob@example.com', display_name: 'Bob Smith', marked_at: new Date(Date.now() - 200000), status: 'attended' },
+            { id: 'u3', email: 'charlie@example.com', display_name: 'Charlie Brown', marked_at: new Date(Date.now() - 300000), status: 'confirmed' },
+        ];
+
+        // For MVP, we'll return a static list if the seminar exists
+        const seminar = this.seminars$.value.find(s => s.id === seminarId);
+        if (!seminar) return of([]);
+
+        return of(mockAttendees).pipe(delay(800));
     }
 }

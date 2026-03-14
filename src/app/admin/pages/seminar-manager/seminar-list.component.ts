@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Seminar } from '../../../core/models/seminar.model';
 
 @Component({
   selector: 'app-seminar-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   template: `
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
@@ -44,6 +45,10 @@ import { Seminar } from '../../../core/models/seminar.model';
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+              <a [routerLink]="['/admin/seminar', seminar.id, 'attendance']"
+                 class="text-admin hover:text-admin-hover font-medium mr-4">
+                Attendance
+              </a>
               <button (click)="onEdit.emit(seminar)"
                       class="text-blue-600 hover:text-blue-800 font-medium mr-4">
                 Edit

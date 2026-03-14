@@ -5,11 +5,12 @@ import { map } from 'rxjs/operators';
 import { Seminar } from '../../../core/models/seminar.model';
 import { MockSeminarService } from '../../../core/services/mock-seminar.service';
 import { SeminarCardComponent } from '../../components/seminar-card/seminar-card.component';
+import { SkeletonCardComponent } from '../../components/skeleton-card/skeleton-card.component';
 
 @Component({
     selector: 'app-archive',
     standalone: true,
-    imports: [CommonModule, SeminarCardComponent],
+    imports: [CommonModule, SeminarCardComponent, SkeletonCardComponent],
     templateUrl: './archive.component.html'
 })
 export class ArchiveComponent implements OnInit {

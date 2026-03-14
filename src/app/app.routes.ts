@@ -49,6 +49,10 @@ export const routes: Routes = [
             {
                 path: 'moderation',
                 loadComponent: () => import('./admin/pages/comment-moderation/comment-moderation.component').then(m => m.CommentModerationComponent)
+            },
+            {
+                path: 'seminar/:id/attendance',
+                loadComponent: () => import('./admin/pages/attendance/attendance.page').then(m => m.AttendancePageComponent)
             }
         ]
     },

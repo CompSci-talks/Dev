@@ -1,92 +1,115 @@
-<ng-container *ngIf="seminar$ | async as seminar; else notFound">
-    <div class="max-w-4xl mx-auto px-4 py-8">
-        <div class="mb-6">
-            <div class="flex items-center gap-3 mb-4">
-                <span *ngFor="let tagId of seminar.tag_ids"
-                    class="bg-primary-light text-primary text-sm font-semibold px-3 py-1 rounded-full">
-                    {{ tagId }}
-                </span>
-                <span class="text-text-muted">{{ seminar.date_time | date:'fullDate' }} at {{ seminar.date_time |
-                    date:'shortTime' }}</span>
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <ng-container *ngIf="!isLoading; else skeleton">
+        <ng-container *ngIf="seminar$ | async as seminar; else notFound">
+            <div class="mb-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <span *ngFor="let tagId of seminar.tag_ids"
+                        class="bg-primary-light text-primary text-sm font-semibold px-3 py-1 rounded-full">
+                        {{ tagId }}
+                    </span>
+                    <span class="text-text-muted">{{ seminar.date_time | date:'fullDate' }} at {{ seminar.date_time |
+                        date:'shortTime' }}</span>
 
-                <ng-container *ngIf="seminar.date_time | seminarStatus as status">
-                    <span *ngIf="status === 'live'"
-                        class="bg-status-error text-white text-xs font-bold px-2 py-1 rounded animate-pulse">LIVE
-                        NOW</span>
-                    <span *ngIf="status === 'soon'"
-                        class="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">STARTING SOON</span>
-                </ng-container>
-            </div>
-
-            <h1 class="text-4xl font-bold text-text-main mb-2">{{ seminar.title }}</h1>
-            <p class="text-lg text-text-muted mb-6">Presented by: {{ seminar.speaker_ids.join(', ') }}</p>
-
-            <div class="bg-surface-muted p-4 rounded-lg flex items-center justify-between mb-8 border border-border">
-                <div class="flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
-                        </path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    <span class="font-medium text-text-main">{{ seminar.location }}</span>
+                    <ng-container *ngIf="seminar.date_time | seminarStatus as status">
+                        <span *ngIf="status === 'live'"
+                            class="bg-status-error text-white text-xs font-bold px-2 py-1 rounded animate-pulse">LIVE
+                            NOW</span>
+                        <span *ngIf="status === 'soon'"
+                            class="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">STARTING SOON</span>
+                    </ng-container>
                 </div>
 
-                <app-rsvp-button [seminar]="seminar"></app-rsvp-button>
-            </div>
-        </div>
+                <h1 class="text-4xl font-bold text-text-main mb-2">{{ seminar.title }}</h1>
+                <p class="text-lg text-text-muted mb-6">Presented by: {{ seminar.speaker_ids.join(', ') }}</p>
 
-        <div class="prose max-w-none mb-12 text-text-main" [innerHTML]="seminar.abstract"></div>
+                <div class="bg-surface-card p-4 rounded-lg flex items-center justify-between mb-8 border border-border">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span class="font-medium text-text-main">{{ seminar.location }}</span>
+                    </div>
 
-        <!-- Materials section (US3) -->
-        <ng-container *ngIf="isAuthenticated$ | async; else guestState">
-            <div class="space-y-8 mb-12"
-                *ngIf="seminar.video_material_id || seminar.presentation_material_id; else noMaterials">
-
-                <div *ngIf="seminar.video_material_id">
-                    <h3 class="text-xl font-bold mb-4">Seminar Recording</h3>
-                    <app-video-player [videoId]="seminar.video_material_id"></app-video-player>
+                    <app-rsvp-button [seminar]="seminar"></app-rsvp-button>
                 </div>
-
-                <div *ngIf="seminar.presentation_material_id">
-                    <h3 class="text-xl font-bold mb-4">Presentation Slides</h3>
-                    <app-slide-viewer [presentationId]="seminar.presentation_material_id"></app-slide-viewer>
-                </div>
-
             </div>
 
-            <ng-template #noMaterials>
+            <div class="prose max-w-none mb-12 text-text-main" [innerHTML]="seminar.abstract"></div>
+
+            <!-- Materials section -->
+            <ng-container *ngIf="isAuthenticated$ | async; else guestState">
+                <div class="space-y-8 mb-12"
+                    *ngIf="seminar.video_material_id || seminar.presentation_material_id; else noMaterials">
+
+                    <div *ngIf="seminar.video_material_id">
+                        <h3 class="text-xl font-bold mb-4">Seminar Recording</h3>
+                        <app-video-player [videoId]="seminar.video_material_id"></app-video-player>
+                    </div>
+
+                    <div *ngIf="seminar.presentation_material_id">
+                        <h3 class="text-xl font-bold mb-4">Presentation Slides</h3>
+                        <app-slide-viewer [presentationId]="seminar.presentation_material_id"></app-slide-viewer>
+                    </div>
+
+                </div>
+
+                <ng-template #noMaterials>
+                    <div class="card p-8 text-center bg-surface-muted border-dashed border-2 border-border mb-8">
+                        <h3 class="text-xl font-bold mb-2">Materials Not Yet Available</h3>
+                        <p class="text-text-muted">The speakers have not uploaded the video or slides for this seminar
+                            yet.
+                        </p>
+                    </div>
+                </ng-template>
+            </ng-container>
+
+            <ng-template #guestState>
                 <div class="card p-8 text-center bg-surface-muted border-dashed border-2 border-border mb-8">
-                    <h3 class="text-xl font-bold mb-2">Materials Not Yet Available</h3>
-                    <p class="text-text-muted">The speakers have not uploaded the video or slides for this seminar yet.
-                    </p>
+                    <h3 class="text-xl font-bold mb-2">Seminar Materials</h3>
+                    <p class="text-text-muted mb-4">Video recording and presentation slides are available to registered
+                        attendees.</p>
+                    <a routerLink="/login" [queryParams]="{ returnUrl: '/seminar/' + seminar.id }"
+                        class="btn btn-outline">Log in to view</a>
                 </div>
             </ng-template>
-        </ng-container>
 
-        <ng-template #guestState>
-            <div class="card p-8 text-center bg-surface-muted border-dashed border-2 border-border mb-8">
-                <h3 class="text-xl font-bold mb-2">Seminar Materials</h3>
-                <p class="text-text-muted mb-4">Video recording and presentation slides are available to registered
-                    attendees.</p>
-                <a routerLink="/login" [queryParams]="{ returnUrl: '/seminar/' + seminar.id }"
-                    class="btn btn-outline">Log in to view</a>
+            <!-- Comments Section -->
+            <div class="mt-12">
+                <app-comments-container [seminarId]="seminar.id"></app-comments-container>
             </div>
-        </ng-template>
+        </ng-container>
+    </ng-container>
 
-        <!-- Comments Section (US5 -> US1) -->
-        <div class="mt-12">
-            <app-comments-container [seminarId]="seminar.id"></app-comments-container>
+    <ng-template #skeleton>
+        <div class="animate-pulse-skeleton">
+            <div class="flex gap-2 mb-4">
+                <div class="h-6 w-16 bg-surface-muted rounded-full"></div>
+                <div class="h-6 w-32 bg-surface-muted rounded ml-auto"></div>
+            </div>
+            <div class="h-10 w-3/4 bg-surface-muted rounded mb-4"></div>
+            <div class="h-6 w-1/2 bg-surface-muted rounded mb-8"></div>
+
+            <div class="h-20 w-full bg-surface-muted rounded mb-8 border border-border"></div>
+
+            <div class="space-y-4 mb-12">
+                <div class="h-4 w-full bg-surface-muted rounded"></div>
+                <div class="h-4 w-full bg-surface-muted rounded"></div>
+                <div class="h-4 w-5/6 bg-surface-muted rounded"></div>
+            </div>
+
+            <div class="h-64 w-full bg-surface-muted rounded mb-8"></div>
         </div>
+    </ng-template>
 
-    </div>
-</ng-container>
-
-<ng-template #notFound>
-    <div class="max-w-4xl mx-auto px-4 py-8 text-center" *ngIf="(seminar$ | async) === null">
-        <h2 class="text-2xl font-bold text-text-main">Seminar not found</h2>
-        <p class="text-text-muted mt-2">The seminar you are looking for does not exist or has been removed.</p>
-        <a href="/" class="btn btn-primary mt-4">Return Home</a>
-    </div>
-</ng-template>
+    <ng-template #notFound>
+        <div class="py-12 text-center">
+            <h2 class="text-2xl font-bold text-text-main">Seminar not found</h2>
+            <p class="text-text-muted mt-2">The seminar you are looking for does not exist or has been removed.</p>
+            <a routerLink="/" class="btn btn-primary mt-6">Return Home</a>
+        </div>
+    </ng-template>
+</div>

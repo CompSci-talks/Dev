@@ -13,6 +13,10 @@ import { MockSpeakerService } from './core/services/mock-speaker.service';
 import { MockTagService } from './core/services/mock-tag.service';
 import { MockCommentService } from './core/services/mock-comment.service';
 import { COMMENT_SERVICE } from './core/contracts/comment.interface';
+import { EMAIL_SERVICE } from './admin/services/email.service';
+import { ATTENDANCE_SERVICE } from './admin/services/attendance.service';
+import { MockEmailAdapter } from './core/adapters/email/mock-email.adapter';
+import { AttendanceService } from './admin/services/attendance.implementation.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,5 +29,7 @@ export const appConfig: ApplicationConfig = {
     { provide: SPEAKER_SERVICE, useClass: MockSpeakerService },
     { provide: TAG_SERVICE, useClass: MockTagService },
     { provide: COMMENT_SERVICE, useClass: MockCommentService },
+    { provide: EMAIL_SERVICE, useClass: MockEmailAdapter },
+    { provide: ATTENDANCE_SERVICE, useClass: AttendanceService },
   ]
 };

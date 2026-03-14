@@ -5,12 +5,13 @@ import { map } from 'rxjs/operators';
 import { Seminar } from '../../../core/models/seminar.model';
 import { MockSeminarService } from '../../../core/services/mock-seminar.service';
 import { SeminarCardComponent } from '../../components/seminar-card/seminar-card.component';
+import { SkeletonCardComponent } from '../../components/skeleton-card/skeleton-card.component';
 import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-schedule',
     standalone: true,
-    imports: [CommonModule, SeminarCardComponent, RouterModule],
+    imports: [CommonModule, SeminarCardComponent, SkeletonCardComponent, RouterModule],
     templateUrl: './schedule.component.html'
 })
 export class ScheduleComponent implements OnInit {

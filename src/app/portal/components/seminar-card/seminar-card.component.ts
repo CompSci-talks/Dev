@@ -16,6 +16,5 @@ import { SeminarStatusPipe } from '../../../core/pipes/seminar-status.pipe';
 export class SeminarCardComponent {
     @Input({ required: true }) seminar!: Seminar;
 
-    // Real app would resolve these IDs to records. 
-    // We're keeping it simple for the initial scaffolding.
+    imageLoaded = false;
 }

@@ -38,7 +38,33 @@ module.exports = {
                 status: {
                     error: '#ef4444',
                     success: '#10b981'
+                },
+                admin: {
+                    DEFAULT: '#7c3aed', // violet-600
+                    hover: '#6d28d9',   // violet-700
+                    light: '#f5f3ff',   // violet-50
                 }
+            },
+            keyframes: {
+                'progress-indeterminate': {
+                    '0%': { transform: 'translateX(-100%) scaleX(0.2)' },
+                    '50%': { transform: 'translateX(0%) scaleX(0.5)' },
+                    '100%': { transform: 'translateX(100%) scaleX(0.2)' },
+                },
+                'pulse-skeleton': {
+                    '0%, 100%': { opacity: '1' },
+                    '50%': { opacity: '0.5' },
+                }
+            },
+            animation: {
+                'progress-indeterminate': 'progress-indeterminate 2s infinite ease-in-out',
+                'pulse-skeleton': 'pulse-skeleton 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            height: {
+                'progress': '0.25rem', // 4px
+            },
+            zIndex: {
+                'progress': '60',
             }
         },
     },

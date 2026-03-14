@@ -1,6 +1,7 @@
 // contracts/seminar.interface.ts
 import { Observable } from 'rxjs';
 import { Seminar } from '../models/seminar.model';
+import { Attendee } from '../models/attendance.model';
 
 export interface ISeminarService {
     /** Fetch all seminars, optionally filtered by Tag, Speaker, or Date Range */
@@ -17,6 +18,9 @@ export interface ISeminarService {
 
     /** CRUD: Delete a seminar */
     deleteSeminar(id: string): Observable<void>;
+
+    /** Fetch attendees for a seminar (projected from User + RSVP) */
+    getAttendees(seminarId: string): Observable<Attendee[]>;
 }
 
 import { InjectionToken } from '@angular/core';

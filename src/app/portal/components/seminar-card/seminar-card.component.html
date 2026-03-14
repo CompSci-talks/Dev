@@ -2,10 +2,13 @@
   class="card flex flex-col hover:shadow-md transition-shadow cursor-pointer w-full h-full relative group">
   <!-- Thumbnail -->
   <div class="h-48 w-full bg-surface-muted relative overflow-hidden">
-    <!-- Using a placeholder URL if no thumbnail exists, applying the placeholder image gracefully via error event handling too -->
+    <!-- Skeleton while loading -->
+    <div *ngIf="!imageLoaded" class="absolute inset-0 bg-surface-muted animate-pulse-skeleton z-10"></div>
+
     <img [src]="seminar.thumbnail_url || 'https://picsum.photos/seed/placeholder/800/400'" [alt]="seminar.title"
       class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-      (error)="img.src='https://picsum.photos/seed/placeholder/800/400'" #img />
+      [class.opacity-0]="!imageLoaded" [class.opacity-100]="imageLoaded" (load)="imageLoaded = true"
+      (error)="imageLoaded = true; img.src='https://picsum.photos/seed/placeholder/800/400'" #img />
 
     <!-- Live / Soon Badges -->
     <ng-container *ngIf="seminar.date_time | seminarStatus as status">

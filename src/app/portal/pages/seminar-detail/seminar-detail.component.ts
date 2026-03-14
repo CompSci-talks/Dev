@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Observable, switchMap, of, map } from 'rxjs';
+import { ActivatedRoute, RouterModule, ParamMap } from '@angular/router';
+import { Observable, switchMap, of, map, tap } from 'rxjs';
 import { Seminar } from '../../../core/models/seminar.model';
 import { MockSeminarService } from '../../../core/services/mock-seminar.service';
 import { MockAuthService } from '../../../core/services/mock-auth.service';
@@ -25,15 +25,20 @@ export class SeminarDetailComponent implements OnInit {
     seminar$!: Observable<Seminar | null>;
     isAuthenticated$!: Observable<boolean>;
 
+    isLoading = true;
+    imageLoaded = false;
+
     ngOnInit() {
         this.isAuthenticated$ = this.authService.currentUser$.pipe(map(user => !!user));
 
         this.seminar$ = this.route.paramMap.pipe(
-            switchMap(params => {
+            tap(() => this.isLoading = true),
+            switchMap((params: ParamMap) => {
                 const id = params.get('id');
                 if (!id) return of(null);
                 return this.seminarService.getSeminarById(id);
-            })
+            }),
+            tap(() => this.isLoading = false)
         );
     }
 }
