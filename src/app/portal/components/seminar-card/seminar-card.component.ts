@@ -17,4 +17,5 @@ export class SeminarCardComponent {
     @Input({ required: true }) seminar!: Seminar;
 
     imageLoaded = false;
+    hasImageError = false;
 }
