@@ -46,8 +46,8 @@ const MOCK_SEMINARS: Seminar[] = [
         thumbnail_url: 'https://picsum.photos/seed/perf/800/400',
         speaker_ids: ['s2'],
         tag_ids: ['t1', 't2'],
-        video_material_id: '1uB8-mC0U9-B9zPzYpL_N5F3Yc5Z0k5p8', // Sample Google Drive ID
-        presentation_material_id: 'presentation-slides',
+        video_material_id: '1GABSDBDy1y05Ml2zNgblZuVDN2Tr05_X', // Real Video ID
+        presentation_material_id: '1VIyW3OP2jqJrLXi6qVNT_FGKqpLlvxiL', // Real Slide ID
         is_hidden: false,
     }
 ];

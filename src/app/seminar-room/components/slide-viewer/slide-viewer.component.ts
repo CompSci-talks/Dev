@@ -11,9 +11,8 @@ import { SafeUrlPipe } from '../../../core/pipes/safe-url.pipe';
 export class SlideViewerComponent {
     @Input({ required: true }) presentationId!: string;
 
-    // Assuming Google Drive ID for MVP as per requirements
+    // Changed to generic Google Drive preview format to support PDFs and other file types
     get embedUrl(): string {
-        // rm=minimal hides some of the google drive UI
-        return `https://docs.google.com/presentation/d/${this.presentationId}/embed?start=false&loop=false&delayms=3000&rm=minimal`;
+        return `https://drive.google.com/file/d/${this.presentationId}/preview`;
     }
 }
