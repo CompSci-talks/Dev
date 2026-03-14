@@ -16,6 +16,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-11
 - Supabase (via adapters) (007-ux-enhancements)
 - TypeScript / Angular 21 + `@supabase/supabase-js`, `rxjs` (009-supabase-integration)
 - Supabase (PostgreSQL) (009-supabase-integration)
+- JavaScript / Node.js + Playwright (for browser automation), Gherkin/Cucumber.js (for reporting) (012-e2e-app-flow-verify)
+- N/A (Targets existing Supabase production/local DB) (012-e2e-app-flow-verify)
 
 - [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION] (001-attendees-portal)
 
@@ -36,9 +38,9 @@ cd src; pytest; ruff check .
 [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]: Follow standard conventions
 
 ## Recent Changes
+- 012-e2e-app-flow-verify: Added JavaScript / Node.js + Playwright (for browser automation), Gherkin/Cucumber.js (for reporting)
 - 009-supabase-integration: Added TypeScript / Angular 21 + `@supabase/supabase-js`, `rxjs`
 - 007-ux-enhancements: Added TypeScript 5.9, Angular 21.2.0 + `@angular/core`, `@angular/router`, `@supabase/supabase-js`, `tailwindcss`, `rxjs`
-- 008-admin-attendance-email: Added TypeScript 5+, Angular 17+ (Standalone Components) + Tailwind CSS, RxJS, Ng-Lucide (for icons), [NEEDS CLARIFICATION: Rich-Text Editor choice]
 
 
 <!-- MANUAL ADDITIONS START -->
