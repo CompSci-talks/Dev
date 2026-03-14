@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { MockAuthService } from '../../../core/services/mock-auth.service';
+import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 
 @Component({
     selector: 'app-register',
@@ -11,7 +11,7 @@ import { MockAuthService } from '../../../core/services/mock-auth.service';
     templateUrl: './register.component.html'
 })
 export class RegisterComponent {
-    authService = inject(MockAuthService);
+    authService = inject(AUTH_SERVICE);
     router = inject(Router);
 
     displayName = '';

@@ -11,7 +11,24 @@ export class SupabaseService {
     constructor() {
         this.supabase = createClient(
             environment.supabase.url,
-            environment.supabase.key
+            environment.supabase.key,
+            {
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true
+                },
+                global: {
+                    fetch: (url, options) => {
+                        return Promise.race([
+                            fetch(url, options),
+                            new Promise<Response>((_, reject) =>
+                                setTimeout(() => reject(new Error('Supabase Fetch Timeout')), 8000)
+                            )
+                        ]);
+                    }
+                }
+            }
         );
     }
 

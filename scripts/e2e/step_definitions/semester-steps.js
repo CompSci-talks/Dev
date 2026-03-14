@@ -13,9 +13,10 @@ Given('I am logged in as an administrator', async function () {
 Given('I am on the Admin Dashboard', async function () {
     const nav = new NavigationPage(this.page);
     await nav.gotoAdminDashboard();
+}); When('I navigate to the Semester Management page', async function () {
+    await this.page.goto('/admin/semesters');
+    await this.page.waitForLoadState('networkidle');
 });
-
-
 
 When('I fill in the semester name as {string}', async function (name) {
     const sem = new SemesterPage(this.page);

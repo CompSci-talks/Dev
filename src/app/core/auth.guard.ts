@@ -1,21 +1,25 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
-import { map, take } from 'rxjs';
-import { MockAuthService } from './services/mock-auth.service';
+import { map, take, switchMap, filter } from 'rxjs';
+import { AUTH_SERVICE } from './contracts/auth.interface';
 
 export const authGuard: CanActivateFn = (route, state) => {
     const router = inject(Router);
-    const authService = inject(MockAuthService);
+    const authService = inject(AUTH_SERVICE);
 
-    return authService.currentUser$.pipe(
+    return authService.isInitialized$.pipe(
+        filter(initialized => initialized),
         take(1),
-        map(user => {
-            if (user) {
-                return true;
-            }
+        switchMap(() => authService.currentUser$.pipe(
+            take(1),
+            map(user => {
+                if (user) {
+                    return true;
+                }
 
-            // Store the attempted URL for redirecting after login
-            return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
-        })
+                // Store the attempted URL for redirecting after login
+                return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
+            })
+        ))
     );
 };

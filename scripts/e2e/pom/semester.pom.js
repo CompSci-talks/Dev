@@ -2,14 +2,15 @@
 class SemesterPage {
     constructor(page) {
         this.page = page;
-        this.newSemesterBtn = page.locator('button:has-text("+ New Semester")');
+        this.newSemesterBtn = page.getByRole('button', { name: /\+ New Semester/i });
         this.nameInput = page.locator('input[formControlName="name"]');
         this.startDateInput = page.locator('input[formControlName="start_date"]');
         this.endDateInput = page.locator('input[formControlName="end_date"]');
-        this.saveBtn = page.locator('button:has-text("Save Semester")');
+        this.saveBtn = page.getByRole('button', { name: /Save Semester/i });
     }
 
     async openCreateForm() {
+        await this.newSemesterBtn.waitFor({ state: 'visible', timeout: 10000 });
         await this.newSemesterBtn.click();
     }
 

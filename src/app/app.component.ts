@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet, RouterModule, Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { MockAuthService } from './core/services/mock-auth.service';
+import { AUTH_SERVICE } from './core/contracts/auth.interface';
 import { ToastComponent } from './core/components/toast/toast.component';
 import { FooterComponent } from './core/components/footer/footer.component';
 import { BehaviorSubject, filter, map, switchMap, timer, tap, of, finalize, Subscription } from 'rxjs';
@@ -52,7 +52,7 @@ import { ToastService } from './core/services/toast.service';
   `
 })
 export class AppComponent implements OnInit {
-  auth = inject(MockAuthService);
+  auth = inject(AUTH_SERVICE);
   private router = inject(Router);
   private toastservice = inject(ToastService);
 

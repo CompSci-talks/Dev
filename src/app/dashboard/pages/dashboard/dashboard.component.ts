@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Seminar } from '../../../core/models/seminar.model';
 import { MockRsvpService } from '../../../core/services/mock-rsvp.service';
-import { MockAuthService } from '../../../core/services/mock-auth.service';
+import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { SeminarCardComponent } from '../../../portal/components/seminar-card/seminar-card.component';
 import { User } from '../../../core/models/user.model';
 
@@ -16,7 +16,7 @@ import { User } from '../../../core/models/user.model';
 })
 export class DashboardComponent implements OnInit {
     private rsvpService = inject(MockRsvpService);
-    private authService = inject(MockAuthService);
+    private authService = inject(AUTH_SERVICE);
 
     rsvps$!: Observable<Seminar[]>;
     currentUser$!: Observable<User | null>;

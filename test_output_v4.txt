@@ -1,0 +1,166 @@
+[Seed] Seeding test users...
+[Utils] Creating user: admin@example.com...
+[Seed] Users already exist, skipping.
+[Runner] Starting E2E Verification Suite...
+(node:32452) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+This Node.js version (v24.0.1) has not been tested with this version of Cucumber; it should work normally, but please raise an issue if you see anything unexpected.
+`publishQuiet` option is no longer needed, you can remove it from your configuration; see https://github.com/cucumber/cucumber-js/blob/main/docs/deprecations.md
+[Runner] Tests finished with code 4294967295
+Failures:
+
+1) Scenario: User posts a comment and a reply # scripts\e2e\features\comments_moderation.feature:9
+   √ Before # scripts\e2e\step_definitions\world.js:25
+   × Given I am on a seminar detail page for "Quantum Computing 101" # scripts\e2e\step_definitions\comment-steps.js:8
+       locator.click: Timeout 30000ms exceeded.
+       Call log:
+       [2m  - waiting for locator('.seminar-card').filter({ hasText: 'Quantum Computing 101' })[22m
+
+           at CustomWorld.<anonymous> (D:\website\compscitalks\scripts\e2e\step_definitions\comment-steps.js:10:66)
+   - Given I am logged in as a standard user # scripts\e2e\step_definitions\comment-steps.js:13
+   - When I post a comment "This is a great seminar topic!" # scripts\e2e\step_definitions\comment-steps.js:17
+   - Then the global loader should appear and disappear # scripts\e2e\step_definitions\comment-steps.js:22
+   - And a success toast should be visible # scripts\e2e\step_definitions\comment-steps.js:30
+   - And the comment "This is a great seminar topic!" should be visible # scripts\e2e\step_definitions\comment-steps.js:34
+   - When I reply to the comment "This is a great seminar topic!" with "I agree!" # scripts\e2e\step_definitions\comment-steps.js:38
+   - Then the reply "I agree!" should be visible nested under the original comment # scripts\e2e\step_definitions\comment-steps.js:43
+   √ After # scripts\e2e\step_definitions\world.js:29
+
+2) Scenario: Admin moderates a comment # scripts\e2e\features\comments_moderation.feature:18
+   √ Before # scripts\e2e\step_definitions\world.js:25
+   × Given I am on a seminar detail page for "Quantum Computing 101" # scripts\e2e\step_definitions\comment-steps.js:8
+       locator.click: Timeout 30000ms exceeded.
+       Call log:
+       [2m  - waiting for locator('.seminar-card').filter({ hasText: 'Quantum Computing 101' })[22m
+
+           at CustomWorld.<anonymous> (D:\website\compscitalks\scripts\e2e\step_definitions\comment-steps.js:10:66)
+   - Given the comment "This is a great seminar topic!" exists # scripts\e2e\step_definitions\comment-steps.js:47
+   - When I log in as an administrator # scripts\e2e\step_definitions\comment-steps.js:51
+   - And I navigate to the moderation view for "Quantum Computing 101" # scripts\e2e\step_definitions\comment-steps.js:55
+   - And I delete the comment "This is a great seminar topic!" # scripts\e2e\step_definitions\comment-steps.js:59
+   - Then the comment "This is a great seminar topic!" should no longer be visible for any user # scripts\e2e\step_definitions\comment-steps.js:66
+   √ After # scripts\e2e\step_definitions\world.js:29
+
+3) Scenario: Attempting to create a semester with invalid dates # scripts\e2e\features\edge_cases.feature:5
+   √ Before # scripts\e2e\step_definitions\world.js:25
+   × Given I am creating a new semester # scripts\e2e\step_definitions\edge-steps.js:6
+       locator.click: Timeout 30000ms exceeded.
+       Call log:
+       [2m  - waiting for locator('button:has-text("+ New Semester")')[22m
+
+           at SemesterPage.openCreateForm (D:\website\compscitalks\scripts\e2e\pom\semester.pom.js:13:35)
+           at CustomWorld.<anonymous> (D:\website\compscitalks\scripts\e2e\step_definitions\edge-steps.js:8:15)
+   - When I enter an end date that is before the start date # scripts\e2e\step_definitions\edge-steps.js:11
+   - Then the "Save Semester" button should be disabled # scripts\e2e\step_definitions\edge-steps.js:17
+   √ After # scripts\e2e\step_definitions\world.js:29
+
+4) Scenario: Navigation to an empty semester # scripts\e2e\features\edge_cases.feature:10
+   √ Before # scripts\e2e\step_definitions\world.js:25
+   √ Given a semester with no assigned seminars "Empty Semester" # scripts\e2e\step_definitions\edge-steps.js:22
+   √ When I view the portal for "Empty Semester" # scripts\e2e\step_definitions\edge-steps.js:26
+   × Then I should see a "No seminars scheduled for this semester" message. # scripts\e2e\step_definitions\ux-steps.js:11
+       Error: expect(locator).toContainText(expected) failed
+
+       Locator: locator('body')
+       Timeout: 5000ms
+       - Expected substring  - 1
+       + Received string     + 5
+
+       - No seminars scheduled for this semester
+       +
+       +     CompSci TalksScheduleArchiveLogin Faculty of Science • Ain Shams University  Read more →The Future of Tech,Decoded Here. Join our premier platform for knowledge exchange. Discover cutting-edge research, industry insights, and engage in academic discussions with leading experts in Computer Science.  View Upcoming Seminars  Browse Archive →Expert SpeakersLearn directly from distinguished professors, researchers, and tech industry leaders.Cutting-Edge TopicsStay ahead of the curve with seminars on AI, Machine Learning, Cybersecurity, and more.Discussion & CommentsEngage directly with speakers through our live platform, leaving comments and discussing with presenters.Foster Innovation Building Egypt's Tech Ecosystem Our seminars serve as a premier gathering point for minds eager to push the boundaries of what's possible in computer science.  Networking Opportunities. Connect with peers, professors, and industry professionals. Accessible Campus. Attend in person at our state-of-the-art auditoriums. Resource Library. Access past presentations, slides, and recordings in our comprehensive archive.Platform Engine v1.0Empowering seamless knowledge transfer.CS SeminarsAdvancing computer science education and research through monthly seminars featuring world-class speakers and cutting-edge topics at Ain Shams University.Quick LinksUpcoming SeminarsConnectEmail NewsletterFaculty WebsiteLinkedInFacebook© 2026 Computer Science Seminars, Faculty of Science, Ain Shams University. All rights reserved. 
+       +   
+       +
+       +
+
+       Call log:
+         - Expect "to.have.text" with timeout 5000ms
+         - waiting for locator('body')
+           9 × locator resolved to <body>…</body>
+             - unexpected value "
+           CompSci TalksScheduleArchiveLogin Faculty of Science • Ain Shams University  Read more →The Future of Tech,Decoded Here. Join our premier platform for knowledge exchange. Discover cutting-edge research, industry insights, and engage in academic discussions with leading experts in Computer Science.  View Upcoming Seminars  Browse Archive →Expert SpeakersLearn directly from distinguished professors, researchers, and tech industry leaders.Cutting-Edge TopicsStay ahead of the curve with seminars on AI, Machine Learning, Cybersecurity, and more.Discussion & CommentsEngage directly with speakers through our live platform, leaving comments and discussing with presenters.Foster Innovation Building Egypt's Tech Ecosystem Our seminars serve as a premier gathering point for minds eager to push the boundaries of what's possible in computer science.  Networking Opportunities. Connect with peers, professors, and industry professionals. Accessible Campus. Attend in person at our state-of-the-art auditoriums. Resource Library. Access past presentations, slides, and recordings in our comprehensive archive.Platform Engine v1.0Empowering seamless knowledge transfer.CS SeminarsAdvancing computer science education and research through monthly seminars featuring world-class speakers and cutting-edge topics at Ain Shams University.Quick LinksUpcoming SeminarsConnectEmail NewsletterFaculty WebsiteLinkedInFacebook© 2026 Computer Science Seminars, Faculty of Science, Ain Shams University. All rights reserved. 
+  
+
+       "
+
+           at Proxy.<anonymous> (D:\website\compscitalks\node_modules\playwright\lib\matchers\expect.js:213:24)
+           at CustomWorld.<anonymous> (D:\website\compscitalks\scripts\e2e\step_definitions\ux-steps.js:12:45)
+   √ After # scripts\e2e\step_definitions\world.js:29
+
+5) Scenario: Admin creates and activates a new semester # scripts\e2e\features\semester_management.feature:9
+   √ Before # scripts\e2e\step_definitions\world.js:25
+   × Given I am logged in as an administrator # scripts\e2e\step_definitions\semester-steps.js:8
+       page.waitForURL: Timeout 20000ms exceeded.
+       =========================== logs ===========================
+       waiting for navigation until "load"
+       ============================================================
+           at login (D:\website\compscitalks\scripts\e2e\helpers\auth-helper.js:13:16)
+           at async CustomWorld.<anonymous> (D:\website\compscitalks\scripts\e2e\step_definitions\semester-steps.js:10:5)
+   - And I am on the Admin Dashboard # scripts\e2e\step_definitions\semester-steps.js:13
+   - When I navigate to the Semester Management page # scripts\e2e\step_definitions\semester-steps.js:16
+   - And I fill in the semester name as "Spring 2027" # scripts\e2e\step_definitions\semester-steps.js:20
+   - And I click "Create Semester" # scripts\e2e\step_definitions\semester-steps.js:33
+   - Then I should see "Spring 2027" in the semester list # scripts\e2e\step_definitions\semester-steps.js:37
+   - When I click "Set Active" for "Spring 2027" # scripts\e2e\step_definitions\semester-steps.js:41
+   - Then "Spring 2027" should have the active status indicator # scripts\e2e\step_definitions\semester-steps.js:46
+   √ After # scripts\e2e\step_definitions\world.js:29
+
+6) Scenario: Admin adds a seminar with speakers and tags # scripts\e2e\features\seminar_management.feature:9
+   √ Before # scripts\e2e\step_definitions\world.js:25
+   × Given I am logged in as an administrator # scripts\e2e\step_definitions\semester-steps.js:8
+       page.waitForURL: Timeout 20000ms exceeded.
+       =========================== logs ===========================
+       waiting for navigation until "load"
+       ============================================================
+           at login (D:\website\compscitalks\scripts\e2e\helpers\auth-helper.js:13:16)
+           at async CustomWorld.<anonymous> (D:\website\compscitalks\scripts\e2e\step_definitions\semester-steps.js:10:5)
+   - And I have an active semester "Spring 2027" # scripts\e2e\step_definitions\seminar-steps.js:8
+   - When I navigate to the Seminar Management page # scripts\e2e\step_definitions\seminar-steps.js:17
+   - And I open the "Add Seminar" form # scripts\e2e\step_definitions\seminar-steps.js:21
+   - And I fill in the following seminar details: # scripts\e2e\step_definitions\seminar-steps.js:26
+       | title    | Quantum Computing 101 |
+       | abstract | Intro to QC basics    |
+       | location | Hall A                |
+   - And I select speaker "Alice Smith" # scripts\e2e\step_definitions\seminar-steps.js:34
+   - And I add tag "Physics" # scripts\e2e\step_definitions\seminar-steps.js:39
+   - And I click "Save Seminar" # scripts\e2e\step_definitions\seminar-steps.js:44
+   - Then I should see "Quantum Computing 101" in the seminar list # scripts\e2e\step_definitions\seminar-steps.js:49
+   - And I should see it in the public portal for "Spring 2027" # scripts\e2e\step_definitions\seminar-steps.js:54
+   √ After # scripts\e2e\step_definitions\world.js:29
+
+7) Scenario: Admin updates an existing seminar # scripts\e2e\features\seminar_management.feature:22
+   √ Before # scripts\e2e\step_definitions\world.js:25
+   × Given I am logged in as an administrator # scripts\e2e\step_definitions\semester-steps.js:8
+       page.waitForURL: Timeout 20000ms exceeded.
+       =========================== logs ===========================
+       waiting for navigation until "load"
+       ============================================================
+           at login (D:\website\compscitalks\scripts\e2e\helpers\auth-helper.js:13:16)
+           at async CustomWorld.<anonymous> (D:\website\compscitalks\scripts\e2e\step_definitions\semester-steps.js:10:5)
+   - And I have an active semester "Spring 2027" # scripts\e2e\step_definitions\seminar-steps.js:8
+   - Given there is an existing seminar "Quantum Computing 101" # scripts\e2e\step_definitions\seminar-steps.js:61
+   - When I edit the seminar "Quantum Computing 101" # scripts\e2e\step_definitions\seminar-steps.js:65
+   - And I change the location to "Virtual" # scripts\e2e\step_definitions\seminar-steps.js:70
+   - And I save the changes # scripts\e2e\step_definitions\seminar-steps.js:75
+   - Then the seminar "Quantum Computing 101" location should be "Virtual" # scripts\e2e\step_definitions\seminar-steps.js:80
+   √ After # scripts\e2e\step_definitions\world.js:29
+
+8) Scenario: Success toast is visible after action # scripts\e2e\features\ux_feedback.feature:9
+   √ Before # scripts\e2e\step_definitions\world.js:25
+   × Given I am logged in as an administrator # scripts\e2e\step_definitions\semester-steps.js:8
+       page.waitForURL: Timeout 20000ms exceeded.
+       =========================== logs ===========================
+       waiting for navigation until "load"
+         navigated to "http://localhost:4200/login"
+         navigated to "http://localhost:4200/login"
+       ============================================================
+           at login (D:\website\compscitalks\scripts\e2e\helpers\auth-helper.js:13:16)
+           at async CustomWorld.<anonymous> (D:\website\compscitalks\scripts\e2e\step_definitions\semester-steps.js:10:5)
+   - And I am on the Admin Dashboard # scripts\e2e\step_definitions\semester-steps.js:13
+   - When I create a new semester named "Temp Semester" # scripts\e2e\step_definitions\semester-steps.js:27
+   - Then a success toast should be visible # scripts\e2e\step_definitions\comment-steps.js:30
+   √ After # scripts\e2e\step_definitions\world.js:29
+
+9 scenarios (8 failed, 1 passed)
+51 steps (8 failed, 39 skipped, 4 passed)
+3m13.497s (executing steps: 3m13.449s)

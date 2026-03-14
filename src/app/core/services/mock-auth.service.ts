@@ -5,8 +5,11 @@ import { User, UserRole } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class MockAuthService implements IAuthService {
-    private userSubject = new BehaviorSubject<User | null>(this.loadUser());
+    private userSubject = new BehaviorSubject<User | null>(null);
     currentUser$ = this.userSubject.asObservable();
+
+    private initializedSubject = new BehaviorSubject<boolean>(true); // Mocks are usually instantly ready
+    isInitialized$ = this.initializedSubject.asObservable();
 
     private loadUser(): User | null {
         const stored = localStorage.getItem('mock_user');

@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { MockAuthService } from '../../../core/services/mock-auth.service';
+import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 
 @Component({
     selector: 'app-login',
@@ -11,7 +11,7 @@ import { MockAuthService } from '../../../core/services/mock-auth.service';
     templateUrl: './login.component.html'
 })
 export class LoginComponent {
-    authService = inject(MockAuthService);
+    authService = inject(AUTH_SERVICE);
     router = inject(Router);
     route = inject(ActivatedRoute);
 

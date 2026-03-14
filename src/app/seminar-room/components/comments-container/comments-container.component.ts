@@ -2,8 +2,8 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CommentListComponent } from '../comment-list/comment-list.component';
 import { CommentFormComponent } from '../comment-form/comment-form.component';
-import { MockCommentService } from '../../../core/services/mock-comment.service';
-import { MockAuthService } from '../../../core/services/mock-auth.service';
+import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
+import { COMMENT_SERVICE } from '../../../core/contracts/comment.interface';
 import { Observable, map } from 'rxjs';
 import { Comment } from '../../../core/models/comment.model';
 
@@ -16,8 +16,8 @@ import { Comment } from '../../../core/models/comment.model';
 export class CommentsContainerComponent implements OnInit {
     @Input({ required: true }) seminarId!: string;
 
-    private commentService = inject(MockCommentService);
-    private authService = inject(MockAuthService);
+    private commentService = inject(COMMENT_SERVICE);
+    private authService = inject(AUTH_SERVICE);
 
     comments$!: Observable<Comment[]>;
     isAuthenticated$!: Observable<boolean>;

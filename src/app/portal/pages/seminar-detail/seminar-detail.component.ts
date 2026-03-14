@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, ParamMap } from '@angular/router';
 import { Observable, switchMap, of, map, tap } from 'rxjs';
 import { Seminar } from '../../../core/models/seminar.model';
-import { MockSeminarService } from '../../../core/services/mock-seminar.service';
-import { MockAuthService } from '../../../core/services/mock-auth.service';
+import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
+import { SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
 import { SeminarStatusPipe } from '../../../core/pipes/seminar-status.pipe';
 import { VideoPlayerComponent } from '../../../seminar-room/components/video-player/video-player.component';
 import { SlideViewerComponent } from '../../../seminar-room/components/slide-viewer/slide-viewer.component';
@@ -18,8 +18,8 @@ import { CommentsContainerComponent } from '../../../seminar-room/components/com
     templateUrl: './seminar-detail.component.html'
 })
 export class SeminarDetailComponent implements OnInit {
-    private seminarService = inject(MockSeminarService);
-    private authService = inject(MockAuthService);
+    private seminarService = inject(SEMINAR_SERVICE);
+    private authService = inject(AUTH_SERVICE);
     private route = inject(ActivatedRoute);
 
     seminar$!: Observable<Seminar | null>;
