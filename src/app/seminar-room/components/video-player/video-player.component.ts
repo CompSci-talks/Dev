@@ -11,10 +11,9 @@ import { SafeUrlPipe } from '../../../core/pipes/safe-url.pipe';
 export class VideoPlayerComponent {
     @Input({ required: true }) videoId!: string;
 
-    // Example Assuming YouTube ID for MVP. 
-    // In production, this would build the correct embed URL based on provider.
+    // Updated for Google Drive embed.
+    // Format: https://drive.google.com/file/d/:id/preview
     get embedUrl(): string {
-        // adding modestbranding and rel=0 to limit external jumping
-        return `https://www.youtube.com/embed/${this.videoId}?modestbranding=1&rel=0`;
+        return `https://drive.google.com/file/d/${this.videoId}/preview`;
     }
 }

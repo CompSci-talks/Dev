@@ -12,14 +12,14 @@ import { Observable } from 'rxjs';
   imports: [CommonModule, SeminarListComponent, SeminarFormComponent],
   template: `
     <div class="max-w-6xl">
-      <div class="flex justify-between items-center mb-8">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Seminar Scheduling</h1>
-          <p class="text-slate-500 mt-1">Manage talk details, speaker assignments, and materials.</p>
+          <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Seminar Scheduling</h1>
+          <p class="text-slate-500 mt-1 text-lg">Manage talk details, speaker assignments, and materials.</p>
         </div>
         <button *ngIf="!showForm" (click)="onCreate()" 
-                class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center">
-          <span class="mr-2">+</span> Schedule Seminar
+                class="btn-primary px-6 py-3 rounded-xl shadow-lg shadow-primary/20 flex items-center transform transition hover:-translate-y-0.5">
+          <span class="mr-2 text-xl font-bold">+</span> Schedule Seminar
         </button>
       </div>
 

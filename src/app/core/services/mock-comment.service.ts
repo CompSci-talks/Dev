@@ -5,11 +5,12 @@ import { Comment } from '../models/comment.model';
 import { MockAuthService } from './mock-auth.service';
 
 @Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: 'root' })
 export class MockCommentService implements ICommentService {
     private auth = inject(MockAuthService);
+    private readonly STORAGE_KEY = 'mock_comments';
 
-    // mock in-memory DB: { seminarId: Comment[] }
-    private store$ = new BehaviorSubject<Record<string, Comment[]>>({
+    private initialStore: Record<string, Comment[]> = {
         '1': [
             { id: 'c1', seminar_id: '1', author_id: 'mock-user-123', author_name: 'John Doe', text: 'Will the slides be shared after the talk?', created_at: new Date(Date.now() - 1000 * 60 * 5), is_hidden: false },
             { id: 'c2', seminar_id: '1', author_id: 'mock-speaker-1', author_name: 'Prof. Smith', text: 'Yes, they will be posted on the faculty portal tomorrow.', created_at: new Date(Date.now() - 1000 * 60 * 4), is_hidden: false, parent_id: 'c1' }
@@ -22,14 +23,38 @@ export class MockCommentService implements ICommentService {
         '3': [
             { id: 'c6', seminar_id: '3', author_id: 'mock-user-3', author_name: 'Alex Rivera', text: 'Excited for this demo!', created_at: new Date(Date.now() - 1000 * 60 * 2), is_hidden: false }
         ]
-    });
+    };
+
+    private store$ = new BehaviorSubject<Record<string, Comment[]>>(this.loadStore());
+
+    private loadStore(): Record<string, Comment[]> {
+        const stored = localStorage.getItem(this.STORAGE_KEY);
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                Object.keys(parsed).forEach(sid => {
+                    parsed[sid] = parsed[sid].map((c: any) => ({
+                        ...c,
+                        created_at: new Date(c.created_at)
+                    }));
+                });
+                return parsed;
+            } catch (e) {
+                console.error('Error loading comments from localStorage', e);
+            }
+        }
+        return this.initialStore;
+    }
+
+    private saveStore(store: Record<string, Comment[]>) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(store));
+        this.store$.next(store);
+    }
 
     getCommentsForSeminar$(seminarId: string): Observable<Comment[]> {
         return this.store$.pipe(
             map(store => store[seminarId] || []),
             map(comments => {
-                // Return all comments chronologically. Single-level nesting
-                // means we just rely on parent_id in the view to indent them.
                 return [...comments].sort((a, b) => a.created_at.getTime() - b.created_at.getTime());
             })
         );
@@ -48,15 +73,16 @@ export class MockCommentService implements ICommentService {
                     text,
                     created_at: new Date(),
                     is_hidden: false,
-                    parent_id: parentId // Will naturally be undefined if not a reply
+                    parent_id: parentId
                 };
 
                 const currentStore = this.store$.value;
                 const currentCs = currentStore[seminarId] || [];
-                this.store$.next({
+                const nextStore = {
                     ...currentStore,
                     [seminarId]: [...currentCs, newC]
-                });
+                };
+                this.saveStore(nextStore);
 
                 return of(newC).pipe(delay(300));
             })
@@ -80,7 +106,7 @@ export class MockCommentService implements ICommentService {
             );
         });
 
-        this.store$.next(newStore);
+        this.saveStore(newStore);
         return of(undefined).pipe(delay(200));
     }
 
@@ -92,7 +118,7 @@ export class MockCommentService implements ICommentService {
             newStore[sId] = currentStore[sId].filter(c => c.id !== commentId);
         });
 
-        this.store$.next(newStore);
+        this.saveStore(newStore);
         return of(undefined).pipe(delay(200));
     }
 }

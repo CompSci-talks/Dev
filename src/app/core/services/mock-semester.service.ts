@@ -24,7 +24,30 @@ const MOCK_SEMESTERS: Semester[] = [
     providedIn: 'root'
 })
 export class MockSemesterService implements ISemesterService {
-    private semesters$ = new BehaviorSubject<Semester[]>(MOCK_SEMESTERS);
+    private readonly STORAGE_KEY = 'mock_semesters';
+    private semesters$ = new BehaviorSubject<Semester[]>(this.loadSemesters());
+
+    private loadSemesters(): Semester[] {
+        const stored = localStorage.getItem(this.STORAGE_KEY);
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                return parsed.map((s: any) => ({
+                    ...s,
+                    start_date: new Date(s.start_date),
+                    end_date: new Date(s.end_date)
+                }));
+            } catch (e) {
+                console.error('Error loading semesters from localStorage', e);
+            }
+        }
+        return MOCK_SEMESTERS;
+    }
+
+    private saveSemesters(semesters: Semester[]) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(semesters));
+        this.semesters$.next(semesters);
+    }
 
     getSemesters(): Observable<Semester[]> {
         return this.semesters$.asObservable().pipe(delay(500));
@@ -40,8 +63,8 @@ export class MockSemesterService implements ISemesterService {
             ...semester,
             id: `sem-${Math.floor(Math.random() * 1000)}`
         };
-        const current = this.semesters$.value;
-        this.semesters$.next([...current, newSemester]);
+        const next = [...this.semesters$.value, newSemester];
+        this.saveSemesters(next);
         return of(newSemester).pipe(delay(500));
     }
 
@@ -53,7 +76,7 @@ export class MockSemesterService implements ISemesterService {
         const updated = { ...current[index], ...updates };
         const next = [...current];
         next[index] = updated;
-        this.semesters$.next(next);
+        this.saveSemesters(next);
         return of(updated).pipe(delay(500));
     }
 
@@ -63,7 +86,7 @@ export class MockSemesterService implements ISemesterService {
             ...s,
             is_active: s.id === id
         }));
-        this.semesters$.next(next);
+        this.saveSemesters(next);
         return of(undefined).pipe(delay(300));
     }
 }

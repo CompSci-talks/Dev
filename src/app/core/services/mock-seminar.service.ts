@@ -36,6 +36,19 @@ const MOCK_SEMINARS: Seminar[] = [
         speaker_ids: ['s1'],
         tag_ids: ['t3'],
         is_hidden: false,
+    },
+    {
+        id: 'video-demo',
+        title: 'Modern Web Performance: Deep Dive',
+        date_time: new Date(Date.now() - 172800000), // 2 days ago (Archive)
+        location: 'Main Hall',
+        abstract: 'Learn how to optimize your web applications for the modern era. This session includes recorded demonstrations of profiling tools.',
+        thumbnail_url: 'https://picsum.photos/seed/perf/800/400',
+        speaker_ids: ['s2'],
+        tag_ids: ['t1', 't2'],
+        video_material_id: '1uB8-mC0U9-B9zPzYpL_N5F3Yc5Z0k5p8', // Sample Google Drive ID
+        presentation_material_id: 'presentation-slides',
+        is_hidden: false,
     }
 ];
 
@@ -43,14 +56,33 @@ const MOCK_SEMINARS: Seminar[] = [
     providedIn: 'root'
 })
 export class MockSeminarService implements ISeminarService {
-    private seminars$ = new BehaviorSubject<Seminar[]>(MOCK_SEMINARS.map(s => ({ ...s, is_hidden: false })));
+    private readonly STORAGE_KEY = 'mock_seminars';
+    private seminars$ = new BehaviorSubject<Seminar[]>(this.loadSeminars());
+
+    private loadSeminars(): Seminar[] {
+        const stored = localStorage.getItem(this.STORAGE_KEY);
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                return parsed.map((s: any) => ({
+                    ...s,
+                    date_time: new Date(s.date_time)
+                }));
+            } catch (e) {
+                console.error('Error loading seminars from localStorage', e);
+            }
+        }
+        return MOCK_SEMINARS.map(s => ({ ...s, is_hidden: false }));
+    }
+
+    private saveSeminars(seminars: Seminar[]) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(seminars));
+        this.seminars$.next(seminars);
+    }
 
     getSeminars(tagId?: string, speakerId?: string, startDate?: Date, endDate?: Date): Observable<Seminar[]> {
         let filtered = [...this.seminars$.value];
 
-        // Public view logic: only show hidden seminars if specifically filtering (which implies admin intent in this mock)
-        // or just always hide hidden ones for this simple demo unless we are in the admin dashboard.
-        // For the demo, let's just use the presence of date range as an "admin/semester" fetch intent.
         if (!startDate && !endDate) {
             filtered = filtered.filter(s => !s.is_hidden);
         }
@@ -77,7 +109,8 @@ export class MockSeminarService implements ISeminarService {
             ...seminar,
             id: `sem-${Math.floor(Math.random() * 1000)}`
         };
-        this.seminars$.next([...this.seminars$.value, newSeminar]);
+        const next = [...this.seminars$.value, newSeminar];
+        this.saveSeminars(next);
         return of(newSeminar).pipe(delay(500));
     }
 
@@ -89,13 +122,14 @@ export class MockSeminarService implements ISeminarService {
         const updated = { ...current[index], ...updates };
         const next = [...current];
         next[index] = updated;
-        this.seminars$.next(next);
+        this.saveSeminars(next);
         return of(updated).pipe(delay(500));
     }
 
     deleteSeminar(id: string): Observable<void> {
         const current = this.seminars$.value;
-        this.seminars$.next(current.filter(s => s.id !== id));
+        const next = current.filter(s => s.id !== id);
+        this.saveSeminars(next);
         return of(undefined).pipe(delay(300));
     }
 }

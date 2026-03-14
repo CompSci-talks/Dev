@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Seminar } from '../../../core/models/seminar.model';
 
 @Component({
-    selector: 'app-seminar-list',
-    standalone: true,
-    imports: [CommonModule],
-    template: `
+  selector: 'app-seminar-list',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead>
@@ -26,7 +26,9 @@ import { Seminar } from '../../../core/models/seminar.model';
             </td>
             <td class="px-6 py-4">
               <div class="font-medium text-slate-900">{{ seminar.title }}</div>
-              <div class="text-xs text-slate-500 truncate max-w-xs">{{ seminar.location }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+              {{ seminar.location }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium text-blue-600">
               {{ getRSVPCount(seminar) }}
@@ -58,12 +60,12 @@ import { Seminar } from '../../../core/models/seminar.model';
   `
 })
 export class SeminarListComponent {
-    @Input() seminars: Seminar[] = [];
-    @Output() onEdit = new EventEmitter<Seminar>();
-    @Output() onDelete = new EventEmitter<string>();
+  @Input() seminars: Seminar[] = [];
+  @Output() onEdit = new EventEmitter<Seminar>();
+  @Output() onDelete = new EventEmitter<string>();
 
-    getRSVPCount(seminar: Seminar): number {
-        // Mock RSVP count logic - in a real app this would be joined or fetched via service
-        return Math.floor(Math.random() * 50);
-    }
+  getRSVPCount(seminar: Seminar): number {
+    // Mock RSVP count logic - in a real app this would be joined or fetched via service
+    return Math.floor(Math.random() * 50);
+  }
 }

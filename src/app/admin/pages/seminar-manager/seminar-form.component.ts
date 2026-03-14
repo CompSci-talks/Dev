@@ -7,10 +7,10 @@ import { TAG_SERVICE, ITagService } from '../../../core/contracts/tag.interface'
 import { Observable } from 'rxjs';
 
 @Component({
-    selector: 'app-seminar-form',
-    standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
-    template: `
+  selector: 'app-seminar-form',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  template: `
     <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-xl max-w-3xl mx-auto">
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-xl font-bold text-slate-900">{{ seminar ? 'Edit' : 'Schedule' }} Seminar</h3>
@@ -99,13 +99,13 @@ import { Observable } from 'rxjs';
           </div>
         </div>
 
-        <div class="flex justify-end space-x-4 pt-4">
+        <div class="flex justify-end items-center space-x-4 pt-6 border-t border-slate-100 mt-4">
           <button type="button" (click)="onCancel.emit()"
-                  class="px-6 py-3 text-slate-600 hover:text-slate-800 font-medium transition-colors">
+                  class="btn-outline px-6 py-3 rounded-xl font-semibold border-slate-300">
             Discard
           </button>
           <button type="submit" [disabled]="seminarForm.invalid"
-                  class="px-10 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 disabled:opacity-50 shadow-lg shadow-blue-100 transition-all">
+                  class="btn-primary px-10 py-3 rounded-xl font-bold shadow-lg shadow-primary/20 disabled:opacity-30 disabled:grayscale transition-all transform hover:-translate-y-0.5 active:scale-95">
             {{ seminar ? 'Update Seminar' : 'Schedule Seminar' }}
           </button>
         </div>
@@ -114,72 +114,72 @@ import { Observable } from 'rxjs';
   `
 })
 export class SeminarFormComponent implements OnInit {
-    @Input() seminar: Seminar | null = null;
-    @Output() onSave = new EventEmitter<Omit<Seminar, 'id'>>();
-    @Output() onCancel = new EventEmitter<void>();
+  @Input() seminar: Seminar | null = null;
+  @Output() onSave = new EventEmitter<Omit<Seminar, 'id'>>();
+  @Output() onCancel = new EventEmitter<void>();
 
-    seminarForm: FormGroup;
-    speakers$: Observable<Speaker[]>;
-    tags$: Observable<Tag[]>;
+  seminarForm: FormGroup;
+  speakers$: Observable<Speaker[]>;
+  tags$: Observable<Tag[]>;
 
-    constructor(
-        private fb: FormBuilder,
-        @Inject(SPEAKER_SERVICE) private speakerService: ISpeakerService,
-        @Inject(TAG_SERVICE) private tagService: ITagService
-    ) {
-        this.speakers$ = this.speakerService.getSpeakers();
-        this.tags$ = this.tagService.getTags();
+  constructor(
+    private fb: FormBuilder,
+    @Inject(SPEAKER_SERVICE) private speakerService: ISpeakerService,
+    @Inject(TAG_SERVICE) private tagService: ITagService
+  ) {
+    this.speakers$ = this.speakerService.getSpeakers();
+    this.tags$ = this.tagService.getTags();
 
-        this.seminarForm = this.fb.group({
-            title: ['', Validators.required],
-            date_time: ['', Validators.required],
-            location: ['', Validators.required],
-            abstract: ['', Validators.required],
-            speaker_ids: [[], Validators.required],
-            tag_ids: [[], Validators.required],
-            video_material_id: [''],
-            presentation_material_id: [''],
-            is_hidden: [false],
-            thumbnail_url: ['']
-        });
+    this.seminarForm = this.fb.group({
+      title: ['', Validators.required],
+      date_time: ['', Validators.required],
+      location: ['', Validators.required],
+      abstract: ['', Validators.required],
+      speaker_ids: [[], Validators.required],
+      tag_ids: [[], Validators.required],
+      video_material_id: [''],
+      presentation_material_id: [''],
+      is_hidden: [false],
+      thumbnail_url: ['']
+    });
+  }
+
+  ngOnInit() {
+    if (this.seminar) {
+      this.seminarForm.patchValue({
+        ...this.seminar,
+        date_time: this.formatDate(this.seminar.date_time)
+      });
     }
+  }
 
-    ngOnInit() {
-        if (this.seminar) {
-            this.seminarForm.patchValue({
-                ...this.seminar,
-                date_time: this.formatDate(this.seminar.date_time)
-            });
-        }
-    }
+  private formatDate(date: Date): string {
+    // Format for datetime-local: yyyy-MM-ddThh:mm
+    const d = new Date(date);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().slice(0, 16);
+  }
 
-    private formatDate(date: Date): string {
-        // Format for datetime-local: yyyy-MM-ddThh:mm
-        const d = new Date(date);
-        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-        return d.toISOString().slice(0, 16);
+  toggleTag(tagId: string) {
+    const currentTags = this.seminarForm.value.tag_ids as string[];
+    if (currentTags.includes(tagId)) {
+      this.seminarForm.patchValue({ tag_ids: currentTags.filter(id => id !== tagId) });
+    } else {
+      this.seminarForm.patchValue({ tag_ids: [...currentTags, tagId] });
     }
+  }
 
-    toggleTag(tagId: string) {
-        const currentTags = this.seminarForm.value.tag_ids as string[];
-        if (currentTags.includes(tagId)) {
-            this.seminarForm.patchValue({ tag_ids: currentTags.filter(id => id !== tagId) });
-        } else {
-            this.seminarForm.patchValue({ tag_ids: [...currentTags, tagId] });
-        }
-    }
+  isTagSelected(tagId: string): boolean {
+    return (this.seminarForm.value.tag_ids as string[]).includes(tagId);
+  }
 
-    isTagSelected(tagId: string): boolean {
-        return (this.seminarForm.value.tag_ids as string[]).includes(tagId);
+  onSubmit() {
+    if (this.seminarForm.valid) {
+      const val = this.seminarForm.value;
+      this.onSave.emit({
+        ...val,
+        date_time: new Date(val.date_time)
+      });
     }
-
-    onSubmit() {
-        if (this.seminarForm.valid) {
-            const val = this.seminarForm.value;
-            this.onSave.emit({
-                ...val,
-                date_time: new Date(val.date_time)
-            });
-        }
-    }
+  }
 }
