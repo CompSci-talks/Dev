@@ -77,8 +77,8 @@
 
 ### Implementation for User Story 3
 
-- [ ] T017 [US3] Verify semester CRUD and activation (using `set_active_semester` RPC)
-- [ ] T018 [US3] Verify seminar CRUD operations (including material IDs)
+- [x] T017 [US3] Verify semester CRUD and activation (using `set_active_semester` RPC)
+- [x] T018 [US3] Verify seminar CRUD operations (including material IDs)
 - [ ] T019 [P] [US3] Verify speaker and tag management in Admin UI
 
 ---
