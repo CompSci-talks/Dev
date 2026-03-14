@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, from, map } from 'rxjs';
 import { ISeminarService } from '../core/contracts/seminar.interface';
 import { Seminar } from '../core/models/seminar.model';
+import { Attendee } from '../core/models/attendance.model';
 import { SupabaseService } from '../core/supabase.service';
 
 @Injectable({
@@ -80,6 +81,26 @@ export class SupabaseSeminarService implements ISeminarService {
         return from(query).pipe(
             map(response => {
                 if (response.error) throw response.error;
+            })
+        );
+    }
+
+    getAttendees(seminarId: string): Observable<Attendee[]> {
+        const query = this.supabase.client
+            .from('rsvps')
+            .select('*, users!user_id(display_name, email)')
+            .eq('seminar_id', seminarId);
+
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
+                return (response.data || []).map((r: any) => ({
+                    id: r.user_id,
+                    email: r.users?.email || '',
+                    display_name: r.users?.display_name || 'User',
+                    marked_at: new Date(r.created_at || r.marked_at), // Assuming created_at or marked_at exists
+                    status: r.status || 'confirmed'
+                })) as Attendee[];
             })
         );
     }

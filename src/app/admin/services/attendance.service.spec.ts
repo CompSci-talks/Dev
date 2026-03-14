@@ -3,6 +3,7 @@ import { AttendanceService } from './attendance.implementation.service';
 import { SEMINAR_SERVICE } from '../../core/contracts/seminar.interface';
 import { of } from 'rxjs';
 import { Attendee } from '../../core/models/attendance.model';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('AttendanceService', () => {
     let service: AttendanceService;
@@ -15,7 +16,7 @@ describe('AttendanceService', () => {
 
     beforeEach(() => {
         mockSeminarService = {
-            getAttendees: jasmine.createSpy('getAttendees').and.returnValue(of(mockAttendees))
+            getAttendees: vi.fn().mockReturnValue(of(mockAttendees))
         };
 
         TestBed.configureTestingModule({
