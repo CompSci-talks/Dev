@@ -1,7 +1,8 @@
 import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, collectionData, docData } from '@angular/fire/firestore';
 import { collection, doc, addDoc, updateDoc, deleteDoc, query, where, getDoc, getDocs, writeBatch, limit, serverTimestamp, orderBy } from 'firebase/firestore';
-import { Observable, from, map, switchMap, combineLatest, of, firstValueFrom } from 'rxjs';
+// Added catchError to the rxjs imports
+import { Observable, from, map, switchMap, combineLatest, of, catchError } from 'rxjs';
 import { ISeminarService } from '../core/contracts/seminar.interface';
 import { Seminar } from '../core/models/seminar.model';
 import { Attendee } from '../core/models/attendance.model';
@@ -38,6 +39,11 @@ export class FirebaseSeminarService implements ISeminarService {
             switchMap(seminars => {
                 if (seminars.length === 0) return of([]);
                 return combineLatest(seminars.map(s => from(this.enrichWithMetadata(s))));
+            }),
+            // Catch permission errors so the UI doesn't crash
+            catchError(error => {
+                console.error('Firebase Error fetching seminars:', error);
+                return of([]);
             })
         ) as Observable<Seminar[]>;
     }
@@ -46,7 +52,12 @@ export class FirebaseSeminarService implements ISeminarService {
         const seminarDoc = doc(this.firestore, `seminars/${id}`);
         return runInInjectionContext(this.injector, () => docData(seminarDoc, { idField: 'id' })).pipe(
             map(s => s ? this.mapTimestamps(s) : null),
-            switchMap(s => s ? from(this.enrichWithMetadata(s)) : of(null))
+            switchMap(s => s ? from(this.enrichWithMetadata(s)) : of(null)),
+            // Catch permission errors to shut off the UI skeleton loader
+            catchError(error => {
+                console.error(`Firebase Error fetching seminar ${id}:`, error);
+                return of(null);
+            })
         ) as Observable<Seminar | null>;
     }
 
@@ -112,6 +123,10 @@ export class FirebaseSeminarService implements ISeminarService {
                         status: (rsvps[index]?.['status'] as any) || 'confirmed'
                     } as Attendee)))
                 );
+            }),
+            catchError(error => {
+                console.error('Firebase Error fetching attendees:', error);
+                return of([]);
             })
         );
     }

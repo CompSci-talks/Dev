@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, ParamMap } from '@angular/router';
-import { Observable, switchMap, of, map, tap } from 'rxjs';
+import { Observable, switchMap, of, map, tap, catchError, shareReplay } from 'rxjs';
 import { Seminar } from '../../../core/models/seminar.model';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
@@ -32,13 +32,24 @@ export class SeminarDetailComponent implements OnInit {
         this.isAuthenticated$ = this.authService.currentUser$.pipe(map(user => !!user));
 
         this.seminar$ = this.route.paramMap.pipe(
-            tap(() => this.isLoading = true),
             switchMap((params: ParamMap) => {
                 const id = params.get('id');
-                if (!id) return of(null);
-                return this.seminarService.getSeminarById(id);
+                if (!id) {
+                    this.isLoading = false;
+                    return of(null);
+                }
+
+                this.isLoading = true;
+
+                return this.seminarService.getSeminarById(id).pipe(
+                    catchError(error => {
+                        console.error('Failed to load seminar data:', error);
+                        return of(null);
+                    })
+                );
             }),
-            tap(() => this.isLoading = false)
+            tap(() => this.isLoading = false),
+            shareReplay(1)
         );
     }
 

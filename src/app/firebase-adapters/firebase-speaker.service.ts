@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, query, orderBy, getDocs, where, writeBatch } from '@angular/fire/firestore';
-import { Observable, from, map, switchMap, take } from 'rxjs';
+import { Observable, from, map, switchMap } from 'rxjs';
 import { ISpeakerService } from '../core/contracts/speaker.interface';
 import { Speaker } from '../core/models/seminar.model';
 
@@ -9,16 +9,24 @@ import { Speaker } from '../core/models/seminar.model';
 })
 export class FirebaseSpeakerService implements ISpeakerService {
     private firestore = inject(Firestore);
+    // Inject the Angular Injector to capture the context
+    private injector = inject(Injector);
     private speakersCollection = collection(this.firestore, 'speakers');
 
     getSpeakers(): Observable<Speaker[]> {
-        const q = query(this.speakersCollection, orderBy('name'));
-        return collectionData(q, { idField: 'id' }) as Observable<Speaker[]>;
+        // Restore the context before calling collectionData
+        return runInInjectionContext(this.injector, () => {
+            const q = query(this.speakersCollection, orderBy('name'));
+            return collectionData(q, { idField: 'id' }) as Observable<Speaker[]>;
+        });
     }
 
     getSpeakerById(id: string): Observable<Speaker | null> {
-        const speakerDoc = doc(this.firestore, `speakers/${id}`);
-        return docData(speakerDoc, { idField: 'id' }) as Observable<Speaker | null>;
+        // Restore the context before calling docData
+        return runInInjectionContext(this.injector, () => {
+            const speakerDoc = doc(this.firestore, `speakers/${id}`);
+            return docData(speakerDoc, { idField: 'id' }) as Observable<Speaker | null>;
+        });
     }
 
     createSpeaker(speaker: Omit<Speaker, 'id'>): Observable<Speaker> {
@@ -34,6 +42,8 @@ export class FirebaseSpeakerService implements ISpeakerService {
                 if (updates.name) {
                     this.cascadeSpeakerUpdate(id, updates.name);
                 }
+                // Because getSpeakerById is now wrapped in the injector, 
+                // it safely runs here even inside the RxJS stream!
                 return this.getSpeakerById(id).pipe(map(s => s!));
             })
         );

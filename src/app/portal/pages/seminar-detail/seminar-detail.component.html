@@ -27,13 +27,14 @@
     </div>
 </ng-template>
 
-<div class="max-w-4xl mx-auto px-4 py-8">
+<!-- We wrap everything in a container that subscribes to seminar$ immediately to trigger the logic -->
+<div class="max-w-4xl mx-auto px-4 py-8" *ngIf="{ data: seminar$ | async } as seminar">
     <ng-container *ngIf="!isLoading; else skeleton">
-        <ng-container *ngIf="seminar$ | async as seminar; else notFound">
+        <ng-container *ngIf="seminar.data; else notFound">
             <!-- Hero Thumbnail -->
-            <div *ngIf="seminar.thumbnail_url"
+            <div *ngIf="seminar.data.thumbnail_url"
                 class="relative h-64 md:h-80 w-full mb-8 rounded-2xl overflow-hidden shadow-lg border border-border bg-surface-muted">
-                <img [src]="seminar.thumbnail_url" [alt]="seminar.title"
+                <img [src]="seminar.data.thumbnail_url" [alt]="seminar.data.title"
                     class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     (load)="imageLoaded = true" [class.opacity-0]="!imageLoaded" [class.opacity-100]="imageLoaded">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
@@ -41,14 +42,15 @@
 
             <div class="mb-6">
                 <div class="flex items-center gap-3 mb-4">
-                    <span *ngFor="let tagId of seminar.tag_ids; let i = index"
+                    <span *ngFor="let tagId of seminar.data.tag_ids; let i = index"
                         class="bg-primary-light text-primary text-sm font-semibold px-3 py-1 rounded-full">
-                        {{ seminar.tags?.[i]?.name || tagId }}
+                        {{ seminar.data.tags?.[i]?.name || tagId }}
                     </span>
-                    <span class="text-text-muted">{{ seminar.date_time | date:'fullDate' }} at {{ seminar.date_time |
+                    <span class="text-text-muted">{{ seminar.data.date_time | date:'fullDate' }} at {{
+                        seminar.data.date_time |
                         date:'shortTime' }}</span>
 
-                    <ng-container *ngIf="seminar.date_time | seminarStatus as status">
+                    <ng-container *ngIf="seminar.data.date_time | seminarStatus as status">
                         <span *ngIf="status === 'live'"
                             class="bg-status-error text-white text-xs font-bold px-2 py-1 rounded animate-pulse">LIVE
                             NOW</span>
@@ -57,9 +59,9 @@
                     </ng-container>
                 </div>
 
-                <h1 class="text-4xl font-bold text-text-main mb-2">{{ seminar.title }}</h1>
-                <p class="text-lg text-text-muted mb-6">Presented by: {{ seminar.speakers?.length ?
-                    getSpeakerNames(seminar.speakers) : (seminar.speaker_ids?.join(', ') || 'TBA') }}</p>
+                <h1 class="text-4xl font-bold text-text-main mb-2">{{ seminar.data.title }}</h1>
+                <p class="text-lg text-text-muted mb-6">Presented by: {{ seminar.data.speakers?.length ?
+                    getSpeakerNames(seminar.data.speakers) : (seminar.data.speaker_ids?.join(', ') || 'TBA') }}</p>
 
                 <div class="bg-surface-card p-4 rounded-lg flex items-center justify-between mb-8 border border-border">
                     <div class="flex items-center">
@@ -70,28 +72,28 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
-                        <span class="font-medium text-text-main">{{ seminar.location }}</span>
+                        <span class="font-medium text-text-main">{{ seminar.data.location }}</span>
                     </div>
 
-                    <app-rsvp-button [seminar]="seminar"></app-rsvp-button>
+                    <app-rsvp-button [seminar]="seminar.data"></app-rsvp-button>
                 </div>
             </div>
 
-            <div class="prose max-w-none mb-12 text-text-main" [innerHTML]="seminar.abstract"></div>
+            <div class="prose max-w-none mb-12 text-text-main" [innerHTML]="seminar.data.abstract"></div>
 
             <!-- Materials section -->
             <ng-container *ngIf="isAuthenticated$ | async; else guestState">
                 <div class="space-y-8 mb-12"
-                    *ngIf="seminar.video_material_id || seminar.presentation_material_id; else noMaterials">
+                    *ngIf="seminar.data.video_material_id || seminar.data.presentation_material_id; else noMaterials">
 
-                    <div *ngIf="seminar.video_material_id">
+                    <div *ngIf="seminar.data.video_material_id">
                         <h3 class="text-xl font-bold mb-4">Seminar Recording</h3>
-                        <app-video-player [videoId]="seminar.video_material_id"></app-video-player>
+                        <app-video-player [videoId]="seminar.data.video_material_id"></app-video-player>
                     </div>
 
-                    <div *ngIf="seminar.presentation_material_id">
+                    <div *ngIf="seminar.data.presentation_material_id">
                         <h3 class="text-xl font-bold mb-4">Presentation Slides</h3>
-                        <app-slide-viewer [presentationId]="seminar.presentation_material_id"></app-slide-viewer>
+                        <app-slide-viewer [presentationId]="seminar.data.presentation_material_id"></app-slide-viewer>
                     </div>
 
                 </div>
@@ -111,14 +113,14 @@
                     <h3 class="text-xl font-bold mb-2">Seminar Materials</h3>
                     <p class="text-text-muted mb-4">Video recording and presentation slides are available to registered
                         attendees.</p>
-                    <a routerLink="/login" [queryParams]="{ returnUrl: '/seminar/' + seminar.id }"
+                    <a routerLink="/login" [queryParams]="{ returnUrl: '/seminar/' + seminar.data.id }"
                         class="btn btn-outline">Log in to view</a>
                 </div>
             </ng-template>
 
             <!-- Comments Section -->
             <div class="mt-12">
-                <app-comments-container [seminarId]="seminar.id"></app-comments-container>
+                <app-comments-container [seminarId]="seminar.data.id"></app-comments-container>
             </div>
         </ng-container>
     </ng-container>

@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, query, orderBy, getDocs, where, writeBatch } from '@angular/fire/firestore';
-import { Observable, from, map, switchMap, take } from 'rxjs';
+import { Observable, from, map, switchMap } from 'rxjs';
 import { ITagService } from '../core/contracts/tag.interface';
 import { Tag } from '../core/models/seminar.model';
 
@@ -9,16 +9,24 @@ import { Tag } from '../core/models/seminar.model';
 })
 export class FirebaseTagService implements ITagService {
     private firestore = inject(Firestore);
+    // Inject the Angular Injector to capture the context
+    private injector = inject(Injector);
     private tagsCollection = collection(this.firestore, 'tags');
 
     getTags(): Observable<Tag[]> {
-        const q = query(this.tagsCollection, orderBy('name'));
-        return collectionData(q, { idField: 'id' }) as Observable<Tag[]>;
+        // Restore the context before calling collectionData
+        return runInInjectionContext(this.injector, () => {
+            const q = query(this.tagsCollection, orderBy('name'));
+            return collectionData(q, { idField: 'id' }) as Observable<Tag[]>;
+        });
     }
 
     getTagById(id: string): Observable<Tag | null> {
-        const tagDoc = doc(this.firestore, `tags/${id}`);
-        return docData(tagDoc, { idField: 'id' }) as Observable<Tag | null>;
+        // Restore the context before calling docData
+        return runInInjectionContext(this.injector, () => {
+            const tagDoc = doc(this.firestore, `tags/${id}`);
+            return docData(tagDoc, { idField: 'id' }) as Observable<Tag | null>;
+        });
     }
 
     createTag(tag: Omit<Tag, 'id'>): Observable<Tag> {
