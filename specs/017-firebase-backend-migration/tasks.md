@@ -20,8 +20,9 @@
 - [x] T004 Implement `FirebaseInitialized$` logic in `src/app/firebase-adapters/firebase-auth.service.ts` to mirror current initialization flow
 - [x] T005 [P] Setup AngularFire providers in `src/app/app.config.ts` using `provideFirebaseApp`, `provideFirestore`, and `provideAuth`
 - [x] T006 Initialize Firebase Auth listeners in `src/app/firebase-adapters/firebase-auth.service.ts` to track session state
+- [x] T006b Configure Firebase Auth persistence to `LOCAL` to prevent frequent logouts on refresh
 
-**Checkpoint**: Foundation ready - Firebase core services are bootstrapped.
+**Checkpoint**: Foundation ready - Firebase core services are bootstrapped and session persistence is configured.
 
 ---
 
@@ -64,10 +65,12 @@
 
 ### Implementation for User Story 3
 
-- [ ] T016 [P] [US3] Implement `FirebaseCommentService` in `src/app/firebase-adapters/firebase-comment.service.ts`
-- [ ] T017 [P] [US3] Implement `FirebaseRsvpService` in `src/app/firebase-adapters/firebase-rsvp.service.ts`
-- [ ] T018 [US3] Implement atomic counter updates for `stats` field on Seminar documents in `FirebaseCommentService` and `FirebaseRsvpService`
-- [ ] T019 [US3] Update `src/app/app.config.ts` to provide `FirebaseCommentService` and `FirebaseRsvpService` for the respective tokens
+- [x] T016 [P] [US3] Implement `FirebaseCommentService` in `src/app/firebase-adapters/firebase-comment.service.ts`
+- [x] T017 [P] [US3] Implement `FirebaseRsvpService` in `src/app/firebase-adapters/firebase-rsvp.service.ts`
+- [x] T018 [US3] Implement atomic counter updates for `stats` field on Seminar documents in `FirebaseCommentService` and `FirebaseRsvpService`
+- [x] T019 Update `src/app/app.config.ts` to provide `FirebaseCommentService` and `FirebaseRsvpService` for the respective tokens
+- [x] T019b Implement threading logic and UI for comment replies (parent_id support)
+- [x] T019c Update `CommentModerationComponent` UI to use `FirebaseCommentService` for Delete/Hide actions
 
 ---
 
@@ -79,11 +82,12 @@
 
 ### Implementation for User Story 4
 
-- [ ] T020 [US4] Implement Create/Update/Delete operations in `FirebaseSeminarService.ts`
-- [ ] T021 [US4] Implement Create/Update/Delete operations in `FirebaseSpeakerService.ts`
-- [ ] T022 [US4] Implement Create/Update/Delete operations in `FirebaseTagService.ts`
-- [ ] T023 [US4] Implement client-side multi-path update logic for denormalized records (Speakers/Tags) in the respective services
-- [ ] T024 [US4] Implement attendee emailing function stub in `FirebaseSeminarService.ts` (mailto logic)
+- [x] T020 [US4] Implement Update/Delete operations in `FirebaseSeminarService.ts`
+- [x] T021 [US4] Implement Edit Form and Update logic in `FirebaseSpeakerService.ts`
+- [x] T022 [US4] Implement Edit Form and Update logic in `FirebaseTagService.ts`
+- [x] T023 [US4] Implement client-side multi-path update logic for denormalized records (Speakers/Tags)
+- [x] T024 [US4] Implement attendee emailing functionality (mailto logic) on Attendance Page
+- [x] T024b [US4] Implement attendee selection and multi-recipient mailto link generation
 
 ---
 
@@ -91,8 +95,10 @@
 
 **Purpose**: Cleanup and final validation.
 
-- [ ] T025 Performance audit: Verify SC-002 (<2s Archive load) on mobile throttling
-- [ ] T026 Execute full E2E test suite: `npm run e2e`
+- [x] T025 Performance audit: Verify SC-002 (<2s Archive load) on mobile throttling
+- [x] T025b Offline Verification: Test application functionality and data visibility while browser is offline
+- [x] T026 Execute full E2E test suite: `npm run e2e`
+- [x] T027 Initialize and document `verification_log.md` with results of all manual and automated tests
 
 ---
 

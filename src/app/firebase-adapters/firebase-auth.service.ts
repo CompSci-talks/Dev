@@ -1,5 +1,5 @@
 import { Injectable, inject, NgZone } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, User as FirebaseUser } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, User as FirebaseUser, setPersistence, browserLocalPersistence } from '@angular/fire/auth';
 import { BehaviorSubject, Observable, from, map, take, tap } from 'rxjs';
 import { IAuthService } from '../core/contracts/auth.interface';
 import { User } from '../core/models/user.model';
@@ -18,6 +18,11 @@ export class FirebaseAuthService implements IAuthService {
     isInitialized$ = this.initializedSubject.asObservable();
 
     constructor() {
+        // Ensure persistence is set to LOCAL
+        setPersistence(this.auth, browserLocalPersistence).catch(err => {
+            console.error('Firebase Auth persistence error:', err);
+        });
+
         // Listen to Firebase Auth state changes
         onAuthStateChanged(this.auth, (firebaseUser) => {
             this.zone.run(() => {

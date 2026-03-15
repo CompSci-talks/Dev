@@ -12,7 +12,9 @@
 - Q: How should seminar video/presentation materials be handled? → A: Metadata-only. Store URLs/IDs as strings in Firestore; no dedicated Storage adapter required for this phase.
 - Q: What is the scope of the User and Admin dashboards? → A: Use existing routes and UI. The Authenticated User Dashboard shows attending seminars (RSVPs). The Admin Dashboard (`/admin`) handles Seminar/Semester management, Comment moderation (show/delete), and Attendee emailing.
 - Q: How should attendee emailing be implemented? → A: Client-side Mailto links for now. Provide a service function stub for future server-side implementation.
-- Q: Where should manual verification steps be documented? → A: Append them directly to existing Acceptance Scenarios.
+- Q: Where should manual verification steps be documented? → A: Document every test in a project-root `verification_log.md` file, including status and results.
+- Q: What specific admin manager features are needed? → A: List, Create, Edit, and Delete for both Speakers and Tags.
+- Q: What comment features are needed? → A: Public posting (US3), public/admin replies (threading), and admin deletion (US4).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -62,7 +64,9 @@ As an authenticated user, I want to RSVP to seminars and post comments, with all
 
 1. **Given** I am on a seminar details page, **When** I post a comment, **Then** the comment is stored in Firestore and appears in the list immediately.
    - **Verification**: Navigate to a seminar, post "Test Comment", verify it appears and is also visible in Firebase Console `comments` collection.
-2. **Given** I am viewing a seminar, **When** I click RSVP, **Then** my attendee status is updated in the Firestore RSVP collection.
+2. **Given** a comment exists, **When** I click "Reply", **Then** my response is nested within the parent comment and saved to Firestore.
+   - **Verification**: From seminar page, click Reply on a comment. Verify the new comment has the correct `parent_id`.
+3. **Given** I am viewing a seminar, **When** I click RSVP, **Then** my attendee status is updated in the Firestore RSVP collection.
    - **Verification**: Click "Attending" on a seminar, verify icon change and record presence in Firebase Console `rsvps` collection.
 
 ---
@@ -77,13 +81,15 @@ As an administrator, I want to manage semesters, seminars, speakers, and tags th
 
 **Acceptance Scenarios**:
 
-1. **Given** I am in the Admin Dashboard, **When** I create a new semester, **Then** it is saved to Firestore.
-   - **Verification**: Admin -> Semesters -> Create. Verify list updates.
-2. **Given** I am editing a seminar, **When** I update its speaker, **Then** the change is reflected in all denormalized views (e.g., speaker's seminar list).
+1. **Given** I am in the Admin Dashboard, **When** I create or edit a semester, **Then** it is saved to Firestore.
+   - **Verification**: Admin -> Semesters. Test both Create and Edit flows.
+2. **Given** I am in the Admin Dashboard, **When** I create or edit a speaker or tag, **Then** it is saved to Firestore and reflected globally.
+   - **Verification**: Admin -> Speakers/Tags. Test both Create and Edit flows. Verify names update on seminars.
+3. **Given** I am editing a seminar, **When** I update its speaker, **Then** the change is reflected in all denormalized views (e.g., speaker's seminar list).
    - **Verification**: Admin -> Seminars -> Edit. Change speaker. Verify the Seminar document in Firestore has the updated embedded speaker name.
-3. **Given** I am on the Admin Comment Moderation page, **When** I delete a comment, **Then** it is removed from Firestore and the seminar's `comment_count` is decremented.
+4. **Given** I am on the Admin Comment Moderation page, **When** I delete a comment, **Then** it is removed from Firestore and the seminar's `comment_count` is decremented.
    - **Verification**: Admin -> Comments. Delete a comment. Verify `comment_count` on the related Seminar document in Firestore.
-4. **Given** I am viewing a seminar's attendees in the dashboard, **When** I click "Send Email", **Then** the system triggers the client-side mail client flow via mailto for the selected attendees.
+5. **Given** I am viewing a seminar's attendees in the dashboard, **When** I click "Send Email", **Then** the system triggers the client-side mail client flow via mailto for the selected attendees.
    - **Verification**: Admin -> Seminar -> Attendees -> Send Email. Verify mailto link contains attendee emails.
 
 ---
@@ -92,7 +98,8 @@ As an administrator, I want to manage semesters, seminars, speakers, and tags th
 
 - **Offline Mode**: If the user loses connectivity, should Firestore's offline persistence allow them to continue browsing? (Assumption: Yes, leveraging AngularFire's default persistence).
 - **Concurrency**: How does the system handle two admins editing the same seminar? (Assumption: Last-write-wins is acceptable for MVP).
-- **Broken Auth State**: How does the system handle an invalid Firebase session? (Assumption: Clear local state and redirect to login).
+- **Broken Auth State**: How does the system handle an invalid Firebase session? (Requirement: System MUST maintain session persistence on refresh and handle invalid sessions by redirection).
+- **Session Stability**: Ensure frequent log-outs do not occur during active navigation.
 
 ## Requirements *(mandatory)*
 
@@ -125,3 +132,4 @@ As an administrator, I want to manage semesters, seminars, speakers, and tags th
 - **SC-002**: Data retrieval for the Archive page (initial load) takes less than 2 seconds over a standard 4G connection.
 - **SC-003**: All CRUD operations in the Admin Dashboard complete within 1.5 seconds (excluding file uploads).
 - **SC-004**: No `Supabase` or `Mock` service is *provided* or *used* at runtime in the migration branch.
+- **SC-005**: 100% of tested components and flows are documented in `verification_log.md` with passing results.

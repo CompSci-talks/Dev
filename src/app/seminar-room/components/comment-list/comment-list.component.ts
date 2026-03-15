@@ -13,12 +13,14 @@ export class CommentListComponent {
     @Input({ required: true }) comments: Comment[] = [];
     @Input() isLoading = false;
     @Input() activeReplyId: string | null = null;
+    @Input() isReply = false;
 
     @Output() replyClicked = new EventEmitter<string | null>();
     @Output() replySubmitted = new EventEmitter<{ text: string; parentId?: string }>();
 
     // Helper to separate top-level comments from replies
-    get topLevelComments() {
+    get displayComments() {
+        if (this.isReply) return this.comments;
         return this.comments.filter(c => !c.parent_id);
     }
 

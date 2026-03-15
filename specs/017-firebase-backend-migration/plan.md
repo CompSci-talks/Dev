@@ -1,34 +1,31 @@
 # Implementation Plan: Firebase Backend Migration
 
-**Branch**: `017-firebase-backend-migration` | **Date**: 2026-03-15 | **Spec**: [spec.md](file:///d:/website/compscitalks/specs/017-firebase-backend-migration/spec.md)
-**Input**: Feature specification from `/specs/017-firebase-backend-migration/spec.md`
+**Branch**: `017-firebase-backend-migration` | **Date**: 2026-03-15 | **Spec**: [spec.md](spec.md)
 
 ## Summary
 
-This plan migrates the CompSci Talks platform from Supabase/Mocks to a native Firebase implementation using AngularFire. The migration follows the project's Adapter Pattern, replacing existing service implementations with Firestore and Firebase Auth equivalents without altering UI components. A denormalized NoSQL schema is adopted to optimize for read performance on schedule and archive views.
+Migrate the CompSci Talks platform from Supabase/Mock backends to a unified Firebase ecosystem. This involves implementing AngularFire-based adapters for all core services, denormalizing the Firestore schema for high-performance seminar rendering, and extending the Admin Dashboard with enhanced attendance management and comment moderation.
 
 ## Technical Context
 
-**Language/Version**: TypeScript 5.9, Angular 21.2.0  
-**Primary Dependencies**: `@angular/fire`, `firebase`, `rxjs`  
-**Storage**: Firebase Firestore, Firebase Authentication  
-**Testing**: Vitest (Unit), Playwright (E2E)  
-**Target Platform**: Web Browser  
-**Project Type**: Web Application  
-**Performance Goals**: SC-002 (<2s Archive load), SC-003 (<1.5s Admin CRUD)  
-**Constraints**: Zero-cost serverless (Constitution Principle VI), Reactive data flow  
-**Scale/Scope**: Migration of 7 core services and associated data entities.
+**Language/Version**: TypeScript 5.x / Angular 19+
+**Primary Dependencies**: `@angular/fire` (v19+), `firebase` (v11+), `ngx-quill`
+**Storage**: Google Cloud Firestore (Native Mode), Firebase Auth
+**Testing**: Angular Testing Library, Jasmine, Manual verification via Browser
+**Target Platform**: Web (SPA)
+**Project Type**: web-application
+**Performance Goals**: < 2s initial load for Archive, < 1.5s admin CRUD latency
+**Constraints**: Zero-cost free tier, serverless only, no Storage bucket for now
+**Scale/Scope**: ~100 seminars, ~1k users (projected), 12+ administrative screens
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-1. **Principle I: Adapter Pattern (NON-NEGOTIABLE)**: The Firebase implementation MUST be entirely self-contained within the `adapters` layer. No feature components or services may directly reference `Firestore` or `Auth` SDKs.
-2. **Principle III: Interface-First**: Every new Firebase service MUST implement the existing TypeScript interfaces in `src/app/core/contracts`.
-3. **Principle VI: Zero-Cost & Serverless-First**: The migration must utilize Firebase's free tier. All denormalization must be optimized to stay within read/write limits.
-4. **Principle VII: Strict Typing (NON-NEGOTIABLE)**: Adapters must have 100% type coverage. `any` is strictly forbidden.
-5. **Principle VIII: Reactive & Declarative**: The implementation must rely on AngularFire's observable streams, avoiding imperative data management.
-6. **Principle IX: Graceful Error Handling**: Firestore query failures or Auth errors must be caught and categorized for user feedback.
+- **Separation of Concerns**: System uses Injection Tokens and Adapter pattern. (PASS)
+- **Interface-First**: All Firebase implementations satisfy existing `ICore*` interfaces. (PASS)
+- **Centralized Styling**: Uses current Tailwind configuration. (PASS)
+- **Strict Typing**: All Firebase DTOs and service signatures are typed. (PASS)
 
 ## Project Structure
 
@@ -36,35 +33,35 @@ This plan migrates the CompSci Talks platform from Supabase/Mocks to a native Fi
 
 ```text
 specs/017-firebase-backend-migration/
-├── spec.md              # Requirements
 ├── plan.md              # This file
-├── research.md          # Data Strategy & Denormalization logic
-├── data-model.md        # Firestore Schema
-├── quickstart.md        # Migration Verification tasks
-└── tasks.md             # Implementation checklist
+├── research.md          # Session persistence & Permission logic
+├── data-model.md        # Firestore collection schemas & denormalization
+├── quickstart.md        # Test scenarios
+├── contracts/           # API/Service interface references
+└── tasks.md             # Implementation tasks
 ```
 
-### Source Code (repository root)
+### Source Code
 
 ```text
 src/app/
 ├── core/
-│   ├── contracts/       # Existing Interfaces (No changes)
-│   └── services/        # Mock implementations
-├── firebase-adapters/   # [NEW] Concrete Firebase implementations
-│   ├── firebase-auth.service.ts
-│   ├── firebase-seminar.service.ts
-│   ├── firebase-semester.service.ts
-│   └── ...
-└── supabase-adapters/   # [LEGACY] (To be removed post-migration)
-
-src/environments/        # [VERIFY] Firebase credentials in environment.ts
+│   ├── contracts/        # Port definitions
+│   └── models/           # Domain entities
+├── firebase-adapters/    # Firebase concrete implementations
+├── admin/
+│   ├── pages/            # Attendance, Moderation, Speakers, Tags
+│   └── services/         # Admin-specific logic
+└── portal/
+    ├── pages/            # Schedule, Archive, Seminar Details
+    └── components/       # Seminar cards, Comments
 ```
 
-**Structure Decision**: A new `firebase-adapters` directory is created to house all Firebase-specific implementations. Legacy `supabase-adapters` and `services/` (Mocks) are preserved for rollback safety but their usage in `app.config.ts` is replaced.
+**Structure Decision**: Vertical slicing by feature (Admin/Portal) with centralized platform adapters in `firebase-adapters/`.
 
 ## Complexity Tracking
 
-> **Fill ONLY if Constitution Check has violations that must be justified**
-
-*(No violations. Plan adheres strictly to all Constitution principles.)*
+| Violation | Why Needed | Simpler Alternative Rejected Because |
+|-----------|------------|-------------------------------------|
+| Denormalization | Performance | Joins in Firestore are expensive and slow for listing pages. |
+| Mailto Adapter | Zero-cost | Server-side mailing requires a paid SMTP service or Cloud Function. |

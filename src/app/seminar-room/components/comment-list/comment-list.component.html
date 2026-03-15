@@ -9,9 +9,10 @@
             No comments yet. Be the first to start the discussion!
         </div>
 
-        <div *ngFor="let c of topLevelComments" class="flex flex-col gap-3">
-            <!-- Parent Comment -->
-            <div class="bg-surface-card border border-border rounded-lg p-4 shadow-sm animate-fade-in text-left">
+        <div *ngFor="let c of displayComments" class="flex flex-col gap-3" [class.ms-8]="isReply">
+            <!-- Comment Card -->
+            <div class="bg-surface-card border border-border rounded-lg p-4 shadow-sm animate-fade-in text-left"
+                [class.bg-surface-muted]="isReply" [class.border-l-2]="isReply" [class.border-primary]="isReply">
                 <div class="flex justify-between items-center mb-1">
                     <span class="font-medium text-sm text-primary">{{ c.author_name }}</span>
                     <span class="text-xs text-text-muted">{{ c.created_at | date:'shortTime' }}</span>
@@ -40,23 +41,11 @@
                 </app-comment-form>
             </div>
 
-            <!-- Nested Replies (1 level deep) -->
-            <div *ngIf="getReplies(c.id).length > 0" class="flex flex-col gap-3 ms-8">
-                <div *ngFor="let reply of getReplies(c.id)"
-                    class="bg-surface-muted border-l-2 border-primary rounded-r-lg p-3 shadow-sm animate-fade-in text-left">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="font-medium text-sm text-primary">{{ reply.author_name }}</span>
-                        <span class="text-xs text-text-muted">{{ reply.created_at | date:'shortTime' }}</span>
-                    </div>
-                    <p class="text-text-main whitespace-pre-line text-sm transition-all"
-                        [class.line-clamp-3]="!isExpanded(reply.id)">
-                        {{ reply.text }}
-                    </p>
-                    <button *ngIf="reply.text.length > 300" (click)="toggleExpand(reply.id)"
-                        class="text-xs text-primary hover:underline font-medium mt-1">
-                        {{ isExpanded(reply.id) ? 'See less' : 'See more' }}
-                    </button>
-                </div>
+            <!-- Recursive Nested Replies -->
+            <div *ngIf="getReplies(c.id).length > 0">
+                <app-comment-list [comments]="getReplies(c.id)" [isReply]="true" [activeReplyId]="activeReplyId"
+                    (replyClicked)="replyClicked.emit($event)" (replySubmitted)="replySubmitted.emit($event)">
+                </app-comment-list>
             </div>
         </div>
     </ng-container>
