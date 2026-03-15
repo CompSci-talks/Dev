@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, collectionData, docData } from '@angular/fire/firestore';
 import { collection, doc, addDoc, updateDoc, deleteDoc, query, where, getDoc, getDocs, writeBatch, limit, serverTimestamp, orderBy } from 'firebase/firestore';
 import { Observable, from, map, switchMap, combineLatest, of, firstValueFrom } from 'rxjs';
@@ -11,6 +11,7 @@ import { Attendee } from '../core/models/attendance.model';
 })
 export class FirebaseSeminarService implements ISeminarService {
     private firestore = inject(Firestore);
+    private injector = inject(Injector);
     private seminarsCollection = collection(this.firestore, 'seminars');
 
     getSeminars(tagId?: string, speakerId?: string, startDate?: Date, endDate?: Date): Observable<Seminar[]> {
@@ -32,7 +33,7 @@ export class FirebaseSeminarService implements ISeminarService {
             q = query(q, where('date_time', '<=', endDate));
         }
 
-        return collectionData(q, { idField: 'id' }).pipe(
+        return runInInjectionContext(this.injector, () => collectionData(q, { idField: 'id' })).pipe(
             map(seminars => seminars.map(s => this.mapTimestamps(s))),
             switchMap(seminars => {
                 if (seminars.length === 0) return of([]);
@@ -43,7 +44,7 @@ export class FirebaseSeminarService implements ISeminarService {
 
     getSeminarById(id: string): Observable<Seminar | null> {
         const seminarDoc = doc(this.firestore, `seminars/${id}`);
-        return docData(seminarDoc, { idField: 'id' }).pipe(
+        return runInInjectionContext(this.injector, () => docData(seminarDoc, { idField: 'id' })).pipe(
             map(s => s ? this.mapTimestamps(s) : null),
             switchMap(s => s ? from(this.enrichWithMetadata(s)) : of(null))
         ) as Observable<Seminar | null>;
@@ -97,11 +98,11 @@ export class FirebaseSeminarService implements ISeminarService {
     getAttendees(seminarId: string): Observable<Attendee[]> {
         const rsvpsQuery = query(collection(this.firestore, 'rsvps'), where('seminar_id', '==', seminarId));
 
-        return collectionData(rsvpsQuery).pipe(
+        return runInInjectionContext(this.injector, () => collectionData(rsvpsQuery)).pipe(
             switchMap(rsvps => {
                 if (rsvps.length === 0) return of([]);
 
-                const userQueries = rsvps.map(r => docData(doc(this.firestore, `users/${r['user_id']}`), { idField: 'id' }));
+                const userQueries = rsvps.map(r => runInInjectionContext(this.injector, () => docData(doc(this.firestore, `users/${r['user_id']}`), { idField: 'id' })));
                 return combineLatest(userQueries).pipe(
                     map(users => users.map((u: any, index) => ({
                         id: u?.id || '',

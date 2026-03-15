@@ -99,6 +99,9 @@
 - [x] T025b Offline Verification: Test application functionality and data visibility while browser is offline
 - [x] T026 Execute full E2E test suite: `npm run e2e`
 - [x] T027 Initialize and document `verification_log.md` with results of all manual and automated tests
+- [x] T028 Implement `MultiSelectComponent` in `src/app/shared/components/` for searchable chip selection
+- [x] T029 Refactor `SeminarFormComponent` to use `MultiSelectComponent` for Speakers and Tags
+- [ ] T030 Perform comprehensive browser-based verification of the entire application flow
 
 ---
 

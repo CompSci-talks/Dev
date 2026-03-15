@@ -18,11 +18,6 @@ export class FirebaseAuthService implements IAuthService {
     isInitialized$ = this.initializedSubject.asObservable();
 
     constructor() {
-        // Ensure persistence is set to LOCAL
-        setPersistence(this.auth, browserLocalPersistence).catch(err => {
-            console.error('Firebase Auth persistence error:', err);
-        });
-
         // Listen to Firebase Auth state changes
         onAuthStateChanged(this.auth, (firebaseUser) => {
             this.zone.run(() => {

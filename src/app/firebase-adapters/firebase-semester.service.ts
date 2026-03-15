@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, query, where, getDocs, writeBatch, orderBy, limit } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, take } from 'rxjs';
 import { ISemesterService } from '../core/contracts/semester.interface';
@@ -9,18 +9,19 @@ import { Semester } from '../core/models/semester.model';
 })
 export class FirebaseSemesterService implements ISemesterService {
     private firestore = inject(Firestore);
+    private injector = inject(Injector);
     private semestersCollection = collection(this.firestore, 'semesters');
 
     getSemesters(): Observable<Semester[]> {
         const q = query(this.semestersCollection, orderBy('start_date', 'desc'));
-        return collectionData(q, { idField: 'id' }).pipe(
+        return runInInjectionContext(this.injector, () => collectionData(q, { idField: 'id' })).pipe(
             map(semesters => semesters.map(s => this.mapTimestamps(s)))
         ) as Observable<Semester[]>;
     }
 
     getActiveSemester(): Observable<Semester | null> {
         const q = query(this.semestersCollection, where('is_active', '==', true), limit(1));
-        return collectionData(q, { idField: 'id' }).pipe(
+        return runInInjectionContext(this.injector, () => collectionData(q, { idField: 'id' })).pipe(
             map(semesters => semesters.length > 0 ? this.mapTimestamps(semesters[0]) : null)
         ) as Observable<Semester | null>;
     }
@@ -70,7 +71,7 @@ export class FirebaseSemesterService implements ISemesterService {
 
     private mapTimestampsFromDoc(id: string): Observable<Semester> {
         const semesterDoc = doc(this.firestore, `semesters/${id}`);
-        return docData(semesterDoc, { idField: 'id' }).pipe(
+        return runInInjectionContext(this.injector, () => docData(semesterDoc, { idField: 'id' })).pipe(
             take(1),
             map(s => this.mapTimestamps(s))
         );

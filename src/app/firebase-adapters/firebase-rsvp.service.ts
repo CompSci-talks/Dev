@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, collection, collectionData, doc, docData, query, where, deleteDoc, getDocs, writeBatch, increment, setDoc } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, take, of, combineLatest } from 'rxjs';
 import { IRsvpService } from '../core/contracts/rsvp.interface';
@@ -10,6 +10,7 @@ import { AUTH_SERVICE } from '../core/contracts/auth.interface';
 })
 export class FirebaseRsvpService implements IRsvpService {
     private firestore = inject(Firestore);
+    private injector = inject(Injector);
     private authService = inject(AUTH_SERVICE);
     private rsvpsCollection = collection(this.firestore, 'rsvps');
 
@@ -18,7 +19,7 @@ export class FirebaseRsvpService implements IRsvpService {
             switchMap(user => {
                 if (!user) return of(false);
                 const q = query(this.rsvpsCollection, where('seminar_id', '==', seminarId), where('user_id', '==', user.id));
-                return collectionData(q).pipe(map(docs => docs.length > 0));
+                return runInInjectionContext(this.injector, () => collectionData(q)).pipe(map(docs => docs.length > 0));
             })
         );
     }
@@ -29,10 +30,10 @@ export class FirebaseRsvpService implements IRsvpService {
             switchMap(user => {
                 if (!user) return of([]);
                 const q = query(this.rsvpsCollection, where('user_id', '==', user.id));
-                return collectionData(q).pipe(
+                return runInInjectionContext(this.injector, () => collectionData(q)).pipe(
                     switchMap(rsvps => {
                         if (rsvps.length === 0) return of([]);
-                        const seminarQueries = rsvps.map(r => docData(doc(this.firestore, `seminars/${r['seminar_id']}`), { idField: 'id' }));
+                        const seminarQueries = rsvps.map(r => runInInjectionContext(this.injector, () => docData(doc(this.firestore, `seminars/${r['seminar_id']}`), { idField: 'id' })));
                         return combineLatest(seminarQueries).pipe(
                             map(seminars => seminars.filter(s => !!s).map(s => this.mapTimestamps(s)) as Seminar[])
                         );

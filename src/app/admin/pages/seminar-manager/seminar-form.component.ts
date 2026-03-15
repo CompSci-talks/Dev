@@ -4,12 +4,13 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Seminar, Speaker, Tag } from '../../../core/models/seminar.model';
 import { SPEAKER_SERVICE, ISpeakerService } from '../../../core/contracts/speaker.interface';
 import { TAG_SERVICE, ITagService } from '../../../core/contracts/tag.interface';
-import { Observable } from 'rxjs';
+import { MultiSelectComponent } from '../../../shared/components/multi-select/multi-select.component';
+import { Observable, map } from 'rxjs';
 
 @Component({
   selector: 'app-seminar-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MultiSelectComponent],
   template: `
     <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-xl max-w-3xl mx-auto">
       <div class="flex justify-between items-center mb-6">
@@ -51,27 +52,20 @@ import { Observable } from 'rxjs';
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-2">Speakers</label>
-            <select multiple formControlName="speaker_ids" 
-                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all min-h-[120px]">
-              <option *ngFor="let speaker of speakers$ | async" [value]="speaker.id">
-                {{ speaker.name }} ({{ speaker.affiliation }})
-              </option>
-            </select>
-            <p class="text-[10px] text-slate-400 mt-1">Hold Ctrl/Cmd to select multiple</p>
+            <app-multi-select 
+                [items]="(speakerItems$ | async) || []"
+                placeholder="Find speakers..."
+                formControlName="speaker_ids">
+            </app-multi-select>
           </div>
           
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-2">Tags</label>
-            <div class="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl min-h-[120px]">
-              <button type="button" *ngFor="let tag of tags$ | async" 
-                      (click)="toggleTag(tag.id)"
-                      [class.bg-blue-600]="isTagSelected(tag.id)"
-                      [class.text-white]="isTagSelected(tag.id)"
-                      [class.bg-white]="!isTagSelected(tag.id)"
-                      class="px-3 py-1 rounded-full text-xs font-medium border border-slate-200 hover:border-blue-400 transition-all">
-                {{ tag.name }}
-              </button>
-            </div>
+            <app-multi-select 
+                [items]="(tagItems$ | async) || []"
+                placeholder="Add tags..."
+                formControlName="tag_ids">
+            </app-multi-select>
           </div>
         </div>
 
@@ -119,16 +113,20 @@ export class SeminarFormComponent implements OnInit {
   @Output() onCancel = new EventEmitter<void>();
 
   seminarForm: FormGroup;
-  speakers$: Observable<Speaker[]>;
-  tags$: Observable<Tag[]>;
+  speakerItems$: Observable<{ id: string, name: string }[]>;
+  tagItems$: Observable<{ id: string, name: string }[]>;
 
   constructor(
     private fb: FormBuilder,
     @Inject(SPEAKER_SERVICE) private speakerService: ISpeakerService,
     @Inject(TAG_SERVICE) private tagService: ITagService
   ) {
-    this.speakers$ = this.speakerService.getSpeakers();
-    this.tags$ = this.tagService.getTags();
+    this.speakerItems$ = this.speakerService.getSpeakers().pipe(
+      map(speakers => speakers.map(s => ({ id: s.id, name: `${s.name} (${s.affiliation})` })))
+    );
+    this.tagItems$ = this.tagService.getTags().pipe(
+      map(tags => tags.map(t => ({ id: t.id, name: t.name })))
+    );
 
     this.seminarForm = this.fb.group({
       title: ['', Validators.required],
@@ -158,19 +156,6 @@ export class SeminarFormComponent implements OnInit {
     const d = new Date(date);
     d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
     return d.toISOString().slice(0, 16);
-  }
-
-  toggleTag(tagId: string) {
-    const currentTags = this.seminarForm.value.tag_ids as string[];
-    if (currentTags.includes(tagId)) {
-      this.seminarForm.patchValue({ tag_ids: currentTags.filter(id => id !== tagId) });
-    } else {
-      this.seminarForm.patchValue({ tag_ids: [...currentTags, tagId] });
-    }
-  }
-
-  isTagSelected(tagId: string): boolean {
-    return (this.seminarForm.value.tag_ids as string[]).includes(tagId);
   }
 
   onSubmit() {

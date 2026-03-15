@@ -59,9 +59,20 @@ src/app/
 
 **Structure Decision**: Vertical slicing by feature (Admin/Portal) with centralized platform adapters in `firebase-adapters/`.
 
-## Complexity Tracking
+| Multi-path update | Sync | Denormalized data must stay in sync across collections. |
+| Custom Multi-Select | UX | Standard HTML multiple select is unintuitive for many items. |
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| Denormalization | Performance | Joins in Firestore are expensive and slow for listing pages. |
-| Mailto Adapter | Zero-cost | Server-side mailing requires a paid SMTP service or Cloud Function. |
+## UI Refinement: Multi-Select Component
+
+The `MultiSelectComponent` will provide:
+- Search/Filter capability.
+- Selected items as removable chips.
+- Dropdown for undiscovered options.
+- Integration with Angular Reactive Forms (`ControlValueAccessor`).
+
+## Comprehensive Browser Testing
+
+A dedicated test suite will be executed manually via the browser subagent to verify:
+1. **User Flow**: Registration -> Login -> RSVP -> Commenting.
+2. **Admin Flow**: Add Speaker -> Add Tag -> Create Seminar (with multiselect) -> Edit Seminar -> Verify changes in public feed.
+3. **Moderation Flow**: Delete/Hide comments -> Verify disappearance from public view.

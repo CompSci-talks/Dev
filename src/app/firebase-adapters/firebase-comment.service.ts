@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, collection, collectionData, addDoc, query, where, orderBy, deleteDoc, doc, getDocs, writeBatch, serverTimestamp, updateDoc, increment, getDoc } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, take } from 'rxjs';
 import { ICommentService } from '../core/contracts/comment.interface';
@@ -10,12 +10,13 @@ import { AUTH_SERVICE } from '../core/contracts/auth.interface';
 })
 export class FirebaseCommentService implements ICommentService {
     private firestore = inject(Firestore);
+    private injector = inject(Injector);
     private authService = inject(AUTH_SERVICE);
     private commentsCollection = collection(this.firestore, 'comments');
 
     getCommentsForSeminar$(seminarId: string): Observable<Comment[]> {
         const q = query(this.commentsCollection, where('seminar_id', '==', seminarId), orderBy('created_at', 'desc'));
-        return collectionData(q, { idField: 'id' }).pipe(
+        return runInInjectionContext(this.injector, () => collectionData(q, { idField: 'id' })).pipe(
             map(comments => comments.map(c => this.mapTimestamps(c)))
         ) as Observable<Comment[]>;
     }
@@ -53,7 +54,7 @@ export class FirebaseCommentService implements ICommentService {
 
     getAllComments(): Observable<Comment[]> {
         const q = query(this.commentsCollection, orderBy('created_at', 'desc'));
-        return collectionData(q, { idField: 'id' }).pipe(
+        return runInInjectionContext(this.injector, () => collectionData(q, { idField: 'id' })).pipe(
             map(comments => comments.map(c => this.mapTimestamps(c)))
         ) as Observable<Comment[]>;
     }
