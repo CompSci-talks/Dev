@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collectionData, docData } from '@angular/fire/firestore';
-import { collection, doc, addDoc, updateDoc, deleteDoc, query, where, orderBy, getDoc, getDocs, writeBatch, limit, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, addDoc, updateDoc, deleteDoc, query, where, getDoc, getDocs, writeBatch, limit, serverTimestamp, orderBy } from 'firebase/firestore';
 import { Observable, from, map, switchMap, combineLatest, of, firstValueFrom } from 'rxjs';
 import { ISeminarService } from '../core/contracts/seminar.interface';
 import { Seminar } from '../core/models/seminar.model';
@@ -33,14 +33,19 @@ export class FirebaseSeminarService implements ISeminarService {
         }
 
         return collectionData(q, { idField: 'id' }).pipe(
-            map(seminars => seminars.map(s => this.mapTimestamps(s)))
+            map(seminars => seminars.map(s => this.mapTimestamps(s))),
+            switchMap(seminars => {
+                if (seminars.length === 0) return of([]);
+                return combineLatest(seminars.map(s => from(this.enrichWithMetadata(s))));
+            })
         ) as Observable<Seminar[]>;
     }
 
     getSeminarById(id: string): Observable<Seminar | null> {
         const seminarDoc = doc(this.firestore, `seminars/${id}`);
         return docData(seminarDoc, { idField: 'id' }).pipe(
-            map(s => s ? this.mapTimestamps(s) : null)
+            map(s => s ? this.mapTimestamps(s) : null),
+            switchMap(s => s ? from(this.enrichWithMetadata(s)) : of(null))
         ) as Observable<Seminar | null>;
     }
 

@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collectionData } from '@angular/fire/firestore';
-import { collection, addDoc, query, where, orderBy, deleteDoc, doc, getDocs, writeBatch, serverTimestamp, updateDoc, increment, getDoc } from 'firebase/firestore';
+import { Firestore, collection, collectionData, addDoc, query, where, orderBy, deleteDoc, doc, getDocs, writeBatch, serverTimestamp, updateDoc, increment, getDoc } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, take } from 'rxjs';
 import { ICommentService } from '../core/contracts/comment.interface';
 import { Comment } from '../core/models/comment.model';

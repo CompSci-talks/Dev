@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collectionData, docData } from '@angular/fire/firestore';
-import { collection, doc, addDoc, updateDoc, deleteDoc, query, orderBy, getDocs, where, writeBatch } from 'firebase/firestore';
+import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, query, orderBy, getDocs, where, writeBatch } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, take } from 'rxjs';
 import { ISpeakerService } from '../core/contracts/speaker.interface';
 import { Speaker } from '../core/models/seminar.model';

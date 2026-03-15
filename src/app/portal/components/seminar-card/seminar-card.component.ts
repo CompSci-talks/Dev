@@ -18,4 +18,9 @@ export class SeminarCardComponent {
 
     imageLoaded = false;
     hasImageError = false;
+
+    getSpeakerNames(speakers: any[] | undefined): string {
+        if (!speakers) return '';
+        return speakers.map(s => s.name).join(', ');
+    }
 }

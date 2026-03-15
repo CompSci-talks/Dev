@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collectionData, docData } from '@angular/fire/firestore';
-import { collection, doc, query, where, deleteDoc, getDocs, writeBatch, increment, setDoc } from 'firebase/firestore';
+import { Firestore, collection, collectionData, doc, docData, query, where, deleteDoc, getDocs, writeBatch, increment, setDoc } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, take, of, combineLatest } from 'rxjs';
 import { IRsvpService } from '../core/contracts/rsvp.interface';
 import { Seminar } from '../core/models/seminar.model';

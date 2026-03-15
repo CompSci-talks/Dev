@@ -3,10 +3,10 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-admin-layout',
-    standalone: true,
-    imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
-    template: `
+  selector: 'app-admin-layout',
+  standalone: true,
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+  template: `
     <div class="flex h-screen bg-slate-50">
       <!-- Sidebar -->
       <aside class="w-64 bg-slate-900 text-white flex flex-col">
@@ -25,6 +25,16 @@ import { CommonModule } from '@angular/common';
              class="flex items-center px-4 py-3 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
             <span class="mr-3">🎤</span>
             Seminar Scheduling
+          </a>
+          <a routerLink="speakers" routerLinkActive="bg-slate-800 text-white"
+             class="flex items-center px-4 py-3 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
+            <span class="mr-3">👤</span>
+            Speaker Manager
+          </a>
+          <a routerLink="tags" routerLinkActive="bg-slate-800 text-white"
+             class="flex items-center px-4 py-3 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
+            <span class="mr-3">🏷️</span>
+            Tag Manager
           </a>
           <a routerLink="moderation" routerLinkActive="bg-slate-800 text-white"
              class="flex items-center px-4 py-3 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">

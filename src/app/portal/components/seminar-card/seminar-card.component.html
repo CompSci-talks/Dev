@@ -46,16 +46,18 @@
   <div class="p-4 flex flex-col flex-grow bg-white">
     <div class="flex items-center gap-2 mb-2">
       <!-- In a real app we would map tag_ids to Tag names from a Store/Service -->
-      <span *ngFor="let tagId of seminar.tag_ids"
+      <span *ngFor="let tagId of seminar.tag_ids; let i = index"
         class="bg-primary-light text-primary text-xs font-semibold px-2 py-0.5 rounded-full">
-        Tag: {{ tagId }}
+        {{ seminar.tags?.[i]?.name || tagId }}
       </span>
       <span class="text-xs text-text-muted ml-auto">{{ seminar.date_time | date:'mediumDate' }}</span>
     </div>
 
     <h3 class="font-bold text-lg text-text-main line-clamp-2 mb-1 min-h-[3.5rem]">{{ seminar.title }}</h3>
     <!-- Speaker IDs -->
-    <p class="text-sm text-text-muted mb-4">{{ seminar.speaker_ids.join(', ') }}</p>
+    <p class="text-sm text-text-muted mb-4">
+      {{ seminar.speakers?.length ? getSpeakerNames(seminar.speakers) : seminar.speaker_ids.join(', ') }}
+    </p>
 
     <div class="text-xs text-text-muted mt-auto flex items-center">
       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

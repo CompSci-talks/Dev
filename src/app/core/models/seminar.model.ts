@@ -21,6 +21,8 @@ export interface Seminar {
     thumbnail_url?: string;
     speaker_ids: string[];
     tag_ids: string[];
+    speakers?: { id: string; name: string }[];
+    tags?: { id: string; name: string; color_code: string }[];
     video_material_id?: string;
     presentation_material_id?: string;
     is_hidden: boolean;

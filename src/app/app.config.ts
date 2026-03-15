@@ -1,12 +1,9 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { provideFirebaseApp } from '@angular/fire/app';
-import { initializeApp } from 'firebase/app';
-import { provideAuth } from '@angular/fire/auth';
-import { getAuth } from 'firebase/auth';
-import { provideFirestore } from '@angular/fire/firestore';
-import { getFirestore } from 'firebase/firestore';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 import { FirebaseSemesterService } from './firebase-adapters/firebase-semester.service';
 import { FirebaseSeminarService } from './firebase-adapters/firebase-seminar.service';
@@ -25,7 +22,8 @@ import { COMMENT_SERVICE } from './core/contracts/comment.interface';
 import { EMAIL_SERVICE } from './admin/services/email.service';
 import { ATTENDANCE_SERVICE } from './admin/services/attendance.service';
 import { MockEmailAdapter } from './core/adapters/email/mock-email.adapter';
-import { AttendanceService } from './admin/services/attendance.implementation.service';
+import { FirebaseAttendanceService } from './firebase-adapters/firebase-attendance.service';
+import { MailtoEmailAdapter } from './core/adapters/email/mailto-email.adapter';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -43,7 +41,7 @@ export const appConfig: ApplicationConfig = {
     { provide: TAG_SERVICE, useClass: FirebaseTagService },
     { provide: COMMENT_SERVICE, useClass: FirebaseCommentService },
     { provide: RSVP_SERVICE, useClass: FirebaseRsvpService },
-    { provide: EMAIL_SERVICE, useClass: MockEmailAdapter },
-    { provide: ATTENDANCE_SERVICE, useClass: AttendanceService },
+    { provide: EMAIL_SERVICE, useClass: MailtoEmailAdapter },
+    { provide: ATTENDANCE_SERVICE, useClass: FirebaseAttendanceService },
   ]
 };

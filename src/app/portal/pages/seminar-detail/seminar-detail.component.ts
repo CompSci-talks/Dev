@@ -41,4 +41,9 @@ export class SeminarDetailComponent implements OnInit {
             tap(() => this.isLoading = false)
         );
     }
+
+    getSpeakerNames(speakers: any[] | undefined): string {
+        if (!speakers) return '';
+        return speakers.map(s => s.name).join(', ');
+    }
 }

@@ -3,9 +3,9 @@
         <ng-container *ngIf="seminar$ | async as seminar; else notFound">
             <div class="mb-6">
                 <div class="flex items-center gap-3 mb-4">
-                    <span *ngFor="let tagId of seminar.tag_ids"
+                    <span *ngFor="let tagId of seminar.tag_ids; let i = index"
                         class="bg-primary-light text-primary text-sm font-semibold px-3 py-1 rounded-full">
-                        {{ tagId }}
+                        {{ seminar.tags?.[i]?.name || tagId }}
                     </span>
                     <span class="text-text-muted">{{ seminar.date_time | date:'fullDate' }} at {{ seminar.date_time |
                         date:'shortTime' }}</span>
@@ -20,7 +20,8 @@
                 </div>
 
                 <h1 class="text-4xl font-bold text-text-main mb-2">{{ seminar.title }}</h1>
-                <p class="text-lg text-text-muted mb-6">Presented by: {{ seminar.speaker_ids.join(', ') }}</p>
+                <p class="text-lg text-text-muted mb-6">Presented by: {{ seminar.speakers?.length ?
+                    getSpeakerNames(seminar.speakers) : seminar.speaker_ids.join(', ') }}</p>
 
                 <div class="bg-surface-card p-4 rounded-lg flex items-center justify-between mb-8 border border-border">
                     <div class="flex items-center">

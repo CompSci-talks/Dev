@@ -51,6 +51,14 @@ export const routes: Routes = [
                 loadComponent: () => import('./admin/pages/comment-moderation/comment-moderation.component').then(m => m.CommentModerationComponent)
             },
             {
+                path: 'speakers',
+                loadComponent: () => import('./admin/pages/speaker-manager/speaker-manager.component').then(m => m.SpeakerManagerComponent)
+            },
+            {
+                path: 'tags',
+                loadComponent: () => import('./admin/pages/tag-manager/tag-manager.component').then(m => m.TagManagerComponent)
+            },
+            {
                 path: 'seminar/:id/attendance',
                 loadComponent: () => import('./admin/pages/attendance/attendance.page').then(m => m.AttendancePageComponent)
             }

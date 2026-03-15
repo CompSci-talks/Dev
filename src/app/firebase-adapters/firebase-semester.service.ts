@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collectionData, docData } from '@angular/fire/firestore';
-import { collection, doc, addDoc, updateDoc, query, where, getDocs, writeBatch, orderBy, limit } from 'firebase/firestore';
+import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, query, where, getDocs, writeBatch, orderBy, limit } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, take } from 'rxjs';
 import { ISemesterService } from '../core/contracts/semester.interface';
 import { Semester } from '../core/models/semester.model';
