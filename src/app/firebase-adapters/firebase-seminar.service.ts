@@ -132,24 +132,38 @@ export class FirebaseSeminarService implements ISeminarService {
     private async enrichWithMetadata(seminar: any): Promise<any> {
         const enriched = { ...seminar };
 
-        if (seminar.speaker_ids && seminar.speaker_ids.length > 0) {
-            const speakers = await Promise.all(
-                seminar.speaker_ids.map(async (id: string) => {
-                    const sDoc = await getDoc(doc(this.firestore, `speakers/${id}`));
-                    return { id, name: sDoc.data()?.['name'] };
-                })
-            );
-            enriched.speakers = speakers;
-        }
+        try {
+            if (seminar.speaker_ids && seminar.speaker_ids.length > 0) {
+                const speakers = await Promise.all(
+                    seminar.speaker_ids.map(async (id: string) => {
+                        try {
+                            const sDoc = await getDoc(doc(this.firestore, `speakers/${id}`));
+                            return { id, name: sDoc.data()?.['name'] || 'Unknown Speaker' };
+                        } catch (err) {
+                            console.warn(`Failed to fetch speaker ${id}:`, err);
+                            return { id, name: id };
+                        }
+                    })
+                );
+                enriched.speakers = speakers;
+            }
 
-        if (seminar.tag_ids && seminar.tag_ids.length > 0) {
-            const tags = await Promise.all(
-                seminar.tag_ids.map(async (id: string) => {
-                    const tDoc = await getDoc(doc(this.firestore, `tags/${id}`));
-                    return { id, name: tDoc.data()?.['name'], color_code: tDoc.data()?.['color_code'] };
-                })
-            );
-            enriched.tags = tags;
+            if (seminar.tag_ids && seminar.tag_ids.length > 0) {
+                const tags = await Promise.all(
+                    seminar.tag_ids.map(async (id: string) => {
+                        try {
+                            const tDoc = await getDoc(doc(this.firestore, `tags/${id}`));
+                            return { id, name: tDoc.data()?.['name'] || id, color_code: tDoc.data()?.['color_code'] };
+                        } catch (err) {
+                            console.warn(`Failed to fetch tag ${id}:`, err);
+                            return { id, name: id };
+                        }
+                    })
+                );
+                enriched.tags = tags;
+            }
+        } catch (err) {
+            console.error('Error enriching seminar metadata:', err);
         }
 
         return enriched;

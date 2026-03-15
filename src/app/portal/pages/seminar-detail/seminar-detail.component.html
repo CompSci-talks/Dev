@@ -1,6 +1,44 @@
+<ng-template #skeleton>
+    <div class="animate-pulse-skeleton">
+        <div class="flex gap-2 mb-4">
+            <div class="h-6 w-16 bg-surface-muted rounded-full"></div>
+            <div class="h-6 w-32 bg-surface-muted rounded ml-auto"></div>
+        </div>
+        <div class="h-10 w-3/4 bg-surface-muted rounded mb-4"></div>
+        <div class="h-6 w-1/2 bg-surface-muted rounded mb-8"></div>
+
+        <div class="h-20 w-full bg-surface-muted rounded mb-8 border border-border"></div>
+
+        <div class="space-y-4 mb-12">
+            <div class="h-4 w-full bg-surface-muted rounded"></div>
+            <div class="h-4 w-full bg-surface-muted rounded"></div>
+            <div class="h-4 w-5/6 bg-surface-muted rounded"></div>
+        </div>
+
+        <div class="h-64 w-full bg-surface-muted rounded mb-8"></div>
+    </div>
+</ng-template>
+
+<ng-template #notFound>
+    <div class="py-12 text-center">
+        <h2 class="text-2xl font-bold text-text-main">Seminar not found</h2>
+        <p class="text-text-muted mt-2">The seminar you are looking for does not exist or has been removed.</p>
+        <a routerLink="/" class="btn btn-primary mt-6">Return Home</a>
+    </div>
+</ng-template>
+
 <div class="max-w-4xl mx-auto px-4 py-8">
     <ng-container *ngIf="!isLoading; else skeleton">
         <ng-container *ngIf="seminar$ | async as seminar; else notFound">
+            <!-- Hero Thumbnail -->
+            <div *ngIf="seminar.thumbnail_url"
+                class="relative h-64 md:h-80 w-full mb-8 rounded-2xl overflow-hidden shadow-lg border border-border bg-surface-muted">
+                <img [src]="seminar.thumbnail_url" [alt]="seminar.title"
+                    class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    (load)="imageLoaded = true" [class.opacity-0]="!imageLoaded" [class.opacity-100]="imageLoaded">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+            </div>
+
             <div class="mb-6">
                 <div class="flex items-center gap-3 mb-4">
                     <span *ngFor="let tagId of seminar.tag_ids; let i = index"
@@ -21,7 +59,7 @@
 
                 <h1 class="text-4xl font-bold text-text-main mb-2">{{ seminar.title }}</h1>
                 <p class="text-lg text-text-muted mb-6">Presented by: {{ seminar.speakers?.length ?
-                    getSpeakerNames(seminar.speakers) : seminar.speaker_ids.join(', ') }}</p>
+                    getSpeakerNames(seminar.speakers) : (seminar.speaker_ids?.join(', ') || 'TBA') }}</p>
 
                 <div class="bg-surface-card p-4 rounded-lg flex items-center justify-between mb-8 border border-border">
                     <div class="flex items-center">
@@ -84,33 +122,4 @@
             </div>
         </ng-container>
     </ng-container>
-
-    <ng-template #skeleton>
-        <div class="animate-pulse-skeleton">
-            <div class="flex gap-2 mb-4">
-                <div class="h-6 w-16 bg-surface-muted rounded-full"></div>
-                <div class="h-6 w-32 bg-surface-muted rounded ml-auto"></div>
-            </div>
-            <div class="h-10 w-3/4 bg-surface-muted rounded mb-4"></div>
-            <div class="h-6 w-1/2 bg-surface-muted rounded mb-8"></div>
-
-            <div class="h-20 w-full bg-surface-muted rounded mb-8 border border-border"></div>
-
-            <div class="space-y-4 mb-12">
-                <div class="h-4 w-full bg-surface-muted rounded"></div>
-                <div class="h-4 w-full bg-surface-muted rounded"></div>
-                <div class="h-4 w-5/6 bg-surface-muted rounded"></div>
-            </div>
-
-            <div class="h-64 w-full bg-surface-muted rounded mb-8"></div>
-        </div>
-    </ng-template>
-
-    <ng-template #notFound>
-        <div class="py-12 text-center">
-            <h2 class="text-2xl font-bold text-text-main">Seminar not found</h2>
-            <p class="text-text-muted mt-2">The seminar you are looking for does not exist or has been removed.</p>
-            <a routerLink="/" class="btn btn-primary mt-6">Return Home</a>
-        </div>
-    </ng-template>
 </div>

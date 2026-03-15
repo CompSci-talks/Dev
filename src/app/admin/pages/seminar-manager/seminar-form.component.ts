@@ -84,6 +84,11 @@ import { Observable, map } from 'rxjs';
               <input type="text" formControlName="presentation_material_id" placeholder="Google Drive ID or URL"
                      class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
             </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-500 mb-1">Thumbnail URL</label>
+              <input type="text" formControlName="thumbnail_url" placeholder="e.g. https://assets.example.com/thumb.jpg"
+                     class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+            </div>
           </div>
           
           <div class="flex items-center space-x-3">

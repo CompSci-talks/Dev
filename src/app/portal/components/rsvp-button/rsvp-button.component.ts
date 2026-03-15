@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Seminar } from '../../../core/models/seminar.model';
 import { IRsvpService, RSVP_SERVICE } from '../../../core/contracts/rsvp.interface';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
-import { Observable, combineLatest, map } from 'rxjs';
+import { Observable, combineLatest, map, switchMap, of } from 'rxjs';
 
 @Component({
     selector: 'app-rsvp-button',
@@ -23,7 +23,9 @@ export class RsvpButtonComponent implements OnInit {
 
     ngOnInit() {
         this.isAuthenticated$ = this.authService.currentUser$.pipe(map(u => !!u));
-        this.isAttending$ = this.rsvpService.isAttending$(this.seminar.id);
+        this.isAttending$ = this.isAuthenticated$.pipe(
+            switchMap(auth => auth ? this.rsvpService.isAttending$(this.seminar.id) : of(false))
+        );
     }
 
     toggleRsvp(currentlyAttending: boolean) {
