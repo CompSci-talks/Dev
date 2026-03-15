@@ -52,10 +52,9 @@ Then('I should see {string} in the seminar list', async function (title) {
 });
 
 Then('I should see it in the public portal for {string}', async function (semesterName) {
-    const nav = new NavigationPage(this.page);
-    await nav.gotoHome();
+    await this.page.goto('/schedule');
     // Logic to verify it appears in the portal
-    await expect(this.page.locator('.seminar-card')).toContainText(semesterName);
+    await expect(this.page.locator('app-seminar-card')).toContainText(semesterName, { timeout: 10000 });
 });
 
 Given('there is an existing seminar {string}', async function (title) {

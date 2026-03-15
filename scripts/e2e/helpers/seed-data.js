@@ -5,13 +5,8 @@ async function seed() {
     console.log('[Seed] Seeding test users...');
     try {
         // Admin user
-        const admin = await createTestUser('admin@example.com', 'admin123', 'Admin User');
-        await elevateToAdmin(admin.user.id);
-        console.log('[Seed] Admin user created and elevated.');
-
-        // Standard user
-        await createTestUser('user@example.com', 'user123', 'Standard User');
-        console.log('[Seed] Standard user created.');
+        // Note: Users are now pre-seeded via REST API in scripts/seed-firebase-auth.ps1
+        console.log('[Seed] Users pre-seeded via REST API.');
     } catch (err) {
         if (err.message.includes('already registered')) {
             console.log('[Seed] Users already exist, skipping.');

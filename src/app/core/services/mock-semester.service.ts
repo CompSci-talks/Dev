@@ -89,4 +89,11 @@ export class MockSemesterService implements ISemesterService {
         this.saveSemesters(next);
         return of(undefined).pipe(delay(300));
     }
+
+    deleteSemester(id: string): Observable<void> {
+        const current = this.semesters$.value;
+        const next = current.filter(s => s.id !== id);
+        this.saveSemesters(next);
+        return of(undefined).pipe(delay(300));
+    }
 }

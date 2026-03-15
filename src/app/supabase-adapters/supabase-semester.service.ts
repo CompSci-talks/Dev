@@ -84,4 +84,13 @@ export class SupabaseSemesterService implements ISemesterService {
         await this.supabase.client.from('semesters').update({ is_active: false }).neq('id', id);
         await this.supabase.client.from('semesters').update({ is_active: true }).eq('id', id);
     }
+
+    deleteSemester(id: string): Observable<void> {
+        const query = this.supabase.client.from('semesters').delete().eq('id', id);
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
+            })
+        );
+    }
 }

@@ -7,7 +7,7 @@ const { login } = require('../helpers/auth-helper');
 
 Given('I am logged in as an administrator', async function () {
     // Using hardcoded test credentials for verification suite
-    await login(this.page, 'admin@example.com', 'admin123');
+    await login(this.page, 'admin@compsci.test', 'TestPassword123!');
 });
 
 Given('I am on the Admin Dashboard', async function () {

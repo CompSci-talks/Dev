@@ -6,12 +6,12 @@ const { NavigationPage } = require('../pom/navigation.pom');
 const { login } = require('../helpers/auth-helper');
 
 Given('I am on a seminar detail page for {string}', async function (title) {
-    await this.page.goto('/');
-    await this.page.locator('.seminar-card', { hasText: title }).click();
+    await this.page.goto('/schedule');
+    await this.page.locator('app-seminar-card', { hasText: title }).click();
 });
 
 Given('I am logged in as a standard user', async function () {
-    await login(this.page, 'user@example.com', 'user123');
+    await login(this.page, 'user@compsci.test', 'TestPassword123!');
 });
 
 When('I post a comment {string}', async function (text) {
@@ -49,7 +49,7 @@ Given('the comment {string} exists', async function (text) {
 });
 
 When('I log in as an administrator', async function () {
-    await login(this.page, 'admin@example.com', 'admin123');
+    await login(this.page, 'admin@compsci.test', 'TestPassword123!');
 });
 
 When('I navigate to the moderation view for {string}', async function (title) {

@@ -98,11 +98,33 @@ As an administrator, I want to manage semesters, seminars, speakers, and tags th
 
 ### Edge Cases
 
-- **Offline Mode**: If the user loses connectivity, should Firestore's offline persistence allow them to continue browsing? (Assumption: Yes, leveraging AngularFire's default persistence).
-- **Concurrency**: How does the system handle two admins editing the same seminar? (Assumption: Last-write-wins is acceptable for MVP).
-- **Broken Auth State**: How does the system handle an invalid Firebase session? (Requirement: System MUST maintain session persistence on refresh and handle invalid sessions by redirection).
 - **Session Stability**: Ensure frequent log-outs do not occur during active navigation.
 - **Offline Integrity**: Data modified while offline (RSVPs, Comments) MUST synchronize automatically upon reconnection.
+- **Missing Metadata**: If a seminar is missing a thumbnail, use the default "CompSci Talks" placeholder. If tags or speakers are missing, hide their respective UI sections.
+
+## UI/UX Requirements (Detail Page)
+
+### Loading States (FR-UX-1)
+- **Seminar Skeleton**: While loading the core seminar document, display a skeleton for title, date, location, and abstract areas.
+- **Auth/RSVP Spinner**: While resolving auth state and RSVP status, display a subtle spinner or placeholder in the action area (RSVP button).
+- **Metadata Skeletons**: Display small skeletons for the Speaker and Tag chips while their respective denormalized details are resolved.
+- **Transition**: The transition from skeleton to content MUST be smooth (CSS opacity transition >= 200ms).
+
+### Guest State (FR-UX-2)
+- **Public View**: Guests can view all seminar metadata, tags, and speakers.
+- **RSVP Gate**: Guests see an RSVP button that, when clicked, redirects to the Login page with a return URL.
+- **Materials Restriction**: Presentation slides and video URLs are hidden or "Locked" behind an authentication gate.
+- **Public Permissions**: Ensure `rsvps` and `attendees` collections are read-restricted to Admins, while `seminars`, `speakers`, and `tags` are publicly readable.
+
+### Error Handling & Resilience (FR-UX-3)
+- **Not Found (404)**: If a Seminar ID is invalid or deleted, display a "Seminar Not Found" page with a link back to the schedule.
+- **Partial Load**: If secondary metadata (e.g., Speakers) fails to load but the Seminar document succeeds, display the Seminar content and log a warning; do not fail the whole page.
+- **Retry Mechanism**: Firestore read failures for the main Seminar document should trigger up to 2 automatic retries before showing an error state.
+- **Navigation Persistence**: Active data streams (RSVP updates) must survive tab switching; network reconnection should trigger immediate data refresh from the server.
+
+### Visual Assets (FR-UX-4)
+- **Hero Thumbnail**: Displayed with a 16:9 aspect ratio. If the source image is different, use `object-fit: cover`.
+- **Placeholder**: Use a consistent brand-styled gradient placeholder if no image URL is provided.
 
 
 ## Requirements *(mandatory)*
@@ -146,3 +168,5 @@ As an administrator, I want to manage semesters, seminars, speakers, and tags th
 - **SC-004**: No `Supabase` or `Mock` service is *provided* or *used* at runtime in the migration branch.
 - **SC-005**: 100% of tested components and flows are documented in `verification_log.md` with passing results.
 - **SC-006**: Deletion and Editing of Semesters/Speakers/Tags are verified via browser tests as fully functional.
+- **SC-007**: Transition from Skeleton to loaded content is smooth and flicker-free (verified via visual inspection).
+- **SC-008**: "Not Found" state is verified by navigating to a non-existent UUID; UI displays the 404 message within 1 second.

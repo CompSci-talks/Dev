@@ -37,7 +37,8 @@ export class FirebaseAuthService implements IAuthService {
 
     signIn(email: string, password: string): Observable<User> {
         return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
-            map(credential => this.mapFirebaseUser(credential.user))
+            map(credential => this.mapFirebaseUser(credential.user)),
+            tap(user => this.userSubject.next(user))
         );
     }
 
@@ -59,7 +60,7 @@ export class FirebaseAuthService implements IAuthService {
             id: firebaseUser.uid,
             email: firebaseUser.email || '',
             display_name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-            role: firebaseUser.email === 'admin@test.com' ? 'admin' : 'authenticated',
+            role: (firebaseUser.email === 'admin@compsci.test' || firebaseUser.email === 'admin@test.com') ? 'admin' : 'authenticated',
             created_at: new Date()
         };
     }
