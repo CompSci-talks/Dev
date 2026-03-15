@@ -15,10 +15,12 @@ export class FirebaseCommentService implements ICommentService {
     private commentsCollection = collection(this.firestore, 'comments');
 
     getCommentsForSeminar$(seminarId: string): Observable<Comment[]> {
-        const q = query(this.commentsCollection, where('seminar_id', '==', seminarId), orderBy('created_at', 'desc'));
-        return runInInjectionContext(this.injector, () => collectionData(q, { idField: 'id' })).pipe(
-            map(comments => comments.map(c => this.mapTimestamps(c)))
-        ) as Observable<Comment[]>;
+        return runInInjectionContext(this.injector, () => {
+            const q = query(this.commentsCollection, where('seminar_id', '==', seminarId), orderBy('created_at', 'desc'));
+            return collectionData(q, { idField: 'id' }).pipe(
+                map(comments => comments.map(c => this.mapTimestamps(c)))
+            ) as Observable<Comment[]>;
+        });
     }
 
     submitComment(seminarId: string, text: string, parentId?: string): Observable<Comment> {
@@ -53,10 +55,12 @@ export class FirebaseCommentService implements ICommentService {
     }
 
     getAllComments(): Observable<Comment[]> {
-        const q = query(this.commentsCollection, orderBy('created_at', 'desc'));
-        return runInInjectionContext(this.injector, () => collectionData(q, { idField: 'id' })).pipe(
-            map(comments => comments.map(c => this.mapTimestamps(c)))
-        ) as Observable<Comment[]>;
+        return runInInjectionContext(this.injector, () => {
+            const q = query(this.commentsCollection, orderBy('created_at', 'desc'));
+            return collectionData(q, { idField: 'id' }).pipe(
+                map(comments => comments.map(c => this.mapTimestamps(c)))
+            ) as Observable<Comment[]>;
+        });
     }
 
     deleteComment(commentId: string): Observable<void> {
