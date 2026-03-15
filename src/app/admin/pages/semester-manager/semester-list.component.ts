@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Semester } from '../../../core/models/semester.model';
 
 @Component({
-    selector: 'app-semester-list',
-    standalone: true,
-    imports: [CommonModule],
-    template: `
+  selector: 'app-semester-list',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead>
@@ -39,8 +39,12 @@ import { Semester } from '../../../core/models/semester.model';
                 Set Active
               </button>
               <button (click)="onEdit.emit(semester)"
-                      class="text-slate-500 hover:text-slate-800 font-medium">
+                      class="text-slate-500 hover:text-slate-800 font-medium mr-4">
                 Edit
+              </button>
+              <button (click)="onDelete.emit(semester.id)"
+                      class="text-red-500 hover:text-red-700 font-medium">
+                Delete
               </button>
             </td>
           </tr>
@@ -50,7 +54,8 @@ import { Semester } from '../../../core/models/semester.model';
   `
 })
 export class SemesterListComponent {
-    @Input() semesters: Semester[] = [];
-    @Output() onEdit = new EventEmitter<Semester>();
-    @Output() onActivate = new EventEmitter<string>();
+  @Input() semesters: Semester[] = [];
+  @Output() onEdit = new EventEmitter<Semester>();
+  @Output() onActivate = new EventEmitter<string>();
+  @Output() onDelete = new EventEmitter<string>();
 }

@@ -1,6 +1,6 @@
 import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, query, where, getDocs, writeBatch, orderBy, limit } from '@angular/fire/firestore';
-import { Observable, from, map, switchMap, take } from 'rxjs';
+import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, query, where, getDocs, writeBatch, orderBy, limit, deleteDoc } from '@angular/fire/firestore';
+import { Observable, from, map, switchMap, take, catchError, of } from 'rxjs';
 import { ISemesterService } from '../core/contracts/semester.interface';
 import { Semester } from '../core/models/semester.model';
 
@@ -59,6 +59,16 @@ export class FirebaseSemesterService implements ISemesterService {
         batch.update(targetDoc, { is_active: true });
 
         await batch.commit();
+    }
+
+    deleteSemester(id: string): Observable<void> {
+        if (!id) return of(undefined);
+        return from(deleteDoc(doc(this.firestore, `semesters/${id}`))).pipe(
+            catchError(err => {
+                console.error(`Error deleting semester ${id}:`, err);
+                throw err;
+            })
+        );
     }
 
     private mapTimestamps(data: any): Semester {

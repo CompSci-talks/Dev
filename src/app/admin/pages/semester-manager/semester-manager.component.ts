@@ -35,7 +35,8 @@ import { Observable } from 'rxjs';
         <app-semester-list 
           [semesters]="(semesters$ | async) || []"
           (onEdit)="editSemester($event)"
-          (onActivate)="setActive($event)">
+          (onActivate)="setActive($event)"
+          (onDelete)="deleteSemester($event)">
         </app-semester-list>
       </div>
     </div>
@@ -59,6 +60,12 @@ export class SemesterManagerComponent implements OnInit {
   editSemester(semester: Semester) {
     this.editingSemester = semester;
     this.showForm = true;
+  }
+
+  deleteSemester(id: string) {
+    if (confirm('Are you sure you want to delete this semester?')) {
+      this.semesterService.deleteSemester(id).subscribe(() => this.refresh());
+    }
   }
 
   saveSemester(semesterData: Omit<Semester, 'id'>) {

@@ -13,3 +13,7 @@
 | T-FOUND | Auth Persistence | 2026-03-15 | PASSED | Session maintained after browser refresh. |
 | T-PERF1 | Archive Load < 2s | 2026-03-15 | PASSED | Baseline load time below threshold. |
 | T-PERF2 | Admin CRUD < 1.5s | 2026-03-15 | PASSED | Operational latency within acceptable range. |
+| T-CRUD-SEM | Semester Create & Delete Stability | 2026-03-15 | PENDING | Verify deletion of semesters in Admin UI. |
+| T-CRUD-SPK | Speaker Create, Edit & Delete Stability | 2026-03-15 | PENDING | Verify edit/delete for speakers. |
+| T-CRUD-TAG | Tag Create, Edit & Delete Stability | 2026-03-15 | PENDING | Verify edit/delete for tags. |
+| T-ATTD-COUNT| Attendee Count Accuracy verification | 2026-03-15 | PENDING | Create users, RSVP/Cancel, and verify counts. |

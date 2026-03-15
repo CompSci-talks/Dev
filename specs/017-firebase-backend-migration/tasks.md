@@ -111,9 +111,14 @@
 - [x] T032 [P] Refactor `SeminarFormComponent` to use `MultiSelectComponent`
 - [x] T033 Wrap Firebase service calls in `runInInjectionContext` to resolve stability warnings (Ref: #1748)
 - [x] T034 Cleanup `firestore.indexes.json` (remove comments) to resolve lint errors
-- [ ] T035 Performance audit: Verify SC-002 (<2s Archive load) on mobile throttling
-- [ ] T036 Execute full E2E test suite: `npm run e2e`
-- [x] T037 Document initial results in `verification_log.md` [SC-005]
+- [ ] T035 [P] Performance audit: Verify SC-002 (<2s Archive load) on mobile throttling
+- [ ] T036 [P] Execute full E2E test suite: `npm run e2e`
+- [ ] T037 [P] Latency audit: Verify Admin CRUD operations complete within 1.5s [SC-003]
+- [/] T038 Browser Verification: Test Semester Delete/Edit stability
+- [/] T040 Browser Verification: Test Speaker Create/Edit/Delete stability
+- [/] T041 Browser Verification: Test Tag Create/Edit/Delete stability
+- [/] T042 Browser Verification: Validate Attendee Count accuracy with 3+ users
+- [x] T043 Document results in `verification_log.md` [SC-005]
 
 ---
 

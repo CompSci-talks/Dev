@@ -17,6 +17,9 @@ export interface ISemesterService {
 
     /** orchestration: Switch the active status to a new semester */
     setActiveSemester(id: string): Observable<void>;
+
+    /** CRUD: Delete a semester */
+    deleteSemester(id: string): Observable<void>;
 }
 
 export const SEMESTER_SERVICE = new InjectionToken<ISemesterService>('SEMESTER_SERVICE');

@@ -1,6 +1,6 @@
 import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, query, orderBy, getDocs, where, writeBatch } from '@angular/fire/firestore';
-import { Observable, from, map, switchMap } from 'rxjs';
+import { Observable, from, map, switchMap, catchError, of } from 'rxjs';
 import { ITagService } from '../core/contracts/tag.interface';
 import { Tag } from '../core/models/seminar.model';
 
@@ -36,13 +36,19 @@ export class FirebaseTagService implements ITagService {
     }
 
     updateTag(id: string, updates: Partial<Tag>): Observable<Tag> {
+        const { id: _, ...cleanUpdates } = updates as any;
         const tagDoc = doc(this.firestore, `tags/${id}`);
-        return from(updateDoc(tagDoc, updates)).pipe(
-            switchMap(() => {
-                if (updates.name || updates.color_code) {
-                    this.cascadeTagUpdate(id, updates);
+        return from(updateDoc(tagDoc, cleanUpdates)).pipe(
+            switchMap(async () => {
+                if (cleanUpdates.name || cleanUpdates.color_code) {
+                    await this.cascadeTagUpdate(id, cleanUpdates);
                 }
-                return this.getTagById(id).pipe(map(t => t!));
+                return id;
+            }),
+            switchMap(tagId => this.getTagById(tagId).pipe(map(t => t!))),
+            catchError(err => {
+                console.error(`Error updating tag ${id}:`, err);
+                throw err;
             })
         );
     }

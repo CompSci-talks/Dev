@@ -70,7 +70,6 @@ export class SeminarListComponent {
   @Output() onDelete = new EventEmitter<string>();
 
   getRSVPCount(seminar: Seminar): number {
-    // Mock RSVP count logic - in a real app this would be joined or fetched via service
-    return Math.floor(Math.random() * 50);
+    return seminar.stats?.rsvp_count || 0;
   }
 }

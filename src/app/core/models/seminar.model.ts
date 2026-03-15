@@ -26,6 +26,10 @@ export interface Seminar {
     video_material_id?: string;
     presentation_material_id?: string;
     is_hidden: boolean;
+    stats?: {
+        rsvp_count: number;
+        comment_count: number;
+    };
 }
 
 export type SeminarStatus = 'upcoming' | 'past';

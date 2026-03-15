@@ -6,10 +6,10 @@ import { Tag } from '../../../core/models/seminar.model';
 import { Observable } from 'rxjs';
 
 @Component({
-    selector: 'app-tag-manager',
-    standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
-    template: `
+  selector: 'app-tag-manager',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  template: `
     <div class="max-w-4xl">
       <div class="flex justify-between items-center mb-6">
         <div>
@@ -24,7 +24,7 @@ import { Observable } from 'rxjs';
 
       <!-- Quick Form -->
       <div *ngIf="showForm" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-8">
-        <h3 class="text-lg font-bold mb-4">Add New Tag</h3>
+        <h3 class="text-lg font-bold mb-4">{{ editingTag ? 'Edit Tag' : 'Add New Tag' }}</h3>
         <form [formGroup]="tagForm" (ngSubmit)="saveTag()" class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium mb-1">Tag Name</label>
@@ -41,9 +41,11 @@ import { Observable } from 'rxjs';
             </div>
           </div>
           <div class="md:col-span-2 flex justify-end space-x-3">
-            <button type="button" (click)="showForm = false" class="px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg">Cancel</button>
+            <button type="button" (click)="cancelEdit()" class="px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg">Cancel</button>
             <button type="submit" [disabled]="tagForm.invalid" 
-                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">Save Tag</button>
+                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
+              {{ editingTag ? 'Update Tag' : 'Save Tag' }}
+            </button>
           </div>
         </form>
       </div>
@@ -62,7 +64,8 @@ import { Observable } from 'rxjs';
              </span>
           </div>
           <div class="font-medium text-slate-900 font-mono">{{ tag.color_code }}</div>
-          <div>
+          <div class="flex space-x-3">
+            <button (click)="editTag(tag)" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
             <button (click)="deleteTag(tag.id)" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
           </div>
         </div>
@@ -74,33 +77,49 @@ import { Observable } from 'rxjs';
   `
 })
 export class TagManagerComponent implements OnInit {
-    private tagService = inject(TAG_SERVICE);
-    private fb = inject(FormBuilder);
+  private tagService = inject(TAG_SERVICE);
+  private fb = inject(FormBuilder);
 
-    tags$ = this.tagService.getTags();
-    showForm = false;
-    tagForm: FormGroup = this.fb.group({
-        name: ['', Validators.required],
-        color_code: ['#3B82F6', Validators.required]
-    });
+  tags$ = this.tagService.getTags();
+  showForm = false;
+  editingTag: Tag | null = null;
+  tagForm: FormGroup = this.fb.group({
+    name: ['', Validators.required],
+    color_code: ['#3B82F6', Validators.required]
+  });
 
-    ngOnInit() { }
+  ngOnInit() { }
 
-    saveTag() {
-        if (this.tagForm.valid) {
-            this.tagService.createTag(this.tagForm.value).subscribe(() => {
-                this.showForm = false;
-                this.tagForm.patchValue({ color_code: '#3B82F6' });
-                this.tags$ = this.tagService.getTags();
-            });
-        }
+  editTag(tag: Tag) {
+    this.editingTag = tag;
+    this.showForm = true;
+    this.tagForm.patchValue(tag);
+  }
+
+  cancelEdit() {
+    this.showForm = false;
+    this.editingTag = null;
+    this.tagForm.reset({ color_code: '#3B82F6' });
+  }
+
+  saveTag() {
+    if (this.tagForm.valid) {
+      const operation = this.editingTag
+        ? this.tagService.updateTag(this.editingTag.id, this.tagForm.value)
+        : this.tagService.createTag(this.tagForm.value);
+
+      operation.subscribe(() => {
+        this.cancelEdit();
+        this.tags$ = this.tagService.getTags();
+      });
     }
+  }
 
-    deleteTag(id: string) {
-        if (confirm('Are you sure?')) {
-            this.tagService.deleteTag(id).subscribe(() => {
-                this.tags$ = this.tagService.getTags();
-            });
-        }
+  deleteTag(id: string) {
+    if (confirm('Are you sure?')) {
+      this.tagService.deleteTag(id).subscribe(() => {
+        this.tags$ = this.tagService.getTags();
+      });
     }
+  }
 }

@@ -62,9 +62,13 @@ export class FirebaseSeminarService implements ISeminarService {
     }
 
     createSeminar(seminar: Omit<Seminar, 'id'>): Observable<Seminar> {
-        return from(this.enrichWithMetadata(seminar)).pipe(
+        const withStats = {
+            ...seminar,
+            stats: { rsvp_count: 0, comment_count: 0 }
+        };
+        return from(this.enrichWithMetadata(withStats)).pipe(
             switchMap(enriched => from(addDoc(this.seminarsCollection, enriched))),
-            map(docRef => ({ ...seminar, id: docRef.id } as Seminar))
+            map(docRef => ({ ...withStats, id: docRef.id } as Seminar))
         );
     }
 
@@ -144,8 +148,23 @@ export class FirebaseSeminarService implements ISeminarService {
         );
     }
 
+    async syncRsvpCount(seminarId: string): Promise<number> {
+        const rsvpsQuery = query(collection(this.firestore, 'rsvps'), where('seminar_id', '==', seminarId));
+        const snapshot = await getDocs(rsvpsQuery);
+        const count = snapshot.size;
+
+        const seminarDoc = doc(this.firestore, `seminars/${seminarId}`);
+        await updateDoc(seminarDoc, { 'stats.rsvp_count': count });
+        return count;
+    }
+
     private async enrichWithMetadata(seminar: any): Promise<any> {
         const enriched = { ...seminar };
+
+        // Ensure stats object exists
+        if (!enriched.stats) {
+            enriched.stats = { rsvp_count: 0, comment_count: 0 };
+        }
 
         try {
             if (seminar.speaker_ids && seminar.speaker_ids.length > 0) {

@@ -15,6 +15,8 @@
 - Q: Where should manual verification steps be documented? → A: Document every test in a project-root `verification_log.md` file, including status and results.
 - Q: What specific admin manager features are needed? → A: List, Create, Edit, and Delete for both Speakers and Tags.
 - Q: What comment features are needed? → A: Public posting (US3), public/admin replies (threading), and admin deletion (US4).
+- Q: Are there known regressions in the Firebase migration? → A: Yes. CRUD Deletion and Editing are currently failing for Tags/Speakers. Attendee counts are displaying incorrect values.
+- Q: What are the verification requirements for these fixes? → A: Create tests (automated or browser scripts) that verify Deletion, Editing, and correct Attendee counting (derived from RSVPs).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -100,6 +102,8 @@ As an administrator, I want to manage semesters, seminars, speakers, and tags th
 - **Concurrency**: How does the system handle two admins editing the same seminar? (Assumption: Last-write-wins is acceptable for MVP).
 - **Broken Auth State**: How does the system handle an invalid Firebase session? (Requirement: System MUST maintain session persistence on refresh and handle invalid sessions by redirection).
 - **Session Stability**: Ensure frequent log-outs do not occur during active navigation.
+- **Offline Integrity**: Data modified while offline (RSVPs, Comments) MUST synchronize automatically upon reconnection.
+
 
 ## Requirements *(mandatory)*
 
@@ -113,11 +117,19 @@ As an administrator, I want to manage semesters, seminars, speakers, and tags th
 - **FR-006**: System MUST ensure that adding a related entity (e.g., adding a seminar to a speaker) updates all redundant/denormalized records.
 - **FR-007**: System MUST replace the *usage* of all `Supabase*Service` and `Mock*Service` providers in `app.config.ts` with their Firebase equivalents, while preserving the legacy source files.
 - **FR-008**: System MUST store seminar video and presentation references as simple string metadata (URLs/IDs) in Firestore.
+- **FR-009**: System MUST ensure 100% success rate for CRUD operations (Create, Read, Update, Delete) for all entities (Seminars, Semesters, Speakers, Tags) in the Admin Dashboard.
+- **FR-010**: System MUST maintain "Attendee Count" for seminars using denormalized atomic counters (increment/decrement) in the Seminar document for O(1) read performance.
+- **FR-011**: System MUST support offline browsing and interaction caching via Firestore's local persistence.
+- **FR-012**: System MUST undergo a full "Feature Parity Audit" to ensure zero regressions in UI behavior post-migration.
+
 
 ### Key Entities
 
 - **User**: Authenticated profile in Firebase Auth + metadata in Firestore `users`.
-- **Seminar**: Core record in `seminars`, potentially denormalized with speaker names and tag titles for fast listing.
+- **Seminar**: Core record in `seminars`, denormalized with:
+    - `speaker_names`: List of strings for fast display.
+    - `tag_titles`: List of strings for fast display.
+    - `stats`: Object containing `rsvp_count` and `comment_count`.
 - **Semester**: Grouping entity in `semesters`.
 - **RSVP**: Interaction record in `rsvps`, linking User and Seminar.
 - **Comment**: Interaction record in `comments`, child of Seminar.
@@ -133,3 +145,4 @@ As an administrator, I want to manage semesters, seminars, speakers, and tags th
 - **SC-003**: All CRUD operations in the Admin Dashboard complete within 1.5 seconds (excluding file uploads).
 - **SC-004**: No `Supabase` or `Mock` service is *provided* or *used* at runtime in the migration branch.
 - **SC-005**: 100% of tested components and flows are documented in `verification_log.md` with passing results.
+- **SC-006**: Deletion and Editing of Semesters/Speakers/Tags are verified via browser tests as fully functional.
