@@ -1,0 +1,79 @@
+import { Injectable, inject } from '@angular/core';
+import { Firestore, collectionData, docData } from '@angular/fire/firestore';
+import { collection, doc, addDoc, updateDoc, query, where, getDocs, writeBatch, orderBy, limit } from 'firebase/firestore';
+import { Observable, from, map, switchMap, take } from 'rxjs';
+import { ISemesterService } from '../core/contracts/semester.interface';
+import { Semester } from '../core/models/semester.model';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class FirebaseSemesterService implements ISemesterService {
+    private firestore = inject(Firestore);
+    private semestersCollection = collection(this.firestore, 'semesters');
+
+    getSemesters(): Observable<Semester[]> {
+        const q = query(this.semestersCollection, orderBy('start_date', 'desc'));
+        return collectionData(q, { idField: 'id' }).pipe(
+            map(semesters => semesters.map(s => this.mapTimestamps(s)))
+        ) as Observable<Semester[]>;
+    }
+
+    getActiveSemester(): Observable<Semester | null> {
+        const q = query(this.semestersCollection, where('is_active', '==', true), limit(1));
+        return collectionData(q, { idField: 'id' }).pipe(
+            map(semesters => semesters.length > 0 ? this.mapTimestamps(semesters[0]) : null)
+        ) as Observable<Semester | null>;
+    }
+
+    createSemester(semester: Omit<Semester, 'id'>): Observable<Semester> {
+        return from(addDoc(this.semestersCollection, semester)).pipe(
+            map(docRef => ({ ...semester, id: docRef.id } as Semester))
+        );
+    }
+
+    updateSemester(id: string, updates: Partial<Semester>): Observable<Semester> {
+        const semesterDoc = doc(this.firestore, `semesters/${id}`);
+        return from(updateDoc(semesterDoc, updates)).pipe(
+            switchMap(() => this.mapTimestampsFromDoc(id))
+        );
+    }
+
+    setActiveSemester(id: string): Observable<void> {
+        return from(this.orchestrateSetActiveSemester(id));
+    }
+
+    private async orchestrateSetActiveSemester(id: string): Promise<void> {
+        const activeQuery = query(this.semestersCollection, where('is_active', '==', true));
+        const activeDocs = await getDocs(activeQuery);
+
+        const batch = writeBatch(this.firestore);
+
+        // Deactivate current active semesters
+        activeDocs.forEach(d => {
+            batch.update(d.ref, { is_active: false });
+        });
+
+        // Activate the new one
+        const targetDoc = doc(this.firestore, `semesters/${id}`);
+        batch.update(targetDoc, { is_active: true });
+
+        await batch.commit();
+    }
+
+    private mapTimestamps(data: any): Semester {
+        return {
+            ...data,
+            start_date: data.start_date?.toDate ? data.start_date.toDate() : data.start_date,
+            end_date: data.end_date?.toDate ? data.end_date.toDate() : data.end_date
+        };
+    }
+
+    private mapTimestampsFromDoc(id: string): Observable<Semester> {
+        const semesterDoc = doc(this.firestore, `semesters/${id}`);
+        return docData(semesterDoc, { idField: 'id' }).pipe(
+            take(1),
+            map(s => this.mapTimestamps(s))
+        );
+    }
+}

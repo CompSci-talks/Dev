@@ -26,4 +26,18 @@ export class MockTagService implements ITagService {
         this.tags.push(newTag);
         return of(newTag);
     }
+
+    updateTag(id: string, updates: Partial<Tag>): Observable<Tag> {
+        const index = this.tags.findIndex(t => t.id === id);
+        if (index > -1) {
+            this.tags[index] = { ...this.tags[index], ...updates };
+            return of(this.tags[index]);
+        }
+        throw new Error('Tag not found');
+    }
+
+    deleteTag(id: string): Observable<void> {
+        this.tags = this.tags.filter(t => t.id !== id);
+        return of(void 0);
+    }
 }

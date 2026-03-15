@@ -39,4 +39,24 @@ export class SupabaseSpeakerService implements ISpeakerService {
             })
         );
     }
+
+    updateSpeaker(id: string, updates: Partial<Speaker>): Observable<Speaker> {
+        const query = this.supabase.client.from('speakers').update(updates).eq('id', id).select().single();
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
+                return response.data as Speaker;
+            })
+        );
+    }
+
+    deleteSpeaker(id: string): Observable<void> {
+        const query = this.supabase.client.from('speakers').delete().eq('id', id);
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
+                return void 0;
+            })
+        );
+    }
 }

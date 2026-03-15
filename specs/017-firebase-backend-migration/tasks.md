@@ -7,9 +7,9 @@
 
 **Purpose**: Project initialization and basic structure.
 
-- [ ] T001 Create `src/app/firebase-adapters/` directory for Firebase implementations
-- [ ] T002 [P] Verify `@angular/fire` and `firebase` are present in `package.json`
-- [ ] T003 Verify Firebase environment credentials in `src/environments/environment.ts`
+- [x] T001 Create `src/app/firebase-adapters/` directory for Firebase implementations
+- [x] T002 [P] Verify `@angular/fire` and `firebase` are present in `package.json`
+- [x] T003 Verify Firebase environment credentials in `src/environments/environment.ts`
 
 ---
 
@@ -17,9 +17,9 @@
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented.
 
-- [ ] T004 Implement `FirebaseInitialized$` logic in `src/app/firebase-adapters/firebase-auth.service.ts` to mirror current initialization flow
-- [ ] T005 [P] Setup AngularFire providers in `src/app/app.config.ts` using `provideFirebaseApp`, `provideFirestore`, and `provideAuth`
-- [ ] T006 Initialize Firebase Auth listeners in `src/app/firebase-adapters/firebase-auth.service.ts` to track session state
+- [x] T004 Implement `FirebaseInitialized$` logic in `src/app/firebase-adapters/firebase-auth.service.ts` to mirror current initialization flow
+- [x] T005 [P] Setup AngularFire providers in `src/app/app.config.ts` using `provideFirebaseApp`, `provideFirestore`, and `provideAuth`
+- [x] T006 Initialize Firebase Auth listeners in `src/app/firebase-adapters/firebase-auth.service.ts` to track session state
 
 **Checkpoint**: Foundation ready - Firebase core services are bootstrapped.
 
@@ -33,10 +33,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T007 [P] [US1] Map `IAuthService` to `src/app/firebase-adapters/firebase-auth.service.ts`
-- [ ] T008 [US1] Implement `login`, `logout`, and `register` methods in `src/app/firebase-adapters/firebase-auth.service.ts`
-- [ ] T009 [US1] Update `src/app/app.config.ts` to provide `FirebaseAuthService` for the `AUTH_SERVICE` token
-- [ ] T010 [US1] Verify `auth.guard.ts` correctly waits for the new `FirebaseInitialized$` stream
+- [x] T007 [P] [US1] Map `IAuthService` to `src/app/firebase-adapters/firebase-auth.service.ts`
+- [x] T008 [US1] Implement `login`, `logout`, and `register` methods in `src/app/firebase-adapters/firebase-auth.service.ts`
+- [x] T009 [US1] Update `src/app/app.config.ts` to provide `FirebaseAuthService` for the `AUTH_SERVICE` token
+- [x] T010 [US1] Verify `auth.guard.ts` correctly waits for the new `FirebaseInitialized$` stream
 
 ---
 
@@ -48,11 +48,11 @@
 
 ### Implementation for User Story 2
 
-- [ ] T011 [P] [US2] Implement `FirebaseSpeakerService` in `src/app/firebase-adapters/firebase-speaker.service.ts`
-- [ ] T012 [P] [US2] Implement `FirebaseTagService` in `src/app/firebase-adapters/firebase-tag.service.ts`
-- [ ] T013 [P] [US2] Implement `FirebaseSemesterService` in `src/app/firebase-adapters/firebase-semester.service.ts`
-- [ ] T014 [US2] Implement `FirebaseSeminarService` in `src/app/firebase-adapters/firebase-seminar.service.ts` with denormalized mapping logic (including video/presentation metadata)
-- [ ] T015 [US2] Update `src/app/app.config.ts` to switch all data service tokens to Firebase adapters
+- [x] T011 [P] [US2] Implement `FirebaseSpeakerService` in `src/app/firebase-adapters/firebase-speaker.service.ts`
+- [x] T012 [P] [US2] Implement `FirebaseTagService` in `src/app/firebase-adapters/firebase-tag.service.ts`
+- [x] T013 [P] [US2] Implement `FirebaseSemesterService` in `src/app/firebase-adapters/firebase-semester.service.ts`
+- [x] T014 [US2] Implement `FirebaseSeminarService` in `src/app/firebase-adapters/firebase-seminar.service.ts` with denormalized mapping logic (including video/presentation metadata)
+- [x] T015 [US2] Update `src/app/app.config.ts` to switch all data service tokens to Firebase adapters
 
 ---
 

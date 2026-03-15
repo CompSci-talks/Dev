@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Seminar } from '../../../core/models/seminar.model';
-import { MockSeminarService } from '../../../core/services/mock-seminar.service';
+import { ISeminarService, SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
 import { SeminarCardComponent } from '../../components/seminar-card/seminar-card.component';
 import { SkeletonCardComponent } from '../../components/skeleton-card/skeleton-card.component';
 import { RouterModule } from '@angular/router';
@@ -15,7 +15,7 @@ import { RouterModule } from '@angular/router';
     templateUrl: './schedule.component.html'
 })
 export class ScheduleComponent implements OnInit {
-    private seminarService = inject(MockSeminarService);
+    private seminarService = inject(SEMINAR_SERVICE);
     upcomingSeminars$!: Observable<Seminar[]>;
 
     ngOnInit() {

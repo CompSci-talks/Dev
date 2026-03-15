@@ -25,4 +25,18 @@ export class MockSpeakerService implements ISpeakerService {
         this.speakers.push(newSpeaker);
         return of(newSpeaker);
     }
+
+    updateSpeaker(id: string, updates: Partial<Speaker>): Observable<Speaker> {
+        const index = this.speakers.findIndex(s => s.id === id);
+        if (index > -1) {
+            this.speakers[index] = { ...this.speakers[index], ...updates };
+            return of(this.speakers[index]);
+        }
+        throw new Error('Speaker not found');
+    }
+
+    deleteSpeaker(id: string): Observable<void> {
+        this.speakers = this.speakers.filter(s => s.id !== id);
+        return of(void 0);
+    }
 }

@@ -18,3 +18,6 @@ export interface IRsvpService {
     /** Generate an Add To Calendar link/file for a seminar */
     getCalendarLink(seminar: Seminar): string;
 }
+
+import { InjectionToken } from '@angular/core';
+export const RSVP_SERVICE = new InjectionToken<IRsvpService>('RSVP_SERVICE');

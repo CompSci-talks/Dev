@@ -1,13 +1,22 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { SupabaseSemesterService } from './supabase-adapters/supabase-semester.service';
-import { SupabaseSeminarService } from './supabase-adapters/supabase-seminar.service';
-import { SupabaseAuthService } from './supabase-adapters/supabase-auth.service';
-import { SupabaseSpeakerService } from './supabase-adapters/supabase-speaker.service';
-import { SupabaseTagService } from './supabase-adapters/supabase-tag.service';
-import { SupabaseCommentService } from './supabase-adapters/supabase-comment.service';
+import { provideFirebaseApp } from '@angular/fire/app';
+import { initializeApp } from 'firebase/app';
+import { provideAuth } from '@angular/fire/auth';
+import { getAuth } from 'firebase/auth';
+import { provideFirestore } from '@angular/fire/firestore';
+import { getFirestore } from 'firebase/firestore';
+import { environment } from '../environments/environment';
+import { FirebaseSemesterService } from './firebase-adapters/firebase-semester.service';
+import { FirebaseSeminarService } from './firebase-adapters/firebase-seminar.service';
+import { FirebaseAuthService } from './firebase-adapters/firebase-auth.service';
+import { FirebaseCommentService } from './firebase-adapters/firebase-comment.service';
+import { FirebaseRsvpService } from './firebase-adapters/firebase-rsvp.service';
+import { FirebaseSpeakerService } from './firebase-adapters/firebase-speaker.service';
+import { FirebaseTagService } from './firebase-adapters/firebase-tag.service';
 import { AUTH_SERVICE } from './core/contracts/auth.interface';
+import { RSVP_SERVICE } from './core/contracts/rsvp.interface';
 import { SEMESTER_SERVICE } from './core/contracts/semester.interface';
 import { SPEAKER_SERVICE } from './core/contracts/speaker.interface';
 import { TAG_SERVICE } from './core/contracts/tag.interface';
@@ -22,13 +31,18 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    // Core Supabase Service Injection
-    { provide: SEMESTER_SERVICE, useClass: SupabaseSemesterService },
-    { provide: SEMINAR_SERVICE, useClass: SupabaseSeminarService },
-    { provide: AUTH_SERVICE, useClass: SupabaseAuthService },
-    { provide: SPEAKER_SERVICE, useClass: SupabaseSpeakerService },
-    { provide: TAG_SERVICE, useClass: SupabaseTagService },
-    { provide: COMMENT_SERVICE, useClass: SupabaseCommentService },
+    // Firebase Setup
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
+    // Core Firebase Service Injection
+    { provide: SEMESTER_SERVICE, useClass: FirebaseSemesterService },
+    { provide: SEMINAR_SERVICE, useClass: FirebaseSeminarService },
+    { provide: AUTH_SERVICE, useClass: FirebaseAuthService },
+    { provide: SPEAKER_SERVICE, useClass: FirebaseSpeakerService },
+    { provide: TAG_SERVICE, useClass: FirebaseTagService },
+    { provide: COMMENT_SERVICE, useClass: FirebaseCommentService },
+    { provide: RSVP_SERVICE, useClass: FirebaseRsvpService },
     { provide: EMAIL_SERVICE, useClass: MockEmailAdapter },
     { provide: ATTENDANCE_SERVICE, useClass: AttendanceService },
   ]

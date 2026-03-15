@@ -39,4 +39,24 @@ export class SupabaseTagService implements ITagService {
             })
         );
     }
+
+    updateTag(id: string, updates: Partial<Tag>): Observable<Tag> {
+        const query = this.supabase.client.from('tags').update(updates).eq('id', id).select().single();
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
+                return response.data as Tag;
+            })
+        );
+    }
+
+    deleteTag(id: string): Observable<void> {
+        const query = this.supabase.client.from('tags').delete().eq('id', id);
+        return from(query).pipe(
+            map(response => {
+                if (response.error) throw response.error;
+                return void 0;
+            })
+        );
+    }
 }

@@ -12,6 +12,7 @@
 - Q: How should seminar video/presentation materials be handled? → A: Metadata-only. Store URLs/IDs as strings in Firestore; no dedicated Storage adapter required for this phase.
 - Q: What is the scope of the User and Admin dashboards? → A: Use existing routes and UI. The Authenticated User Dashboard shows attending seminars (RSVPs). The Admin Dashboard (`/admin`) handles Seminar/Semester management, Comment moderation (show/delete), and Attendee emailing.
 - Q: How should attendee emailing be implemented? → A: Client-side Mailto links for now. Provide a service function stub for future server-side implementation.
+- Q: Where should manual verification steps be documented? → A: Append them directly to existing Acceptance Scenarios.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -26,7 +27,9 @@ As a user or administrator, I want to sign in and out of the platform using my e
 **Acceptance Scenarios**:
 
 1. **Given** I am on the login page, **When** I enter valid Firebase credentials, **Then** I am authenticated and redirected to the appropriate dashboard (Admin or User).
+   - **Verification**: Open `/login`, enter test credentials, verify successful redirect and presence of dashboard-specific links.
 2. **Given** I am authenticated, **When** I click "Logout", **Then** my session is terminated in Firebase and I am redirected to the public portal.
+   - **Verification**: From dashboard, click Logout; verify redirect to home and inability to re-enter dashboard via URL without login.
 
 ---
 
@@ -41,7 +44,9 @@ As a guest or authenticated user, I want to view the seminar schedule and archiv
 **Acceptance Scenarios**:
 
 1. **Given** there are active seminars in Firestore, **When** I open the Schedule page, **Then** I see the upcoming seminars with correct metadata.
+   - **Verification**: Load `/schedule`, verify seminar titles, speakers, and tags from Firestore appear.
 2. **Given** I am on the Archive page, **When** I filter by a specific tag, **Then** only seminars associated with that tag are displayed (leveraging denormalized indices if applicable).
+   - **Verification**: Load `/archive`, select a tag filter, verify list updates to only show matching seminars.
 
 ---
 
@@ -56,7 +61,9 @@ As an authenticated user, I want to RSVP to seminars and post comments, with all
 **Acceptance Scenarios**:
 
 1. **Given** I am on a seminar details page, **When** I post a comment, **Then** the comment is stored in Firestore and appears in the list immediately.
+   - **Verification**: Navigate to a seminar, post "Test Comment", verify it appears and is also visible in Firebase Console `comments` collection.
 2. **Given** I am viewing a seminar, **When** I click RSVP, **Then** my attendee status is updated in the Firestore RSVP collection.
+   - **Verification**: Click "Attending" on a seminar, verify icon change and record presence in Firebase Console `rsvps` collection.
 
 ---
 
@@ -71,9 +78,13 @@ As an administrator, I want to manage semesters, seminars, speakers, and tags th
 **Acceptance Scenarios**:
 
 1. **Given** I am in the Admin Dashboard, **When** I create a new semester, **Then** it is saved to Firestore.
+   - **Verification**: Admin -> Semesters -> Create. Verify list updates.
 2. **Given** I am editing a seminar, **When** I update its speaker, **Then** the change is reflected in all denormalized views (e.g., speaker's seminar list).
+   - **Verification**: Admin -> Seminars -> Edit. Change speaker. Verify the Seminar document in Firestore has the updated embedded speaker name.
 3. **Given** I am on the Admin Comment Moderation page, **When** I delete a comment, **Then** it is removed from Firestore and the seminar's `comment_count` is decremented.
+   - **Verification**: Admin -> Comments. Delete a comment. Verify `comment_count` on the related Seminar document in Firestore.
 4. **Given** I am viewing a seminar's attendees in the dashboard, **When** I click "Send Email", **Then** the system triggers the client-side mail client flow via mailto for the selected attendees.
+   - **Verification**: Admin -> Seminar -> Attendees -> Send Email. Verify mailto link contains attendee emails.
 
 ---
 

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Seminar } from '../../../core/models/seminar.model';
-import { MockRsvpService } from '../../../core/services/mock-rsvp.service';
+import { IRsvpService, RSVP_SERVICE } from '../../../core/contracts/rsvp.interface';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { Observable, combineLatest, map } from 'rxjs';
 
@@ -14,7 +14,7 @@ import { Observable, combineLatest, map } from 'rxjs';
 export class RsvpButtonComponent implements OnInit {
     @Input({ required: true }) seminar!: Seminar;
 
-    private rsvpService = inject(MockRsvpService);
+    private rsvpService = inject(RSVP_SERVICE);
     private authService = inject(AUTH_SERVICE);
 
     isAttending$!: Observable<boolean>;
