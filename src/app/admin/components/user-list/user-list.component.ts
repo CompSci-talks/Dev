@@ -4,10 +4,10 @@ import { UserProfile } from '../../../core/models/user-profile.model';
 import { RoleToggleComponent } from '../role-toggle/role-toggle.component';
 
 @Component({
-    selector: 'app-user-list',
-    standalone: true,
-    imports: [CommonModule, RoleToggleComponent],
-    template: `
+  selector: 'app-user-list',
+  standalone: true,
+  imports: [CommonModule, RoleToggleComponent],
+  template: `
     <div class="overflow-x-auto shadow-md sm:rounded-lg">
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -21,6 +21,7 @@ import { RoleToggleComponent } from '../role-toggle/role-toggle.component';
             <th scope="col" class="px-6 py-3">Name</th>
             <th scope="col" class="px-6 py-3">Email</th>
             <th scope="col" class="px-6 py-3">Role</th>
+            <th scope="col" class="px-6 py-3 text-center">Attendance</th>
             <th scope="col" class="px-6 py-3">Created</th>
             <th scope="col" class="px-6 py-3">Action</th>
           </tr>
@@ -42,8 +43,8 @@ import { RoleToggleComponent } from '../role-toggle/role-toggle.component';
           <tr *ngFor="let user of users" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
             <td class="w-4 p-4">
               <div class="flex items-center">
-                <input id="checkbox-table-search-{{user.uid}}" type="checkbox" [checked]="selectedUserIds.has(user.uid)" (change)="toggleUser(user.uid)" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <label for="checkbox-table-search-{{user.uid}}" class="sr-only">checkbox</label>
+                <input [id]="'checkbox-' + user.uid" type="checkbox" [checked]="selectedUserIds.has(user.uid)" (change)="toggleUser(user.uid)" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label [for]="'checkbox-' + user.uid" class="sr-only">Select {{ user.displayName }}</label>
               </div>
             </td>
             <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
@@ -61,6 +62,9 @@ import { RoleToggleComponent } from '../role-toggle/role-toggle.component';
                  (roleChange)="onRoleUpdate(user.uid, $event)"
                ></app-role-toggle>
             </td>
+            <td class="px-6 py-4 text-center text-sm font-medium text-gray-900 dark:text-white">
+              {{user.attendanceCount || 0}}
+            </td>
             <td class="px-6 py-4">{{user.createdAt | date:'mediumDate'}}</td>
             <td class="px-6 py-4">
               <button (click)="viewDetail.emit(user.uid)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View details</button>
@@ -72,34 +76,34 @@ import { RoleToggleComponent } from '../role-toggle/role-toggle.component';
   `,
 })
 export class UserListComponent {
-    @Input() users: UserProfile[] = [];
-    @Input() loading: boolean = false;
-    @Input() selectedUserIds: Set<string> = new Set();
-    @Input() currentUserId: string | null = null;
+  @Input() users: UserProfile[] = [];
+  @Input() loading: boolean = false;
+  @Input() selectedUserIds: Set<string> = new Set();
+  @Input() currentUserId: string | null = null;
 
-    @Output() viewDetail = new EventEmitter<string>();
-    @Output() selectionChange = new EventEmitter<Set<string>>();
-    @Output() roleChange = new EventEmitter<{ uid: string, role: 'admin' | 'user' | 'moderator' }>();
+  @Output() viewDetail = new EventEmitter<string>();
+  @Output() selectionChange = new EventEmitter<Set<string>>();
+  @Output() roleChange = new EventEmitter<{ uid: string, role: 'admin' | 'moderator' | 'authenticated' }>();
 
-    onRoleUpdate(uid: string, role: 'admin' | 'user' | 'moderator'): void {
-        this.roleChange.emit({ uid, role });
+  onRoleUpdate(uid: string, role: 'admin' | 'moderator' | 'authenticated'): void {
+    this.roleChange.emit({ uid, role });
+  }
+
+  toggleUser(uid: string): void {
+    if (this.selectedUserIds.has(uid)) {
+      this.selectedUserIds.delete(uid);
+    } else {
+      this.selectedUserIds.add(uid);
     }
+    this.selectionChange.emit(this.selectedUserIds);
+  }
 
-    toggleUser(uid: string): void {
-        if (this.selectedUserIds.has(uid)) {
-            this.selectedUserIds.delete(uid);
-        } else {
-            this.selectedUserIds.add(uid);
-        }
-        this.selectionChange.emit(this.selectedUserIds);
+  toggleAll(event: any): void {
+    if (event.target.checked) {
+      this.users.forEach((u) => this.selectedUserIds.add(u.uid));
+    } else {
+      this.selectedUserIds.clear();
     }
-
-    toggleAll(event: any): void {
-        if (event.target.checked) {
-            this.users.forEach((u) => this.selectedUserIds.add(u.uid));
-        } else {
-            this.selectedUserIds.clear();
-        }
-        this.selectionChange.emit(this.selectedUserIds);
-    }
+    this.selectionChange.emit(this.selectedUserIds);
+  }
 }

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collectionData, docData } from '@angular/fire/firestore';
-import { collection, doc, query, where, getDoc, getDocs, updateDoc, limit, startAfter, orderBy, DocumentSnapshot } from 'firebase/firestore';
+import { collection, doc, query, where, getDoc, getDocs, updateDoc, setDoc, limit, startAfter, orderBy, DocumentSnapshot } from 'firebase/firestore';
 import { Observable, from, map, of, catchError } from 'rxjs';
 import { IUserService } from '../core/contracts/user.service.interface';
 import { UserProfile } from '../core/models/user-profile.model';
@@ -58,9 +58,27 @@ export class FirebaseUserProfileService implements IUserService {
         );
     }
 
-    updateUserRole(uid: string, role: 'admin' | 'user' | 'moderator'): Observable<void> {
+    getUserById$(uid: string): Observable<UserProfile | null> {
+        const userDoc = doc(this.firestore, `users/${uid}`);
+        return (docData(userDoc, { idField: 'uid' }) as Observable<any>).pipe(
+            map(data => data ? this.mapToProfile(data) : null),
+            catchError(err => {
+                console.error('[FirebaseUserProfileService] Error listening to user:', err);
+                return of(null);
+            })
+        );
+    }
+
+    updateUserRole(uid: string, role: 'admin' | 'moderator' | 'authenticated'): Observable<void> {
         const userDoc = doc(this.firestore, `users/${uid}`);
         return from(updateDoc(userDoc, { role }));
+    }
+
+    createUserProfile(profile: UserProfile): Observable<void> {
+        const userDoc = doc(this.firestore, `users/${profile.uid}`);
+        // Convert to plain object and handle dates if necessary (though Firebase SDK handles Dates)
+        const data = { ...profile };
+        return from(setDoc(userDoc, data));
     }
 
     sendBulkEmail(uids: string[], subject: string, body: string): Observable<void> {
@@ -92,13 +110,14 @@ export class FirebaseUserProfileService implements IUserService {
             uid: data.uid || data.id,
             displayName: data.displayName || data.display_name || 'User',
             email: data.email || '',
-            role: data.role || 'user',
+            role: data.role || 'authenticated',
             photoURL: data.photoURL || data.photo_url,
             createdAt: this.toDate(data.createdAt || data.created_at),
             lastLogin: this.toDate(data.lastLogin || data.last_login),
             enrollmentDate: this.toDate(data.enrollmentDate),
             lastActiveTimestamp: this.toDate(data.lastActiveTimestamp || data.last_active_timestamp),
-            preferredTopicAreas: data.preferredTopicAreas || []
+            preferredTopicAreas: data.preferredTopicAreas || [],
+            attendanceCount: data.attendanceCount || data.attendance_count || 0
         };
     }
 

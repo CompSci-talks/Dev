@@ -74,7 +74,9 @@ export class UserManagementPageComponent implements OnInit {
 
     ngOnInit(): void {
         // Get current user for self-demotion check
-        this.authService.currentUser$.subscribe(user => this.currentUserId = user?.id || null);
+        this.authService.currentUser$.subscribe(user => {
+            this.currentUserId = user?.id || null;
+        });
 
         combineLatest([this.filter$, this.page$]).pipe(
             debounceTime(100),
@@ -128,7 +130,7 @@ export class UserManagementPageComponent implements OnInit {
         this.selectedUserIds = new Set(selected);
     }
 
-    onRoleChange(event: { uid: string, role: 'admin' | 'user' | 'moderator' }): void {
+    onRoleChange(event: { uid: string, role: 'admin' | 'moderator' | 'authenticated' }): void {
         this.userService.updateUserRole(event.uid, event.role).subscribe({
             next: () => this.toastService.success(`Role updated to ${event.role}`),
             error: () => this.toastService.error('Failed to update role')

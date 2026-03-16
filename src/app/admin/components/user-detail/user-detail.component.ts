@@ -6,10 +6,10 @@ import { USER_ACTIVITY_SERVICE } from '../../../core/contracts/user-activity.ser
 import { Observable, catchError, of } from 'rxjs';
 
 @Component({
-    selector: 'app-user-detail',
-    standalone: true,
-    imports: [CommonModule],
-    template: `
+  selector: 'app-user-detail',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <!-- Profile Card -->
       <div class="md:col-span-1">
@@ -26,7 +26,11 @@ import { Observable, catchError, of } from 'rxjs';
             </div>
             <div>
               <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Enrollment Date</label>
-              <p class="text-sm text-gray-900 dark:text-white">{{user.enrollmentDate | date:'mediumDate' || 'N/A'}}</p>
+              <p class="text-sm text-gray-900 dark:text-white">{{user.enrollmentDate | date:'mediumDate'}}</p>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Last Active</label>
+              <p class="text-sm text-gray-900 dark:text-white">{{user.lastActiveTimestamp | date:'medium'}}</p>
             </div>
             <div>
               <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Preferred Topics</label>
@@ -101,28 +105,28 @@ import { Observable, catchError, of } from 'rxjs';
   `
 })
 export class UserDetailComponent implements OnInit {
-    @Input({ required: true }) user!: UserProfile;
+  @Input({ required: true }) user!: UserProfile;
 
-    private activityService = inject(USER_ACTIVITY_SERVICE);
+  private activityService = inject(USER_ACTIVITY_SERVICE);
 
-    activities: UserActivity[] = [];
-    loading = true;
-    error: string | null = null;
+  activities: UserActivity[] = [];
+  loading = true;
+  error: string | null = null;
 
-    ngOnInit(): void {
-        this.loadActivity();
-    }
+  ngOnInit(): void {
+    this.loadActivity();
+  }
 
-    loadActivity(): void {
-        this.loading = true;
-        this.activityService.getUserActivity(this.user.uid).pipe(
-            catchError(err => {
-                this.error = "Partial load failure: Some activity records couldn't be retrieved.";
-                return of([]);
-            })
-        ).subscribe(acts => {
-            this.activities = acts;
-            this.loading = false;
-        });
-    }
+  loadActivity(): void {
+    this.loading = true;
+    this.activityService.getUserActivity(this.user.uid).pipe(
+      catchError(err => {
+        this.error = "Partial load failure: Some activity records couldn't be retrieved.";
+        return of([]);
+      })
+    ).subscribe(acts => {
+      this.activities = acts;
+      this.loading = false;
+    });
+  }
 }

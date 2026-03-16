@@ -5,6 +5,13 @@
 **Status**: Draft  
 **Input**: User description: "there must be a user management section as well in the admin dashboard, it should have list of all user paginated that shows those fields for the user( display name, email, role, number or seminar attendance, and maybe any other relevant fiels that maybe useful in the system (pagination list should be extracted into component in the core, and should be used in any view list in the system) have a filter with text ( this also should go for all the view list in system). and user management should have actions like change the role of user ( to admin or user), select multiple one of them and go to email composer so send them email this should be similar to the attendee page for the seminar make sure that the system is consistent. and wen openening one user, you should to to user detail page, which have all the user activity ( atteneded seminars, comments and so on)"
 
+## Clarifications
+
+### Session 2026-03-16
+
+- Q: What is the permission hierarchy for role management? → A: Flattened Hierarchy: All users with 'admin' role can promote others to 'admin' or demote them. No 'super-admin' role is required.
+- Q: How is the initial admin bootstrapped? → A: CLI/Script: A separate utility script is used to promote the first user UID to 'admin' in Firestore.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - View All User Profiles (Priority: P1)
@@ -95,7 +102,7 @@ As an administrator, I want to click on a user profile to view their detailed ac
 - **FR-010**: The User Profile Detail view MUST show seminar attendance and comment history for the selected user profile.
 - **FR-011**: User Detail view MUST include: Enrollment Date, Last Active Timestamp, and Preferred Topic Areas. [NEW]
 - **FR-012**: System MUST display a "No Users Found" message when search or filter returns zero results. [NEW]
-- **FR-013**: Role toggle functionality MUST be restricted to 'Super-Admin' roles only (implementation may use specific custom claims). [NEW]
+- **FR-013**: Role toggle functionality MUST be accessible to all users with the 'Admin' role. Initial admin bootstrapping MUST be handled via CLI/Script. [CLARIFIED: 2026-03-16]
 - **FR-014**: Email "Email Selected" action MUST validate that at least one user is selected and enforce a maximum of 50 recipients per batch. [NEW]
 - **FR-015**: System MUST prevent an Admin from changing their own role (self-demotion). [NEW]
 - **FR-016**: The User Detail view MUST use skeleton screens during initial data fetch. [NEW]

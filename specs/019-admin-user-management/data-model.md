@@ -4,10 +4,13 @@
 - **uid**: `string` (Primary Key, matches Firebase Auth UID)
 - **displayName**: `string`
 - **email**: `string`
-- **role**: `'admin' | 'user' | 'moderator'`
+- **role**: `'admin' | 'authenticated' | 'moderator'` (Updated to match `UserRole` type)
 - **photoURL**: `string` (optional)
 - **createdAt**: `Timestamp`
+- **lastActiveTimestamp**: `Timestamp` (FR-011)
 - **lastLogin**: `Timestamp`
+- **attendanceCount**: `number` (Derived or cached count of seminar participations)
+- **preferredTopicAreas**: `string[]` (FR-011 - Optional list of interests)
 
 ## User Activity
 - **id**: `string`

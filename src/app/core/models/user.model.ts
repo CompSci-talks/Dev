@@ -1,4 +1,4 @@
-export type UserRole = 'guest' | 'authenticated' | 'admin';
+export type UserRole = 'authenticated' | 'moderator' | 'admin';
 
 export interface User {
     id: string; // UUID from Auth Provider

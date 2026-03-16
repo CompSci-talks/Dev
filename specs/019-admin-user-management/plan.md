@@ -9,25 +9,27 @@ Implement a centralized user management dashboard for administrators, enabling t
 
 ## Technical Context
 
-**Language/Version**: TypeScript (Angular)
-**Primary Dependencies**: Angular, Firebase (Firestore, Auth), Tailwind CSS
-**Storage**: Firestore
-**Testing**: Cucumber (E2E), Angular Testing Library (Unit)
-**Target Platform**: Web Browser
-**Project Type**: Web Application
-**Performance Goals**: Filter 1,000 users in <500ms
-**Constraints**: <200ms p95 for API/Service responses, strictly enforced Separation of Concerns
-**Scale/Scope**: Admin Dashboard (~5 screens/views including user list and details)
+**Language/Version**: TypeScript / Angular 17+  
+**Primary Dependencies**: @angular/core, @angular/fire, Firebase (Auth, Firestore), RxJS, Tailwind CSS  
+**Storage**: Cloud Firestore  
+**Testing**: Cucumber (E2E), Angular Testing Library (Unit)  
+**Target Platform**: Web Browser  
+**Project Type**: Web Application  
+**Performance Goals**: Filter 1,000 users in <500ms (SC-001)  
+**Constraints**: <200ms p95 for service responses, strictly enforced Separation of Concerns  
+**Scale/Scope**: Admin Dashboard (~5 screens/views including user list and details)  
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- [x] **Separation of Concerns (Adapter Pattern)**: All user data fetching must go through a `UserPort` / `UserService` interface.
-- [x] **Interface-First Development**: Define `IUserService` and `IUserActivityService` before coding.
-- [x] **Strict Typing**: Ensure all user models and activity logs are explicitly typed.
-- [x] **Reusable Shared Components**: Pagination and Filter logic MUST be extracted to `core/shared`.
-- [x] **Centralized Styling**: Use `tailwind.config.js` tokens for the dashboard UI.
+- [x] **Separation of Concerns (Adapter Pattern)**: All external service interactions (Auth, Firestore) MUST use interfaces and adapters. (Validated: Port/Adapter pattern in use)
+- [x] **Clean Architecture with Vertical Slicing**: Code MUST be organized by feature slice (`admin`). (Validated: Vertical slicing used for components)
+- [x] **Interface-First Development**: Every service MUST define a port before an adapter. (Validated: Interfaces defined in `contracts/`)
+- [x] **Smart vs. Dumb Components**: Separation MUST be strictly enforced. (Validated: Logic moved to smart components)
+- [x] **Strict Typing**: `any` is forbidden. (Validated: Detailed models in use)
+- [x] **Centralized Styling**: No hardcoded hex values; use Tailwind tokens. (Validated: Tailwind config utilized)
+- [x] **Reusable Shared Components**: Pagination and Filter MUST be moved to `src/app/shared`. (Validated: Components extracted)
 
 ## Project Structure
 
@@ -49,29 +51,32 @@ specs/019-admin-user-management/
 ```text
 src/app/
 ├── core/
-│   ├── shared/
-│   │   ├── components/
-│   │   │   ├── pagination/ [NEW]
-│   │   │   └── text-filter/ [NEW]
-│   │   └── models/
-│   │       └── user.model.ts [MODIFY]
+│   ├── models/
+│   │   ├── user.model.ts
+│   │   └── user-profile.model.ts
 │   └── services/
-│       ├── ports/
-│       │   └── user.port.ts [NEW]
-│       └── adapters/
-│           └── firebase-user.service.ts [NEW]
-└── features/
-    └── admin/
-        ├── components/
-        │   ├── user-list/ [NEW]
-        │   ├── user-detail/ [NEW]
-        │   └── role-toggle/ [NEW]
-        └── pages/
-            ├── user-management-page/ [NEW]
-            └── user-detail-page/ [NEW]
+│       └── contracts/
+│           ├── user.service.interface.ts
+│           └── user-activity.service.interface.ts
+├── firebase-adapters/
+│   ├── firebase-auth.service.ts
+│   ├── firebase-user-profile.service.ts
+│   └── firebase-user-activity.service.ts
+├── shared/
+│   └── components/
+│       ├── pagination/
+│       └── text-filter/
+└── admin/
+    ├── components/
+    │   ├── user-list/
+    │   ├── user-detail/
+    │   └── role-toggle/
+    └── pages/
+        ├── user-management-page/
+        └── user-detail-page/
 ```
 
-**Structure Decision**: Angular feature-based vertical slicing with a centralized core for shared components and ports.
+**Structure Decision**: Angular feature-based vertical slicing with a centralized core for shared components and ports. Note: Adapters are colocated in `firebase-adapters` to facilitate provider swapping as per Principle I.
 
 ## Complexity Tracking
 

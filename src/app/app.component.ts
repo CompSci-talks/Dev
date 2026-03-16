@@ -86,6 +86,7 @@ export class AppComponent implements OnInit {
 
     // Admin Redirection Logic - Deep-link preservation (T006)
     this.auth.currentUser$.subscribe(user => {
+      console.log('[AppComponent] Current user role:', user?.role);
       const currentUrl = this.router.url;
       const isEntryRoute = currentUrl === '/' || currentUrl === '/login';
       if (user?.role === 'admin' && isEntryRoute) {

@@ -21,6 +21,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-11
 - TypeScript 5.9, Angular 21.2.0 + `@angular/fire`, `firebase`, `rxjs` (017-firebase-backend-migration)
 - Firebase Firestore, Firebase Authentication (017-firebase-backend-migration)
 - TypeScript (Angular) + Angular, Firebase (Firestore, Auth), Tailwind CSS (019-admin-user-management)
+- TypeScript / Angular 17+ + @angular/core, @angular/fire, Firebase (Auth, Firestore), RxJS, Tailwind CSS (019-admin-user-management)
+- Cloud Firestore (019-admin-user-management)
 
 - [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION] (001-attendees-portal)
 
@@ -41,9 +43,9 @@ cd src; pytest; ruff check .
 [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]: Follow standard conventions
 
 ## Recent Changes
+- 019-admin-user-management: Added TypeScript / Angular 17+ + @angular/core, @angular/fire, Firebase (Auth, Firestore), RxJS, Tailwind CSS
 - 019-admin-user-management: Added TypeScript (Angular) + Angular, Firebase (Firestore, Auth), Tailwind CSS
 - 017-firebase-backend-migration: Added TypeScript 5.9, Angular 21.2.0 + `@angular/fire`, `firebase`, `rxjs`
-- 012-e2e-app-flow-verify: Added JavaScript / Node.js + Playwright (for browser automation), Gherkin/Cucumber.js (for reporting)
 
 
 <!-- MANUAL ADDITIONS START -->

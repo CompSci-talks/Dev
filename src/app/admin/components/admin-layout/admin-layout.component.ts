@@ -41,6 +41,11 @@ import { CommonModule } from '@angular/common';
             <span class="mr-3">💬</span>
             Comment Moderation
           </a>
+          <a routerLink="user-management" routerLinkActive="bg-slate-800 text-white"
+             class="flex items-center px-4 py-3 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
+            <span class="mr-3">👥</span>
+            User Management
+          </a>
         </nav>
         
         <div class="p-4 border-t border-slate-800">

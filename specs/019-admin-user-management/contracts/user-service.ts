@@ -1,36 +1,40 @@
 import { Observable } from 'rxjs';
 
+export type UserRole = 'admin' | 'authenticated' | 'moderator';
+
 export interface User {
     uid: string;
     displayName: string;
     email: string;
-    role: 'admin' | 'user' | 'moderator';
+    role: UserRole;
     photoURL?: string;
     createdAt: any;
     lastLogin: any;
+    lastActiveTimestamp?: any;
+    attendanceCount?: number;
+    preferredTopicAreas?: string[];
 }
 
 export interface IUserService {
     /**
      * Fetches a paginated list of users.
-     * @param pageSize Number of users per page.
-     * @param lastVisible Last user from the previous page for cursor-based pagination.
-     * @param filter Text filter (optional).
      */
     getUsers(pageSize: number, lastVisible?: any, filter?: string): Observable<UserPage>;
 
     /**
      * Updates a user's role.
-     * @param uid User ID.
-     * @param role New role.
      */
     updateUserRole(uid: string, role: string): Observable<void>;
 
     /**
-     * Fetches a single user by ID.
-     * @param uid User ID.
+     * Fetches a single user by ID (One-time fetch).
      */
     getUserById(uid: string): Observable<User | null>;
+
+    /**
+     * Fetches a single user by ID (Real-time listener).
+     */
+    getUserById$(uid: string): Observable<User | null>;
 }
 
 export interface UserPage {
