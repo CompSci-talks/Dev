@@ -1,9 +1,11 @@
 import { Injectable, inject, NgZone } from '@angular/core';
 import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, User as FirebaseUser, setPersistence, browserLocalPersistence } from '@angular/fire/auth';
-import { BehaviorSubject, Observable, from, map, take, tap, switchMap, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, from, map, take, tap, switchMap, Subscription, throwError } from 'rxjs';
 import { IAuthService } from '../core/contracts/auth.interface';
 import { USER_SERVICE } from '../core/contracts/user.service.interface';
 import { User } from '../core/models/user.model';
+import { Firestore } from '@angular/fire/firestore';
+import { isNameUnique } from '../core/utils/firestore-utils';
 
 @Injectable({
     providedIn: 'root'
@@ -12,6 +14,7 @@ export class FirebaseAuthService implements IAuthService {
     private zone = inject(NgZone);
     private auth = inject(Auth);
     private userService = inject(USER_SERVICE);
+    private firestore = inject(Firestore);
 
     private userSubject = new BehaviorSubject<User | null>(null);
     private initializedSubject = new BehaviorSubject<boolean>(false);
@@ -63,7 +66,11 @@ export class FirebaseAuthService implements IAuthService {
     }
 
     signUp(email: string, password: string, displayName: string): Observable<User> {
-        return from(createUserWithEmailAndPassword(this.auth, email, password)).pipe(
+        return from(isNameUnique(this.firestore, 'users', 'displayName', displayName)).pipe(
+            switchMap(isUnique => {
+                if (!isUnique) return throwError(() => new Error('This display name is already taken.'));
+                return from(createUserWithEmailAndPassword(this.auth, email, password));
+            }),
             switchMap(credential => {
                 const firebaseUser = credential.user;
                 const user = this.mapFirebaseUser(firebaseUser);

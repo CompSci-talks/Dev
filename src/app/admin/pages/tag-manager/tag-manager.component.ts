@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { TAG_SERVICE } from '../../../core/contracts/tag.interface';
 import { Tag } from '../../../core/models/seminar.model';
 import { TagListComponent } from './tag-list.component';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-tag-manager',
@@ -63,6 +64,7 @@ import { TagListComponent } from './tag-list.component';
 export class TagManagerComponent implements OnInit {
   private tagService = inject(TAG_SERVICE);
   private fb = inject(FormBuilder);
+  private toastService = inject(ToastService);
 
   tags: Tag[] = [];
   loading = false;
@@ -109,9 +111,15 @@ export class TagManagerComponent implements OnInit {
         ? this.tagService.updateTag(this.editingTag.id, this.tagForm.value)
         : this.tagService.createTag(this.tagForm.value);
 
-      operation.subscribe(() => {
-        this.cancelEdit();
-        this.loadTags();
+      operation.subscribe({
+        next: () => {
+          this.toastService.success(this.editingTag ? 'Tag updated successfully' : 'Tag created successfully');
+          this.cancelEdit();
+          this.loadTags();
+        },
+        error: (err: any) => {
+          this.toastService.error(err.message || 'Failed to save tag');
+        }
       });
     }
   }

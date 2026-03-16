@@ -5,6 +5,7 @@ import { SeminarFormComponent } from './seminar-form.component';
 import { ISeminarService, SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
 import { Seminar } from '../../../core/models/seminar.model';
 import { Observable } from 'rxjs';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-seminar-manager',
@@ -44,6 +45,7 @@ import { Observable } from 'rxjs';
 })
 export class SeminarManagerComponent implements OnInit {
   private seminarService = inject(SEMINAR_SERVICE);
+  private toastService = inject(ToastService);
   seminars: Seminar[] = [];
   loading = true;
   showForm = false;
@@ -81,9 +83,21 @@ export class SeminarManagerComponent implements OnInit {
 
   saveSeminar(seminarData: Omit<Seminar, 'id'>) {
     if (this.editingSeminar) {
-      this.seminarService.updateSeminar(this.editingSeminar.id, seminarData).subscribe(() => this.refresh());
+      this.seminarService.updateSeminar(this.editingSeminar.id, seminarData).subscribe({
+        next: () => {
+          this.toastService.success('Seminar updated successfully');
+          this.refresh();
+        },
+        error: (err: any) => this.toastService.error(err.message || 'Failed to update seminar')
+      });
     } else {
-      this.seminarService.createSeminar(seminarData).subscribe(() => this.refresh());
+      this.seminarService.createSeminar(seminarData).subscribe({
+        next: () => {
+          this.toastService.success('Seminar scheduled successfully');
+          this.refresh();
+        },
+        error: (err: any) => this.toastService.error(err.message || 'Failed to schedule seminar')
+      });
     }
   }
 

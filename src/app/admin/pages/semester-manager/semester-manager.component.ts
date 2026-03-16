@@ -5,6 +5,7 @@ import { SemesterFormComponent } from './semester-form.component';
 import { SEMESTER_SERVICE, ISemesterService } from '../../../core/contracts/semester.interface';
 import { Semester } from '../../../core/models/semester.model';
 import { Observable } from 'rxjs';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-semester-manager',
@@ -45,6 +46,7 @@ import { Observable } from 'rxjs';
 })
 export class SemesterManagerComponent implements OnInit {
   private semesterService = inject(SEMESTER_SERVICE);
+  private toastService = inject(ToastService);
   semesters: Semester[] = [];
   loading = true;
   showForm = false;
@@ -88,9 +90,21 @@ export class SemesterManagerComponent implements OnInit {
 
   saveSemester(semesterData: Omit<Semester, 'id'>) {
     if (this.editingSemester) {
-      this.semesterService.updateSemester(this.editingSemester.id, semesterData).subscribe(() => this.refresh());
+      this.semesterService.updateSemester(this.editingSemester.id, semesterData).subscribe({
+        next: () => {
+          this.toastService.success('Semester updated successfully');
+          this.refresh();
+        },
+        error: (err: any) => this.toastService.error(err.message || 'Failed to update semester')
+      });
     } else {
-      this.semesterService.createSemester(semesterData).subscribe(() => this.refresh());
+      this.semesterService.createSemester(semesterData).subscribe({
+        next: () => {
+          this.toastService.success('Semester created successfully');
+          this.refresh();
+        },
+        error: (err: any) => this.toastService.error(err.message || 'Failed to create semester')
+      });
     }
   }
 

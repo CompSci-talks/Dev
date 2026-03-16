@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { SPEAKER_SERVICE } from '../../../core/contracts/speaker.interface';
 import { Speaker } from '../../../core/models/seminar.model';
 import { SpeakerListComponent } from './speaker-list.component';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-speaker-manager',
@@ -69,6 +70,7 @@ import { SpeakerListComponent } from './speaker-list.component';
 export class SpeakerManagerComponent implements OnInit {
   private speakerService = inject(SPEAKER_SERVICE);
   private fb = inject(FormBuilder);
+  private toastService = inject(ToastService);
 
   speakers: Speaker[] = [];
   loading = false;
@@ -118,9 +120,15 @@ export class SpeakerManagerComponent implements OnInit {
         ? this.speakerService.updateSpeaker(this.editingSpeaker.id, this.speakerForm.value)
         : this.speakerService.createSpeaker(this.speakerForm.value);
 
-      operation.subscribe(() => {
-        this.cancelEdit();
-        this.loadSpeakers();
+      operation.subscribe({
+        next: () => {
+          this.toastService.success(this.editingSpeaker ? 'Speaker updated successfully' : 'Speaker created successfully');
+          this.cancelEdit();
+          this.loadSpeakers();
+        },
+        error: (err: any) => {
+          this.toastService.error(err.message || 'Failed to save speaker');
+        }
       });
     }
   }
