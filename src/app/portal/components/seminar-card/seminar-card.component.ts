@@ -23,4 +23,10 @@ export class SeminarCardComponent {
         if (!speakers || !Array.isArray(speakers)) return '';
         return speakers.map(s => s?.name || '').filter(Boolean).join(', ');
     }
+
+    getAbstractSnippet(abstract: string | undefined): string {
+        if (!abstract) return '';
+        const plainText = abstract.replace(/[#*`]/g, '');
+        return plainText.length > 100 ? plainText.substring(0, 100) + '...' : plainText;
+    }
 }
