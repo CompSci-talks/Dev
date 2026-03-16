@@ -61,6 +61,14 @@ export const routes: Routes = [
             {
                 path: 'seminar/:id/attendance',
                 loadComponent: () => import('./admin/pages/attendance/attendance.page').then(m => m.AttendancePageComponent)
+            },
+            {
+                path: 'user-management',
+                loadComponent: () => import('./admin/pages/user-management-page/user-management-page.component').then(m => m.UserManagementPageComponent)
+            },
+            {
+                path: 'user/:id',
+                loadComponent: () => import('./admin/pages/user-detail-page/user-detail-page.component').then(m => m.UserDetailPageComponent)
             }
         ]
     },

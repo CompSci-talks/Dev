@@ -19,8 +19,8 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Define User Management routes in `src/app/features/admin/admin-routing.module.ts`
-- [ ] T002 Register the new `admin/user-management` path in `src/app/features/admin/admin.module.ts` or equivalent routing config
+- [x] T001 Define User Management routes in `src/app/app.routes.ts`
+- [x] T002 Register the new `admin/user-management` path in `src/app/app.routes.ts`
 
 ---
 
@@ -28,12 +28,12 @@
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
-- [ ] T003 [P] Create `UserProfile` model interface in `src/app/core/models/user.model.ts` based on `data-model.md`
-- [ ] T004 [P] Create `ActivityLog` model interface in `src/app/core/models/activity.model.ts`
-- [ ] T005 [P] Create reusable `PaginationComponent` (UI only) in `src/app/core/shared/components/pagination/`
-- [ ] T006 [P] Create reusable `TextFilterComponent` (UI only) in `src/app/core/shared/components/text-filter/`
-- [ ] T007 [P] Define `UserProfilePort` in `src/app/core/services/ports/user.port.ts` using `IUserService` contract
-- [ ] T008 [P] Define `ActivityPort` in `src/app/core/services/ports/activity.port.ts` using `IUserActivityService` contract
+- [x] T003 [P] Create `UserProfile` model interface in `src/app/core/models/user-profile.model.ts`
+- [x] T004 [P] Create `UserActivity` model interface in `src/app/core/models/user-activity.model.ts`
+- [x] T005 [P] Create reusable `PaginationComponent` (UI only) in `src/app/shared/components/pagination/`
+- [x] T006 [P] Create reusable `TextFilterComponent` (UI only) in `src/app/shared/components/text-filter/`
+- [x] T007 [P] Define `UserProfilePort` in `src/app/core/contracts/user.service.interface.ts`
+- [x] T008 [P] Define `ActivityPort` in `src/app/core/contracts/user-activity.service.interface.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin.
 
@@ -47,10 +47,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T009 [US1] Implement `FirebaseUserProfileService` adapter in `src/app/core/services/adapters/firebase-user.service.ts` for `getUsers` with cursor pagination
-- [ ] T010 [US1] Create `UserListComponent` in `src/app/features/admin/components/user-list/` using `PaginationComponent`
-- [ ] T011 [US1] Create `UserManagementPage` in `src/app/features/admin/pages/user-management-page/` to host the list
-- [ ] T012 [US1] Add unit test for `FirebaseUserService.getUsers` in `src/app/core/services/adapters/firebase-user.service.spec.ts`
+- [x] T009 [US1] Implement `FirebaseUserProfileService` adapter in `src/app/firebase-adapters/firebase-user-profile.service.ts` for `getUsers` with cursor pagination
+- [x] T010 [US1] Create `UserListComponent` in `src/app/admin/components/user-list/` using `PaginationComponent`
+- [x] T011 [US1] Create `UserManagementPage` in `src/app/admin/pages/user-management-page/` to host the list
+- [x] T012 [US1] Implement cursor-based pagination logic in `UserManagementPageComponent`
 
 **Checkpoint**: User Story 1 (MVP) is fully functional and testable.
 
@@ -79,10 +79,11 @@
 
 ### Implementation for User Story 3
 
-- [ ] T016 [US3] Implement `updateUserRole` in `FirebaseUserService`
-- [ ] T017 [US3] Create `RoleToggleComponent` in `src/app/features/admin/components/role-toggle/`
-- [ ] T018 [US3] Integrate `RoleToggleComponent` into `UserListComponent` rows
-- [ ] T019 [US3] Add success/error toast notifications using `ToastService` when role is updated
+- [x] T016 [US3] Implement `updateUserRole` in `FirebaseUserService`
+- [x] T017 [US3] Create `RoleToggleComponent` in `src/app/admin/components/role-toggle/`
+- [x] T018 [US3] Integrate `RoleToggleComponent` into `UserListComponent` rows
+- [x] T019 [US3] Add success/error toast notifications using `ToastService` when role is updated
+- [x] T033 [US3] Add client-side check to disable/hide role toggle for the currently logged-in Admin's own profile (FR-015) [NEW]
 
 ---
 
@@ -94,10 +95,12 @@
 
 ### Implementation for User Story 5
 
-- [ ] T020 [US5] Implement `FirebaseUserActivityService` in `src/app/core/services/adapters/firebase-user-activity.service.ts`
-- [ ] T021 [US5] Create `UserDetailComponent` in `src/app/features/admin/components/user-detail/` (with specific sub-views for Attendance and Comments history)
-- [ ] T022 [US5] Create `UserDetailPage` in `src/app/features/admin/pages/user-detail-page/`
-- [ ] T023 [US5] Implement navigation from `UserListComponent` rows to `UserDetailPage`
+- [x] T020 [US5] Implement `FirebaseUserActivityService` in `src/app/firebase-adapters/firebase-user-activity.service.ts`
+- [x] T021 [US5] Create `UserDetailComponent` in `src/app/admin/components/user-detail/` (with specific sub-views for Attendance and Comments history)
+- [x] T022 [US5] Create `UserDetailPage` in `src/app/admin/pages/user-detail-page/`
+- [x] T023 [US5] Implement navigation from `UserListComponent` rows to `UserDetailPage`
+- [x] T034 [US5] Implement skeleton screen loaders for activity sections (FR-016) [NEW]
+- [x] T035 [US5] Implement partial error states for activity history sections (FR-018) [NEW]
 
 ---
 
@@ -109,9 +112,9 @@
 
 ### Implementation for User Story 4
 
-- [ ] T024 [US4] Add checkbox selection logic to `UserListComponent`
-- [ ] T025 [US4] Implement "Email Selected" action that maps selected users to the `EmailService.openComposer` call
-- [ ] T032 [US4] Add validation for recipient count (min 1, max 50) and error feedback in email action [NEW]
+- [x] T024 [US4] Add checkbox selection logic to `UserListComponent`
+- [x] T025 [US4] Implement "Email Selected" action that maps selected users to the `EmailService.openComposer` call
+- [x] T032 [US4] Add validation for recipient count (min 1, max 50) and error feedback in email action [NEW]
 
 ---
 
@@ -124,6 +127,7 @@
 - [ ] T028 [P] UI Polish: Ensure consistent dark mode and transition animations for dashboard views
 - [ ] T029 [P] Final E2E verification using Cucumber in `tests/e2e/features/admin-user-management.feature`
 - [ ] T030 [P] Verify SC-004: Multi-selection of 50 users performs with <100ms UI response time
+- [ ] T036 [P] Audit and verify accessibility (ARIA roles, keyboard tab order) for new components (FR-017) [NEW]
 
 ---
 

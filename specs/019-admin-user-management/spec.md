@@ -97,6 +97,10 @@ As an administrator, I want to click on a user profile to view their detailed ac
 - **FR-012**: System MUST display a "No Users Found" message when search or filter returns zero results. [NEW]
 - **FR-013**: Role toggle functionality MUST be restricted to 'Super-Admin' roles only (implementation may use specific custom claims). [NEW]
 - **FR-014**: Email "Email Selected" action MUST validate that at least one user is selected and enforce a maximum of 50 recipients per batch. [NEW]
+- **FR-015**: System MUST prevent an Admin from changing their own role (self-demotion). [NEW]
+- **FR-016**: The User Detail view MUST use skeleton screens during initial data fetch. [NEW]
+- **FR-017**: All interactive elements MUST be keyboard-accessible and include ARIA labels. [NEW]
+- **FR-018**: System MUST display specific error messages if only a part of the user activity fails to load. [NEW]
 
 ### Key Entities
 

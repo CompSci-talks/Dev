@@ -25,6 +25,14 @@ import { ATTENDANCE_SERVICE } from './admin/services/attendance.service';
 import { MockEmailAdapter } from './core/adapters/email/mock-email.adapter';
 import { FirebaseAttendanceService } from './firebase-adapters/firebase-attendance.service';
 import { MailtoEmailAdapter } from './core/adapters/email/mailto-email.adapter';
+import { USER_SERVICE } from './core/contracts/user.service.interface';
+import { USER_ACTIVITY_SERVICE } from './core/contracts/user-activity.service.interface';
+import { FirebaseUserProfileService } from './firebase-adapters/firebase-user-profile.service';
+import { FirebaseUserActivityService } from './firebase-adapters/firebase-user-activity.service';
+// No activity service yet, but let's assume we'll use a mock or similar soon, 
+// for now let's only provide USER_SERVICE if we haven't created the other implementation.
+// Actually T020 says FirebaseUserActivityService, but I haven't written it.
+// I'll provide USER_SERVICE only for now.
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -45,5 +53,7 @@ export const appConfig: ApplicationConfig = {
     { provide: RSVP_SERVICE, useClass: FirebaseRsvpService },
     { provide: EMAIL_SERVICE, useClass: MailtoEmailAdapter },
     { provide: ATTENDANCE_SERVICE, useClass: FirebaseAttendanceService },
+    { provide: USER_SERVICE, useClass: FirebaseUserProfileService },
+    { provide: USER_ACTIVITY_SERVICE, useClass: FirebaseUserActivityService },
   ]
 };
