@@ -13,6 +13,13 @@
 - Q: How is the initial admin bootstrapped? → A: CLI/Script: A separate utility script is used to promote the first user UID to 'admin' in Firestore.
 - Q: What loading state should the unified paginated list use? → A: **Skeleton Screens**: Placeholder rows or cards that pulse while data is fetching. [CLARIFIED: 2026-03-16]
 - Q: How will the specialized components support different visual layouts (e.g., Tables vs. Cards)? → A: **Template-Based Projection**: Using `<ng-template>` to allow parent components to define the inner UI while the base components (`PaginatedTableComponent`, `PaginatedGridComponent`) handle logic. [CLARIFIED: 2026-03-16]
+- Q: Data Model for "Preferred Topic Areas" (FR-011) → A: **Array of Tag IDs**: Reusing the existing Tag system to maintain UI consistency and data integrity. [CLARIFIED: 2026-03-16]
+- Q: How should email actions be presented and handled in User Management? → A: **Global Header Actions & Dedicated Page**: Email actions (e.g., "Send Email") must be always visible in the top toolbar but disabled until selection. Clicking must navigate to a dedicated Email Composer page featuring a WYSIWYG editor. [CLARIFIED: 2026-03-16]
+- Q: Which WYSIWYG editor should be used for the Email Composer? → A: **Quill Editor**: Lightweight, highly customizable, and easy to theme with Tailwind using `ngx-quill`. [CLARIFIED: 2026-03-16]
+- Q: How should selected users' data be passed to the Email Composer? → A: **State Service**: Use an in-memory `EmailSelectionService` to manage selected UIDs before navigation. The composer must display a recipient indicator (e.g., list or chip-count) showing who will receive the email. [CLARIFIED: 2026-03-16]
+- Q: Should emails sent via the Admin Dashboard be recorded? → A: **Audit Log**: Yes, save a record (timestamp, sender, recipients, subject, body snippet) to a `SentEmails` collection in Firestore for audit and history purposes. [CLARIFIED: 2026-03-16]
+- Q: How should entity name uniqueness be enforced? → A: **Case-insensitive within type**: No two entities of the same type (e.g., two Tags or two Speakers) can have the same name (case-insensitive). [CLARIFIED: 2026-03-16]
+- Q: Does name uniqueness apply to User Profiles? → A: **No**: User Profiles are unique by Email and UID; Display Names do not have to be unique across the user base. [CLARIFIED: 2026-03-16]
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -70,7 +77,7 @@ As an administrator, I want to select multiple users and send them an email coll
 
 **Acceptance Scenarios**:
 
-1. **Given** multiple users in the list, **When** I select three users and click "Email Selected", **Then** I am redirected to the email composer with those three users as recipients.
+1. **Given** multiple users in the list, **When** I select three users and click "Email Selected", **Then** I am navigated to a dedicated Email Composer page with a WYSIWYG editor and those three users as recipients.
 
 ---
 
@@ -99,26 +106,34 @@ As an administrator, I want to click on a user profile to view their detailed ac
 - **FR-005**: System MUST extract the filter logic into a reusable `core/shared` component.
 - **FR-006**: System MUST allow admins to toggle roles (Admin/User).
 - **FR-007**: System MUST support multi-selection of user profiles via checkboxes.
-- **FR-008**: System MUST integrate with the existing `Email Service` to pass multiple recipient addresses to the email composer.
+- **FR-008**: System MUST provide a dedicated "Email Composer" route featuring a **Quill-based WYSIWYG editor** for drafting and sending collective emails. [UPDATED]
 - **FR-009**: System MUST provide a `User Profile Detail` view reachable from the user list.
 - **FR-010**: The User Profile Detail view MUST show seminar attendance and comment history for the selected user profile.
-- **FR-011**: User Detail view MUST include: Enrollment Date, Last Active Timestamp, and Preferred Topic Areas. [NEW]
+- **FR-011**: User Detail view MUST include: Enrollment Date, Last Active Timestamp Timestamp, and Preferred Topic Areas. [NEW]
 - **FR-012**: System MUST display a "No Users Found" message when search or filter returns zero results. [NEW]
 - **FR-013**: Role toggle functionality MUST be accessible to all users with the 'Admin' role. Initial admin bootstrapping MUST be handled via CLI/Script. [CLARIFIED: 2026-03-16]
-- **FR-014**: Email "Email Selected" action MUST validate that at least one user is selected and enforce a maximum of 50 recipients per batch. [NEW]
+- **FR-014**: "Email Selected" action MUST be always visible in the list header (disabled by default) and navigate to the Email Composer. The Composer MUST display a visual indicator/list of the selected recipients. [UPDATED]
 - **FR-015**: System MUST prevent an Admin from changing their own role (self-demotion). [NEW]
 - **FR-016**: The User Detail view MUST use skeleton screens during initial data fetch. [NEW]
 - **FR-017**: All interactive elements MUST be keyboard-accessible and include ARIA labels. [NEW]
-- FR-018: System MUST display specific error messages if only a part of the user activity fails to load. [NEW]
+- FR-018: System MUST display specific error messages if only a part of the user activity fails to load (e.g., "Attendance loaded, but Comments history is unavailable"). [NEW]
 - FR-021: System MUST refactor all administrative tables (Seminars, Semesters, Speakers, Tags) to use `PaginatedTableComponent`. [NEW: 2026-03-16]
 - FR-022: System MUST refactor all public grid views (Upcoming Seminars, Archive) to use `PaginatedGridComponent`. [NEW: 2026-03-16]
-- FR-023: Specialized components MUST support custom empty states and loading skeletons specific to the content type (e.g., Seminar skeletons vs User skeletons). [NEW: 2026-03-16]
+- FR-023: Specialized components MUST support custom empty states (e.g., "No comments posted yet") and loading skeletons specific to the content type. [NEW: 2026-03-16]
+- FR-024: System MUST implement a centralized, recursive Firestore sanitization utility to prevent `undefined` values and reserved keys (like `id`) from being sent to updateDoc/setDoc. [NEW: 2026-03-16]
+- FR-025: System MUST validate name uniqueness (case-insensitive) for Seminars, Speakers, Tags, and Semesters during create/update. [NEW: 2026-03-16]
+- FR-026: System MUST store a record of every email sent via the Admin Dashboard in a `SentEmails` collection. [NEW: 2026-03-16]
 
 ### Key Entities
 
-- **User Profile**: Identity and profile data (UID, Display Name, Email, Role, Created At, Last Active, Preferred Topics).
+- **User Profile**: Identity and profile data (UID, Display Name, Email, Role, Created At, Last Active Timestamp, Preferred Topics).
 - **Seminar Attendance**: Record of participation in a seminar (User Profile UID, Seminar UID, Date, Role during seminar).
 - **User Activity**: Aggregated view of Seminar Attendances and Comments for a specific User Profile.
+- **Sent Email**: Audit record of communication (Timestamp, Sender Admin UID, Recipient UIDs, Subject, Body Content). [NEW: 2026-03-16]
+
+### Edge Cases & Failure Handling
+
+- **Name Collision**: If a user attempts to create or rename an entity to a name that already exists in the same collection (case-insensitive), the system MUST block the operation and display a descriptive error toast (e.g., "A Tag with this name already exists"). [NEW: 2026-03-16]
 
 ## Success Criteria *(mandatory)*
 

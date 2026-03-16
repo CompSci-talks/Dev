@@ -3,6 +3,7 @@ import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc,
 import { Observable, from, map, switchMap, catchError, of } from 'rxjs';
 import { ISpeakerService } from '../core/contracts/speaker.interface';
 import { Speaker } from '../core/models/seminar.model';
+import { isNameUnique, sanitizeForFirestore } from '../core/utils/firestore-utils';
 
 @Injectable({
     providedIn: 'root'
@@ -30,15 +31,27 @@ export class FirebaseSpeakerService implements ISpeakerService {
     }
 
     createSpeaker(speaker: Omit<Speaker, 'id'>): Observable<Speaker> {
-        return from(addDoc(this.speakersCollection, speaker)).pipe(
+        return from(isNameUnique(this.firestore, 'speakers', 'name', speaker.name)).pipe(
+            switchMap(isUnique => {
+                if (!isUnique) throw new Error('A speaker with this name already exists.');
+                return from(addDoc(this.speakersCollection, speaker));
+            }),
             map(docRef => ({ ...speaker, id: docRef.id } as Speaker))
         );
     }
 
     updateSpeaker(id: string, updates: Partial<Speaker>): Observable<Speaker> {
-        const { id: _, ...cleanUpdates } = updates as any;
-        const speakerDoc = doc(this.firestore, `speakers/${id}`);
-        return from(updateDoc(speakerDoc, cleanUpdates)).pipe(
+        const cleanUpdates = sanitizeForFirestore(updates);
+        return from(
+            cleanUpdates.name
+                ? isNameUnique(this.firestore, 'speakers', 'name', cleanUpdates.name, id)
+                : Promise.resolve(true)
+        ).pipe(
+            switchMap(isUnique => {
+                if (!isUnique) throw new Error('A speaker with this name already exists.');
+                const speakerDoc = doc(this.firestore, `speakers/${id}`);
+                return from(updateDoc(speakerDoc, cleanUpdates));
+            }),
             switchMap(async () => {
                 if (cleanUpdates.name) {
                     await this.cascadeSpeakerUpdate(id, cleanUpdates.name);

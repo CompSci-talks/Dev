@@ -7,13 +7,11 @@ import { SEMINAR_SERVICE, ISeminarService } from '../../../core/contracts/semina
 import { ToastService } from '../../../core/services/toast.service';
 import { Attendee, AttendanceFilter } from '../../../core/models/attendance.model';
 import { Seminar } from '../../../core/models/seminar.model';
-import { Observable, forkJoin } from 'rxjs';
-import { EmailComposerComponent } from '../../components/email-composer/email-composer.component';
-
+import { Observable, combineLatest } from 'rxjs';
 @Component({
     selector: 'app-attendance-page',
     standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, EmailComposerComponent],
+    imports: [CommonModule, RouterModule, FormsModule],
     templateUrl: './attendance.page.html',
     styleUrl: './attendance.page.css'
 })
@@ -57,7 +55,7 @@ export class AttendancePageComponent implements OnInit {
             }
         }, 10000);
 
-        forkJoin({
+        combineLatest({
             seminar: this.seminarService.getSeminarById(id),
             attendees: this.attendanceService.getAttendees(id)
         }).subscribe({

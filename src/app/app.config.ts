@@ -24,7 +24,7 @@ import { EMAIL_SERVICE } from './admin/services/email.service';
 import { ATTENDANCE_SERVICE } from './admin/services/attendance.service';
 import { MockEmailAdapter } from './core/adapters/email/mock-email.adapter';
 import { FirebaseAttendanceService } from './firebase-adapters/firebase-attendance.service';
-import { MailtoEmailAdapter } from './core/adapters/email/mailto-email.adapter';
+import { FirebaseEmailService } from './firebase-adapters/firebase-email.service';
 import { USER_SERVICE } from './core/contracts/user.service.interface';
 import { USER_ACTIVITY_SERVICE } from './core/contracts/user-activity.service.interface';
 import { FirebaseUserProfileService } from './firebase-adapters/firebase-user-profile.service';
@@ -51,7 +51,7 @@ export const appConfig: ApplicationConfig = {
     { provide: TAG_SERVICE, useClass: FirebaseTagService },
     { provide: COMMENT_SERVICE, useClass: FirebaseCommentService },
     { provide: RSVP_SERVICE, useClass: FirebaseRsvpService },
-    { provide: EMAIL_SERVICE, useClass: MailtoEmailAdapter },
+    { provide: EMAIL_SERVICE, useClass: FirebaseEmailService },
     { provide: ATTENDANCE_SERVICE, useClass: FirebaseAttendanceService },
     { provide: USER_SERVICE, useClass: FirebaseUserProfileService },
     { provide: USER_ACTIVITY_SERVICE, useClass: FirebaseUserActivityService },

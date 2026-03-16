@@ -105,6 +105,6 @@ export class SemesterManagerComponent implements OnInit {
 
   private refresh() {
     this.closeForm();
-    this.loadSeminars();
+    this.loadSemesters();
   }
 }

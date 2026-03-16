@@ -4,6 +4,7 @@ import { collection, doc, query, where, getDoc, getDocs, updateDoc, setDoc, limi
 import { Observable, from, map, of, catchError } from 'rxjs';
 import { IUserService } from '../core/contracts/user.service.interface';
 import { UserProfile } from '../core/models/user-profile.model';
+import { sanitizeForFirestore } from '../core/utils/firestore-utils';
 
 @Injectable({
     providedIn: 'root'
@@ -71,13 +72,14 @@ export class FirebaseUserProfileService implements IUserService {
 
     updateUserRole(uid: string, role: 'admin' | 'moderator' | 'authenticated'): Observable<void> {
         const userDoc = doc(this.firestore, `users/${uid}`);
-        return from(updateDoc(userDoc, { role }));
+        const cleanUpdates = sanitizeForFirestore({ role });
+        return from(updateDoc(userDoc, cleanUpdates));
     }
 
     createUserProfile(profile: UserProfile): Observable<void> {
         const userDoc = doc(this.firestore, `users/${profile.uid}`);
-        // Convert to plain object and handle dates if necessary (though Firebase SDK handles Dates)
-        const data = { ...profile };
+        // Convert to plain object and sanitize
+        const data = sanitizeForFirestore(profile);
         return from(setDoc(userDoc, data));
     }
 

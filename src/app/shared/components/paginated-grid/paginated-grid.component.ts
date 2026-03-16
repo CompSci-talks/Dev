@@ -8,7 +8,11 @@ import { PaginationComponent } from '../pagination/pagination.component';
   imports: [CommonModule, PaginationComponent],
   template: `
     <div class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div 
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        [attr.aria-label]="ariaLabel || 'Data Grid'"
+        role="list"
+      >
         <!-- Loading State -->
         <ng-container *ngIf="loading">
           <ng-container *ngIf="skeletonTemplate; else defaultSkeleton">
@@ -55,6 +59,7 @@ export class PaginatedGridComponent {
   @Input() currentPage = 1;
   @Input() hasMore = false;
   @Input() trackByProperty?: string;
+  @Input() ariaLabel: string = '';
 
   @Input() itemTemplate!: TemplateRef<any>;
   @Input() skeletonTemplate?: TemplateRef<any>;

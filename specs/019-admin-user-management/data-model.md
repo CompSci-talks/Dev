@@ -1,32 +1,38 @@
 # Data Model: Admin User Management
 
-## Entities
+This document defines the entities and relationships for the Admin User Management feature.
 
-### UserProfile (Core)
-- **uid**: string (Primary Key)
-- **displayName**: string
-- **email**: string
-- **role**: 'admin' | 'user'
-- **lastActiveTimestamp**: Timestamp
-- **preferredTopicAreas**: string[]
-- **createdAt**: Timestamp
+## 1. UserProfile (Extended)
 
-### SeminarAttendance
-- **userId**: string (Foreign Key to UserProfile.uid)
-- **seminarId**: string (Foreign Key to Seminar.id)
-- **timestamp**: Timestamp
-- **attended**: boolean
+Represents basic user identity and administrative metadata.
 
-### Seminar (Reference)
-- **id**: string
-- **title**: string
-- **date_time**: Timestamp
-- **location**: string
+| Field | Type | Description |
+|-------|------|-------------|
+| `uid` | `string` | Unique identifier (Firebase Auth UID) |
+| `displayName` | `string` | User's visible name |
+| `email` | `string` | User's primary email address |
+| `role` | `'admin' \| 'moderator' \| 'authenticated'` | System-wide permissions |
+| `photoURL` | `string` | URL to user's profile image |
+| `createdAt` | `Timestamp \| Date` | Registration timestamp |
+| `lastActiveTimestamp` | `Timestamp \| Date` | Last activity recorded in system |
+| `preferredTopicIds` | `string[]` | IDs of Tag entities (topics of interest) |
+| `attendanceCount` | `number` | Aggregated count of attended seminars |
 
-## Relationships
-- **UserProfile** has-many **SeminarAttendance**
-- **UserProfile** has-many **Comments** (stored in `seminars/{id}/comments`)
+## 2. SeminarAttendance
 
-## Validation Rules
-- **Role**: Must be either 'admin' or 'user'.
-- **Self-Demotion Prevention**: The active user's UID must not match the UID being demoted if the active user is the only admin (soft check in UI/Guard).
+Represents a link between a user and a seminar event.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `uid` | `string` | Unique identifier for the attendance record |
+| `userUid` | `string` | Reference to UserProfile.uid |
+| `seminarUid` | `string` | Reference to Seminar.uid |
+| `seminarTitle` | `string` | Denormalized title for quick display |
+| `date` | `Timestamp \| Date` | Date of the seminar |
+| `role` | `'attendee' \| 'speaker' \| 'moderator'` | User's role in the specific seminar |
+
+## 3. Relationships
+
+- **UserProfile 1:N SeminarAttendance**: One user can attend many seminars.
+- **Seminar 1:N SeminarAttendance**: One seminar has many attendees.
+- **UserProfile 1:N PreferredTopicIds**: A user can have multiple topic preferences referencing the `Tags` collection.

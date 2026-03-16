@@ -23,6 +23,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-11
 - TypeScript (Angular) + Angular, Firebase (Firestore, Auth), Tailwind CSS (019-admin-user-management)
 - TypeScript / Angular 17+ + @angular/core, @angular/fire, Firebase (Auth, Firestore), RxJS, Tailwind CSS (019-admin-user-management)
 - Cloud Firestore (019-admin-user-management)
+- TypeScript / Angular 17+ + Firebase SDK (Auth, Firestore), Tailwind CSS, RxJS, Lucide Angular (019-admin-user-management)
+- Firestore (User Profiles, Attendance, Activities) (019-admin-user-management)
 
 - [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION] (001-attendees-portal)
 
@@ -43,9 +45,9 @@ cd src; pytest; ruff check .
 [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]: Follow standard conventions
 
 ## Recent Changes
+- 019-admin-user-management: Added TypeScript / Angular 17+ + Firebase SDK (Auth, Firestore), Tailwind CSS, RxJS, Lucide Angular
 - 019-admin-user-management: Added TypeScript / Angular 17+ + @angular/core, @angular/fire, Firebase (Auth, Firestore), RxJS, Tailwind CSS
 - 019-admin-user-management: Added TypeScript (Angular) + Angular, Firebase (Firestore, Auth), Tailwind CSS
-- 017-firebase-backend-migration: Added TypeScript 5.9, Angular 21.2.0 + `@angular/fire`, `firebase`, `rxjs`
 
 
 <!-- MANUAL ADDITIONS START -->

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
-import { IEmailService, EmailPayload } from '../../../admin/services/email.service';
+import { IEmailService, EmailPayload, SentEmail } from '../../../admin/services/email.service';
 
 @Injectable({
     providedIn: 'root'
@@ -16,7 +16,10 @@ export class MockEmailAdapter implements IEmailService {
         console.log(`Body: ${payload.body}`);
         console.log('-------------------------');
 
-        // Simulate network delay
-        return of(undefined).pipe(delay(1000));
+        return of(void 0).pipe(delay(1000));
+    }
+
+    getSentEmails(): Observable<SentEmail[]> {
+        return of([]);
     }
 }

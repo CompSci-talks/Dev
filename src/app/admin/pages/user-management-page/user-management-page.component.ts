@@ -20,9 +20,9 @@ import { BehaviorSubject, combineLatest, debounceTime, map, startWith, switchMap
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">User Management</h1>
         <div class="flex items-center space-x-3">
           <button 
-            *ngIf="selectedUserIds.size > 0"
+            [disabled]="selectedUserIds.size === 0"
             (click)="onEmailSelected()"
-            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-colors"
+            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Email Selected ({{ selectedUserIds.size }})
           </button>
@@ -133,21 +133,11 @@ export class UserManagementPageComponent implements OnInit {
     }
 
     onEmailSelected(): void {
-        if (this.selectedUserIds.size === 0) {
-            this.toastService.error('Please select at least one user.');
-            return;
-        }
-        if (this.selectedUserIds.size > 50) {
-            this.toastService.error('You can only email up to 50 users at a time.');
-            return;
-        }
+        if (this.selectedUserIds.size === 0) return;
 
-        this.userService.sendBulkEmail(Array.from(this.selectedUserIds), 'Subject', 'Message body').subscribe({
-            next: () => {
-                this.toastService.success(`Emailing ${this.selectedUserIds.size} users...`);
-                this.selectedUserIds.clear();
-            },
-            error: () => this.toastService.error('Failed to initiate bulk email')
+        const uids = Array.from(this.selectedUserIds);
+        this.router.navigate(['/admin/email-composer'], {
+            queryParams: { uids: uids.join(',') }
         });
     }
 }

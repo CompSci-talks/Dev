@@ -14,5 +14,5 @@ export interface ActivityLog {
     type: string;
     targetId: string;
     timestamp: Date;
-    metadata: any;
+    metadata: Record<string, unknown>;
 }

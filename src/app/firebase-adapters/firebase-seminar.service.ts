@@ -6,6 +6,7 @@ import { Observable, from, map, switchMap, combineLatest, of, catchError } from 
 import { ISeminarService } from '../core/contracts/seminar.interface';
 import { Seminar } from '../core/models/seminar.model';
 import { Attendee } from '../core/models/attendance.model';
+import { isNameUnique, sanitizeForFirestore } from '../core/utils/firestore-utils';
 
 @Injectable({
     providedIn: 'root'
@@ -66,7 +67,11 @@ export class FirebaseSeminarService implements ISeminarService {
             ...seminar,
             stats: { rsvp_count: 0, comment_count: 0 }
         };
-        return from(this.enrichWithMetadata(withStats)).pipe(
+        return from(isNameUnique(this.firestore, 'seminars', 'title', seminar.title)).pipe(
+            switchMap(isUnique => {
+                if (!isUnique) throw new Error('A seminar with this title already exists.');
+                return from(this.enrichWithMetadata(withStats));
+            }),
             switchMap(enriched => from(addDoc(this.seminarsCollection, enriched))),
             map(docRef => ({ ...withStats, id: docRef.id } as Seminar))
         );
@@ -75,13 +80,23 @@ export class FirebaseSeminarService implements ISeminarService {
     updateSeminar(id: string, updates: Partial<Seminar>): Observable<Seminar> {
         const seminarDoc = doc(this.firestore, `seminars/${id}`);
 
-        // If IDs changed, we might need to re-enrich
-        const enrichPromise = (updates.speaker_ids || updates.tag_ids)
-            ? this.enrichWithMetadata(updates as any)
-            : Promise.resolve(updates);
+        return from(
+            updates.title
+                ? isNameUnique(this.firestore, 'seminars', 'title', updates.title, id)
+                : Promise.resolve(true)
+        ).pipe(
+            switchMap(isUnique => {
+                if (!isUnique) throw new Error('A seminar with this title already exists.');
 
-        return from(enrichPromise).pipe(
-            switchMap(enriched => from(updateDoc(seminarDoc, enriched))),
+                // If IDs changed, we might need to re-enrich
+                const enrichPromise = (updates.speaker_ids || updates.tag_ids)
+                    ? this.enrichWithMetadata(updates as any, true) // Pass flag to indicate update
+                    : Promise.resolve(updates);
+
+                return from(enrichPromise);
+            }),
+            map(enriched => sanitizeForFirestore(enriched)),
+            switchMap(sanitized => from(updateDoc(seminarDoc, sanitized))),
             switchMap(() => this.getSeminarById(id).pipe(map(s => s!)))
         );
     }
@@ -158,11 +173,12 @@ export class FirebaseSeminarService implements ISeminarService {
         return count;
     }
 
-    private async enrichWithMetadata(seminar: any): Promise<any> {
+    private async enrichWithMetadata(seminar: any, isUpdate: boolean = false): Promise<any> {
         const enriched = { ...seminar };
 
-        // Ensure stats object exists
-        if (!enriched.stats) {
+        // Ensure stats object exists ONLY during creation, or if explicitly provided
+        // During updates, we don't want to overwrite existing stats with defaults
+        if (!isUpdate && !enriched.stats) {
             enriched.stats = { rsvp_count: 0, comment_count: 0 };
         }
 
@@ -187,10 +203,15 @@ export class FirebaseSeminarService implements ISeminarService {
                     seminar.tag_ids.map(async (id: string) => {
                         try {
                             const tDoc = await getDoc(doc(this.firestore, `tags/${id}`));
-                            return { id, name: tDoc.data()?.['name'] || id, color_code: tDoc.data()?.['color_code'] };
+                            const data = tDoc.data();
+                            return {
+                                id,
+                                name: data?.['name'] || id,
+                                color_code: data?.['color_code'] || '#CBD5E1' // Default to slate-300 if missing
+                            };
                         } catch (err) {
                             console.warn(`Failed to fetch tag ${id}:`, err);
-                            return { id, name: id };
+                            return { id, name: id, color_code: '#CBD5E1' };
                         }
                     })
                 );
@@ -208,5 +229,9 @@ export class FirebaseSeminarService implements ISeminarService {
             ...data,
             date_time: data.date_time?.toDate ? data.date_time.toDate() : data.date_time
         };
+    }
+
+    private sanitizeObject(obj: any): any {
+        return obj;
     }
 }

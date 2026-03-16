@@ -3,6 +3,7 @@ import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc,
 import { Observable, from, map, switchMap, take, catchError, of } from 'rxjs';
 import { ISemesterService } from '../core/contracts/semester.interface';
 import { Semester } from '../core/models/semester.model';
+import { isNameUnique, sanitizeForFirestore } from '../core/utils/firestore-utils';
 
 @Injectable({
     providedIn: 'root'
@@ -27,14 +28,27 @@ export class FirebaseSemesterService implements ISemesterService {
     }
 
     createSemester(semester: Omit<Semester, 'id'>): Observable<Semester> {
-        return from(addDoc(this.semestersCollection, semester)).pipe(
+        return from(isNameUnique(this.firestore, 'semesters', 'name', semester.name)).pipe(
+            switchMap(isUnique => {
+                if (!isUnique) throw new Error('A semester with this name already exists.');
+                return from(addDoc(this.semestersCollection, semester));
+            }),
             map(docRef => ({ ...semester, id: docRef.id } as Semester))
         );
     }
 
     updateSemester(id: string, updates: Partial<Semester>): Observable<Semester> {
-        const semesterDoc = doc(this.firestore, `semesters/${id}`);
-        return from(updateDoc(semesterDoc, updates)).pipe(
+        const cleanUpdates = sanitizeForFirestore(updates);
+        return from(
+            cleanUpdates.name
+                ? isNameUnique(this.firestore, 'semesters', 'name', cleanUpdates.name, id)
+                : Promise.resolve(true)
+        ).pipe(
+            switchMap(isUnique => {
+                if (!isUnique) throw new Error('A semester with this name already exists.');
+                const semesterDoc = doc(this.firestore, `semesters/${id}`);
+                return from(updateDoc(semesterDoc, cleanUpdates));
+            }),
             switchMap(() => this.mapTimestampsFromDoc(id))
         );
     }

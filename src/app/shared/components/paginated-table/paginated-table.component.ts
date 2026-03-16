@@ -9,7 +9,11 @@ import { PaginationComponent } from '../pagination/pagination.component';
   template: `
     <div class="overflow-hidden shadow-md sm:rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
       <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <table 
+          class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+          [attr.aria-label]="ariaLabel || 'Data Table'"
+          role="grid"
+        >
           <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
@@ -74,6 +78,7 @@ export class PaginatedTableComponent {
   @Input() currentPage: number = 1;
   @Input() hasMore: boolean = false;
   @Input() trackByProperty?: string;
+  @Input() ariaLabel: string = '';
 
   @Input() headerTemplate!: TemplateRef<any>;
   @Input() rowTemplate!: TemplateRef<any>;

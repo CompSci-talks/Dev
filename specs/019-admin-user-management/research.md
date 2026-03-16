@@ -1,26 +1,32 @@
-# Research: Unified Paginated List Components
+# Research: Admin User Management
 
-## Technical Context
-- **Framework**: Angular 19+ (Standalone)
-- **Styling**: Tailwind CSS
-- **Data Source**: Firestore (via adapters)
-- **Interaction Pattern**: Template-based content projection for rows/cells.
+This document consolidation findings on technical unknowns and best practices for the Admin User Management feature.
 
-## Decision: Specialized vs Generic Component
-- **Decision**: Implement two specialized components: `PaginatedTableComponent` and `PaginatedGridComponent`.
-- **Rationale**: 
-  - Tables and Grids have fundamentally different DOM structures (`<table>` vs `<div>` grid).
-  - Attempting a single component would lead to complex conditional logic and poor accessibility.
-  - Common logic (pagination, filtering, loading states) can be shared via documentation or a common interface/base class if needed, but simple duplication for specific UI needs is cleaner for Angular components.
-- **Alternatives Considered**: 
-  - One generic `UnifiedListComponent`: Rejected because it makes semantic HTML (`<thead>`, `<tbody>`, etc.) difficult to maintain.
+## 1. Skeleton Screens for Angular
 
-## Research Task: Angular Content Projection Best Practices
-- **Goal**: Ensure the component is flexible enough for any row layout.
-- **Finding**: Using `TemplateRef` with `@Input` (as currently implemented) is more flexible than simple `<ng-content>` because it allows the child to pass a "context" (the item data) back to the parent's template.
-- **Decision**: Stick with `itemTemplate: TemplateRef<any>` pattern.
+**Decision**: Use `ng-content` or `ng-template` based skeletons in reusable components.
+**Rationale**: CSS-only skeletons with `animate-pulse` provide the best performance and simplest implementation without external dependencies.
+**Alternatives considered**: 
+- `ngx-skeleton-loader`: Rejected to minimize bundle size and maintain vanilla Tailwind control.
 
-## Research Task: Skeleton Screens in Tailwind
-- **Goal**: Implement smooth pulse animations.
-- **Finding**: Tailwind's `animate-pulse` is sufficient. Using CSS Grid for skeleton cards and `<tr>` with dummy `<td>` for tables maintains layout stability.
-- **Decision**: Use `animate-pulse` on container elements with fixed heights.
+## 2. WYSIWYG Editor for Email Composer
+
+**Decision**: Use `ngx-editor` or a simple `contenteditable` wrapper with standard execCommand/modern replacement.
+**Rationale**: `ngx-editor` is lightweight and well-integrated with Angular's reactive forms.
+**Alternatives considered**:
+- `Quill`: Powerful but heavy; overkill for simple administrative emails.
+- `TinyMCE`: Requires API keys/cloud connection; violates "Serverless-First" if self-hosting is difficult.
+
+## 3. User Activity Aggregation in Firestore
+
+**Decision**: Parallel fetch and client-side merge using `combineLatest`.
+**Rationale**: Firestore does not support cross-collection joins. Fetching "Attendance" and "Comments" separately by `uid` and merging them in an observable stream is the standard reactive pattern for this platform.
+**Constraints**: 
+- Individual error handling for each stream (FR-018).
+- Limit returned activity to most recent 50 entries to ensure SC-001 results.
+
+## 4. Name Uniqueness Enforcement
+
+**Decision**: Case-insensitive query validation in the `FirebaseAdapter`.
+**Rationale**: Prevents accidental duplicates (e.g., "AI" vs "ai").
+**Implementation**: Use `where('nameLower', '==', name.toLowerCase())` indexing or fetch all and filter if the collection size is guaranteed small (<100).

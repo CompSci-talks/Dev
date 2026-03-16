@@ -3,6 +3,7 @@ import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc,
 import { Observable, from, map, switchMap, catchError, of } from 'rxjs';
 import { ITagService } from '../core/contracts/tag.interface';
 import { Tag } from '../core/models/seminar.model';
+import { isNameUnique, sanitizeForFirestore } from '../core/utils/firestore-utils';
 
 @Injectable({
     providedIn: 'root'
@@ -30,15 +31,27 @@ export class FirebaseTagService implements ITagService {
     }
 
     createTag(tag: Omit<Tag, 'id'>): Observable<Tag> {
-        return from(addDoc(this.tagsCollection, tag)).pipe(
+        return from(isNameUnique(this.firestore, 'tags', 'name', tag.name)).pipe(
+            switchMap(isUnique => {
+                if (!isUnique) throw new Error('A tag with this name already exists.');
+                return from(addDoc(this.tagsCollection, tag));
+            }),
             map(docRef => ({ ...tag, id: docRef.id } as Tag))
         );
     }
 
     updateTag(id: string, updates: Partial<Tag>): Observable<Tag> {
-        const { id: _, ...cleanUpdates } = updates as any;
-        const tagDoc = doc(this.firestore, `tags/${id}`);
-        return from(updateDoc(tagDoc, cleanUpdates)).pipe(
+        const cleanUpdates = sanitizeForFirestore(updates);
+        return from(
+            cleanUpdates.name
+                ? isNameUnique(this.firestore, 'tags', 'name', cleanUpdates.name, id)
+                : Promise.resolve(true)
+        ).pipe(
+            switchMap(isUnique => {
+                if (!isUnique) throw new Error('A tag with this name already exists.');
+                const tagDoc = doc(this.firestore, `tags/${id}`);
+                return from(updateDoc(tagDoc, cleanUpdates));
+            }),
             switchMap(async () => {
                 if (cleanUpdates.name || cleanUpdates.color_code) {
                     await this.cascadeTagUpdate(id, cleanUpdates);

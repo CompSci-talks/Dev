@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { IEmailService, EmailPayload } from '../../../admin/services/email.service';
+import { IEmailService, EmailPayload, SentEmail } from '../../../admin/services/email.service';
 
 @Injectable({
     providedIn: 'root'
@@ -20,5 +20,9 @@ export class MailtoEmailAdapter implements IEmailService {
         window.location.href = mailtoLink;
 
         return of(undefined);
+    }
+
+    getSentEmails(): Observable<SentEmail[]> {
+        return of([]);
     }
 }
