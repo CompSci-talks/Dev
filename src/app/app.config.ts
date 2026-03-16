@@ -6,6 +6,7 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
+import { provideQuillConfig } from 'ngx-quill';
 import { FirebaseSemesterService } from './firebase-adapters/firebase-semester.service';
 import { FirebaseSeminarService } from './firebase-adapters/firebase-seminar.service';
 import { FirebaseAuthService } from './firebase-adapters/firebase-auth.service';
@@ -55,5 +56,15 @@ export const appConfig: ApplicationConfig = {
     { provide: ATTENDANCE_SERVICE, useClass: FirebaseAttendanceService },
     { provide: USER_SERVICE, useClass: FirebaseUserProfileService },
     { provide: USER_ACTIVITY_SERVICE, useClass: FirebaseUserActivityService },
+    provideQuillConfig({
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['link'],
+          ['clean']
+        ]
+      }
+    }),
   ]
 };

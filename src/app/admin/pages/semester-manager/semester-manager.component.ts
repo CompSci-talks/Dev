@@ -4,7 +4,7 @@ import { SemesterListComponent } from './semester-list.component';
 import { SemesterFormComponent } from './semester-form.component';
 import { SEMESTER_SERVICE, ISemesterService } from '../../../core/contracts/semester.interface';
 import { Semester } from '../../../core/models/semester.model';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
@@ -60,7 +60,7 @@ export class SemesterManagerComponent implements OnInit {
 
   private loadSemesters() {
     this.loading = true;
-    this.semesterService.getSemesters().subscribe({
+    this.semesterService.getSemesters().pipe(take(1)).subscribe({
       next: (semesters) => {
         this.semesters = semesters;
         this.loading = false;
@@ -84,7 +84,13 @@ export class SemesterManagerComponent implements OnInit {
 
   deleteSemester(id: string) {
     if (confirm('Are you sure you want to delete this semester?')) {
-      this.semesterService.deleteSemester(id).subscribe(() => this.refresh());
+      this.semesterService.deleteSemester(id).subscribe({
+        next: () => {
+          this.toastService.success('Semester deleted successfully');
+          this.refresh();
+        },
+        error: (err: any) => this.toastService.error(err.message || 'Failed to delete semester')
+      });
     }
   }
 

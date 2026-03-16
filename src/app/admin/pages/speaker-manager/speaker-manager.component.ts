@@ -5,6 +5,7 @@ import { SPEAKER_SERVICE } from '../../../core/contracts/speaker.interface';
 import { Speaker } from '../../../core/models/seminar.model';
 import { SpeakerListComponent } from './speaker-list.component';
 import { ToastService } from '../../../core/services/toast.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-speaker-manager',
@@ -62,7 +63,7 @@ import { ToastService } from '../../../core/services/toast.service';
         [speakers]="speakers"
         [loading]="loading"
         (edit)="editSpeaker($event)"
-        (delete)="deleteSpeaker($event)"
+        (onDelete)="deleteSpeaker($event)"
       ></app-speaker-list>
     </div>
   `
@@ -90,7 +91,7 @@ export class SpeakerManagerComponent implements OnInit {
 
   private loadSpeakers() {
     this.loading = true;
-    this.speakerService.getSpeakers().subscribe({
+    this.speakerService.getSpeakers().pipe(take(1)).subscribe({
       next: (speakers) => {
         this.speakers = speakers;
         this.loading = false;
@@ -135,8 +136,12 @@ export class SpeakerManagerComponent implements OnInit {
 
   deleteSpeaker(id: string) {
     if (confirm('Are you sure?')) {
-      this.speakerService.deleteSpeaker(id).subscribe(() => {
-        this.loadSpeakers();
+      this.speakerService.deleteSpeaker(id).subscribe({
+        next: () => {
+          this.toastService.success('Speaker deleted successfully');
+          this.loadSpeakers();
+        },
+        error: (err: any) => this.toastService.error(err.message || 'Failed to delete speaker')
       });
     }
   }

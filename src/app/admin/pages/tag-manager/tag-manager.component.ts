@@ -5,6 +5,7 @@ import { TAG_SERVICE } from '../../../core/contracts/tag.interface';
 import { Tag } from '../../../core/models/seminar.model';
 import { TagListComponent } from './tag-list.component';
 import { ToastService } from '../../../core/services/toast.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-tag-manager',
@@ -56,7 +57,7 @@ import { ToastService } from '../../../core/services/toast.service';
         [tags]="tags"
         [loading]="loading"
         (edit)="editTag($event)"
-        (delete)="deleteTag($event)"
+        (onDelete)="deleteTag($event)"
       ></app-tag-list>
     </div>
   `
@@ -81,7 +82,7 @@ export class TagManagerComponent implements OnInit {
 
   private loadTags() {
     this.loading = true;
-    this.tagService.getTags().subscribe({
+    this.tagService.getTags().pipe(take(1)).subscribe({
       next: (tags) => {
         this.tags = tags;
         this.loading = false;
@@ -126,8 +127,12 @@ export class TagManagerComponent implements OnInit {
 
   deleteTag(id: string) {
     if (confirm('Are you sure?')) {
-      this.tagService.deleteTag(id).subscribe(() => {
-        this.loadTags();
+      this.tagService.deleteTag(id).subscribe({
+        next: () => {
+          this.toastService.success('Tag deleted successfully');
+          this.loadTags();
+        },
+        error: (err: any) => this.toastService.error(err.message || 'Failed to delete tag')
       });
     }
   }

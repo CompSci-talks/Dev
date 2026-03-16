@@ -8,6 +8,8 @@ import { ToastService } from '../../../core/services/toast.service';
 import { Attendee, AttendanceFilter } from '../../../core/models/attendance.model';
 import { Seminar } from '../../../core/models/seminar.model';
 import { Observable, combineLatest } from 'rxjs';
+import { Router } from '@angular/router';
+import { EmailSelectionService } from '../../services/email-selection.service';
 @Component({
     selector: 'app-attendance-page',
     standalone: true,
@@ -32,9 +34,11 @@ export class AttendancePageComponent implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
+        private router: Router,
         @Inject(ATTENDANCE_SERVICE) private attendanceService: IAttendanceService,
         @Inject(SEMINAR_SERVICE) private seminarService: ISeminarService,
-        private toastService: ToastService
+        private toastService: ToastService,
+        private emailSelectionService: EmailSelectionService
     ) { }
 
     ngOnInit(): void {
@@ -114,10 +118,23 @@ export class AttendancePageComponent implements OnInit {
     }
 
     openComposer(): void {
-        this.selectedRecipients = this.attendees.filter(a => this.selectedAttendeeIds.has(a.id));
-        if (this.selectedRecipients.length > 0) {
-            this.showComposer = true;
-        }
+        const selected = this.attendees.filter(a => this.selectedAttendeeIds.has(a.id));
+        if (selected.length === 0) return;
+
+        // Map attendees to UserProfile shape expected by EmailSelectionService
+        const profiles = selected.map(a => ({
+            uid: a.id,
+            displayName: a.display_name,
+            email: a.email,
+            role: 'authenticated' as const,
+            createdAt: new Date(),
+            lastLogin: new Date(),
+            lastActiveTimestamp: new Date(),
+            attendanceCount: 0
+        }));
+
+        this.emailSelectionService.setSelectedUsers(profiles);
+        this.router.navigate(['/admin/email-composer']);
     }
 
     closeComposer(): void {

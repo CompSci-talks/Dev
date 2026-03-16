@@ -33,7 +33,7 @@ import { Speaker } from '../../../core/models/seminar.model';
         <td class="px-6 py-4 whitespace-nowrap">
           <div class="flex space-x-3">
             <button (click)="edit.emit(speaker)" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
-            <button (click)="delete.emit(speaker.id)" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
+            <button (click)="onDelete.emit(speaker.id)" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
           </div>
         </td>
       </ng-template>
@@ -52,5 +52,5 @@ export class SpeakerListComponent {
   @Input() speakers: Speaker[] = [];
   @Input() loading = false;
   @Output() edit = new EventEmitter<Speaker>();
-  @Output() delete = new EventEmitter<string>();
+  @Output() onDelete = new EventEmitter<string>();
 }

@@ -4,7 +4,7 @@ import { SeminarListComponent } from './seminar-list.component';
 import { SeminarFormComponent } from './seminar-form.component';
 import { ISeminarService, SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
 import { Seminar } from '../../../core/models/seminar.model';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
@@ -59,7 +59,7 @@ export class SeminarManagerComponent implements OnInit {
 
   private loadSeminars() {
     this.loading = true;
-    this.seminarService.getSeminars().subscribe({
+    this.seminarService.getSeminars().pipe(take(1)).subscribe({
       next: (seminars) => {
         this.seminars = seminars;
         this.loading = false;
@@ -103,7 +103,13 @@ export class SeminarManagerComponent implements OnInit {
 
   deleteSeminar(id: string) {
     if (confirm('Are you sure you want to delete this seminar?')) {
-      this.seminarService.deleteSeminar(id).subscribe(() => this.refresh());
+      this.seminarService.deleteSeminar(id).subscribe({
+        next: () => {
+          this.toastService.success('Seminar deleted successfully');
+          this.refresh();
+        },
+        error: (err: any) => this.toastService.error(err.message || 'Failed to delete seminar')
+      });
     }
   }
 

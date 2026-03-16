@@ -69,6 +69,10 @@ export const routes: Routes = [
             {
                 path: 'user/:id',
                 loadComponent: () => import('./admin/pages/user-detail-page/user-detail-page.component').then(m => m.UserDetailPageComponent)
+            },
+            {
+                path: 'email-composer',
+                loadComponent: () => import('./admin/pages/email-composer-page/email-composer-page').then(m => m.EmailComposerPage)
             }
         ]
     },

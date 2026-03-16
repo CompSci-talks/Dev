@@ -82,6 +82,6 @@ export class EmailComposerPage implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/admin/users']);
+    this.router.navigate(['/admin/user-management']);
   }
 }

@@ -9,6 +9,7 @@ import { TextFilterComponent } from '../../../shared/components/text-filter/text
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { ToastService } from '../../../core/services/toast.service';
 import { BehaviorSubject, combineLatest, debounceTime, map, startWith, switchMap, tap } from 'rxjs';
+import { EmailSelectionService } from '../../services/email-selection.service';
 
 @Component({
     selector: 'app-user-management-page',
@@ -54,6 +55,7 @@ export class UserManagementPageComponent implements OnInit {
     private authService = inject(AUTH_SERVICE);
     private toastService = inject(ToastService);
     private router = inject(Router);
+    private emailSelectionService = inject(EmailSelectionService);
 
     users: UserProfile[] = [];
     loading = true;
@@ -135,9 +137,9 @@ export class UserManagementPageComponent implements OnInit {
     onEmailSelected(): void {
         if (this.selectedUserIds.size === 0) return;
 
-        const uids = Array.from(this.selectedUserIds);
-        this.router.navigate(['/admin/email-composer'], {
-            queryParams: { uids: uids.join(',') }
-        });
+        // Build full UserProfile objects for the selected UIDs from the current page
+        const selectedProfiles = this.users.filter(u => this.selectedUserIds.has(u.uid));
+        this.emailSelectionService.setSelectedUsers(selectedProfiles);
+        this.router.navigate(['/admin/email-composer']);
     }
 }

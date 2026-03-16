@@ -35,7 +35,7 @@ import { Tag } from '../../../core/models/seminar.model';
         <td class="px-6 py-4 whitespace-nowrap">
           <div class="flex space-x-3">
             <button (click)="edit.emit(tag)" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
-            <button (click)="delete.emit(tag.id)" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
+            <button (click)="onDelete.emit(tag.id)" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
           </div>
         </td>
       </ng-template>
@@ -54,5 +54,5 @@ export class TagListComponent {
   @Input() tags: Tag[] = [];
   @Input() loading = false;
   @Output() edit = new EventEmitter<Tag>();
-  @Output() delete = new EventEmitter<string>();
+  @Output() onDelete = new EventEmitter<string>();
 }

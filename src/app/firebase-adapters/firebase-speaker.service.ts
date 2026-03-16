@@ -1,5 +1,5 @@
 import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, query, orderBy, getDocs, where, writeBatch } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, getDoc, query, orderBy, getDocs, where, writeBatch } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, catchError, of } from 'rxjs';
 import { ISpeakerService } from '../core/contracts/speaker.interface';
 import { Speaker } from '../core/models/seminar.model';
@@ -56,9 +56,10 @@ export class FirebaseSpeakerService implements ISpeakerService {
                 if (cleanUpdates.name) {
                     await this.cascadeSpeakerUpdate(id, cleanUpdates.name);
                 }
-                return id;
+                // Use a one-shot getDoc so the pipeline completes
+                const snapshot = await getDoc(doc(this.firestore, `speakers/${id}`));
+                return { id, ...snapshot.data() } as Speaker;
             }),
-            switchMap(speakerId => this.getSpeakerById(speakerId).pipe(map(s => s!))),
             catchError(err => {
                 console.error(`Error updating speaker ${id}:`, err);
                 throw err;
