@@ -12,6 +12,11 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class ToastService {
     private readonly toasts = new BehaviorSubject<Toast[]>([]);
+
+    // Default durations in milliseconds
+    public static readonly DEFAULT_DURATION = 1000;
+    public static readonly ERROR_DURATION = 2000;
+
     /**
      * Observable stream of all active toast notifications.
      */
@@ -21,11 +26,11 @@ export class ToastService {
      * Display a toast notification.
      * @param type Semantic type of the toast.
      * @param message Content to display.
-     * @param duration Optional duration in ms (defaults to 5000 for success/info, 8000 for error).
+     * @param duration Optional duration in ms.
      */
     show(type: Toast['type'], message: string, duration?: number) {
         const id = Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
-        const defaultDuration = type === 'error' ? 8000 : 5000;
+        const defaultDuration = type === 'error' ? ToastService.ERROR_DURATION : ToastService.DEFAULT_DURATION;
         const toast: Toast = {
             id,
             type,
