@@ -1,10 +1,10 @@
 <!--
 Sync Impact Report:
-- Version change: 1.0.0 -> 1.1.0
+- Version change: 1.1.0 -> 1.2.0
 - Modified principles: None
-- Added sections: XI. Centralized Styling Configuration
+- Added sections: XII. Reusable Shared Components
 - Removed sections: None
-- Templates requiring updates: None
+- Templates requiring updates: ✅ updated
 - Follow-up TODOs: None
 -->
 # CompSci Talks Platform Constitution
@@ -73,6 +73,11 @@ Sync Impact Report:
 - Hardcoding raw hex/rgb values or using non-semantic generic utility classes directly within components or local stylesheets is strictly forbidden.
 - This ensures the platform's visual identity remains cohesive and can be modified or themed easily from one centralized location.
 
+### XII. Reusable Shared Components (NON-NEGOTIABLE)
+- Any component designed or discovered to be reusable across multiple feature slices **must** be moved to the `core/shared` directory.
+- Shared components **must** be as generic as possible, using generic types, configuration inputs, and styling tokens to ensure they are portable and maintain a consistent look and feel.
+- This prevents logic duplication and ensures global UI improvements propagate automatically.
+
 ## Development Workflow
 
 - **Interface → Mock → UI → Adapter**: This is the mandatory build order for every feature.
@@ -92,4 +97,4 @@ Sync Impact Report:
 - Any amendment requires explicit documentation of the rationale, impact analysis, and a migration plan for existing code.
 - All code reviews must verify compliance with these principles before approval.
 
-**Version**: 1.1.0 | **Ratified**: 2026-03-11 | **Last Amended**: 2026-03-12
+**Version**: 1.2.0 | **Ratified**: 2026-03-11 | **Last Amended**: 2026-03-16

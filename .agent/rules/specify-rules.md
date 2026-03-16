@@ -42,7 +42,6 @@ cd src; pytest; ruff check .
 ## Recent Changes
 - 017-firebase-backend-migration: Added TypeScript 5.9, Angular 21.2.0 + `@angular/fire`, `firebase`, `rxjs`
 - 012-e2e-app-flow-verify: Added JavaScript / Node.js + Playwright (for browser automation), Gherkin/Cucumber.js (for reporting)
-- 009-supabase-integration: Added TypeScript / Angular 21 + `@supabase/supabase-js`, `rxjs`
 
 
 <!-- MANUAL ADDITIONS START -->

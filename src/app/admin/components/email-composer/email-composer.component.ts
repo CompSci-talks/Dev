@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
 import { EMAIL_SERVICE, IEmailService, EmailPayload } from '../../services/email.service';
 import { Attendee } from '../../../core/models/attendance.model';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
     selector: 'app-email-composer',
@@ -41,7 +42,8 @@ export class EmailComposerComponent {
     };
 
     constructor(
-        @Inject(EMAIL_SERVICE) private emailService: IEmailService
+        @Inject(EMAIL_SERVICE) private emailService: IEmailService,
+        private toastService: ToastService
     ) { }
 
     get recipientEmails(): string[] {
@@ -66,6 +68,7 @@ export class EmailComposerComponent {
             error: (err) => {
                 console.error('Failed to send email', err);
                 this.isSending = false;
+                this.toastService.error('Failed to send email. Please try again.');
             }
         });
     }

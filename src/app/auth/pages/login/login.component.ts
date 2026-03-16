@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
     selector: 'app-login',
@@ -14,6 +15,7 @@ export class LoginComponent {
     authService = inject(AUTH_SERVICE);
     router = inject(Router);
     route = inject(ActivatedRoute);
+    toastService = inject(ToastService);
 
     email = '';
     password = '';
@@ -35,6 +37,7 @@ export class LoginComponent {
             error: (err) => {
                 this.errorMessage = err.message || 'Login failed';
                 this.isLoading = false;
+                this.toastService.error(this.errorMessage);
             }
         });
     }

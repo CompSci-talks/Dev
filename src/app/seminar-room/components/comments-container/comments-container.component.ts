@@ -6,6 +6,7 @@ import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { COMMENT_SERVICE } from '../../../core/contracts/comment.interface';
 import { Observable, map } from 'rxjs';
 import { Comment } from '../../../core/models/comment.model';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
     selector: 'app-comments-container',
@@ -18,6 +19,7 @@ export class CommentsContainerComponent implements OnInit {
 
     private commentService = inject(COMMENT_SERVICE);
     private authService = inject(AUTH_SERVICE);
+    private toastService = inject(ToastService);
 
     comments$!: Observable<Comment[]>;
     isAuthenticated$!: Observable<boolean>;
@@ -43,6 +45,7 @@ export class CommentsContainerComponent implements OnInit {
         this.commentService.submitComment(this.seminarId, event.text, event.parentId).subscribe({
             next: () => {
                 this.isSubmitting = false;
+                this.toastService.success('Comment posted successfully.');
                 if (event.parentId) {
                     this.activeReplyId = null; // Close reply UI
                 }
@@ -50,6 +53,7 @@ export class CommentsContainerComponent implements OnInit {
             error: (err) => {
                 console.error('Failed to submit comment:', err);
                 this.isSubmitting = false;
+                this.toastService.error('Failed to post comment. Please try again.');
             }
         });
     }
