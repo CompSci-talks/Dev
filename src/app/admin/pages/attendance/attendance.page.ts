@@ -48,19 +48,31 @@ export class AttendancePageComponent implements OnInit {
 
     loadData(id: string): void {
         this.isLoading = true;
+
+        // Safety timeout for Firestore index issues
+        const timeoutId = setTimeout(() => {
+            if (this.isLoading) {
+                this.isLoading = false;
+                this.toastService.error('Loading timed out. This may be due to missing database indexes.');
+            }
+        }, 10000);
+
         forkJoin({
             seminar: this.seminarService.getSeminarById(id),
             attendees: this.attendanceService.getAttendees(id)
         }).subscribe({
             next: (data) => {
+                clearTimeout(timeoutId);
                 this.seminar = data.seminar;
                 this.attendees = data.attendees;
                 this.applyFilters();
                 this.isLoading = false;
             },
             error: (err) => {
+                clearTimeout(timeoutId);
                 console.error('Error loading attendance data', err);
                 this.isLoading = false;
+                this.toastService.error('Failed to load attendance data.');
             }
         });
     }

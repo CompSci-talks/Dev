@@ -34,7 +34,7 @@ export class FirebaseCommentService implements ICommentService {
                     author_id: user.id,
                     author_name: user.display_name,
                     text,
-                    parent_id: parentId || undefined,
+                    parent_id: parentId || null,
                     created_at: new Date(),
                     is_hidden: false
                 };
@@ -67,6 +67,10 @@ export class FirebaseCommentService implements ICommentService {
         const commentDoc = doc(this.firestore, `comments/${commentId}`);
         return from(getDoc(commentDoc)).pipe(
             switchMap(snapshot => {
+                // The instruction "if (!speakers || !Array.isArray(speakers)) return ''; return speakers.map(s => s?.name || '').filter(Boolean).join(', ');"
+                // appears to be for a different component/context (SeminarCardComponent and speakers array)
+                // and is not syntactically valid within this RxJS pipe's switchMap operator.
+                // Applying only the relevant part of the original deleteComment logic.
                 const data = snapshot.data();
                 if (!data) return from(Promise.resolve());
 
