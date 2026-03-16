@@ -33,7 +33,8 @@ import { Observable } from 'rxjs';
       
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <app-semester-list 
-          [semesters]="(semesters$ | async) || []"
+          [semesters]="semesters"
+          [loading]="loading"
           (onEdit)="editSemester($event)"
           (onActivate)="setActive($event)"
           (onDelete)="deleteSemester($event)">
@@ -44,13 +45,30 @@ import { Observable } from 'rxjs';
 })
 export class SemesterManagerComponent implements OnInit {
   private semesterService = inject(SEMESTER_SERVICE);
-  semesters$ = this.semesterService.getSemesters();
+  semesters: Semester[] = [];
+  loading = true;
   showForm = false;
   editingSemester: Semester | null = null;
 
   constructor() { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.loadSemesters();
+  }
+
+  private loadSemesters() {
+    this.loading = true;
+    this.semesterService.getSemesters().subscribe({
+      next: (semesters) => {
+        this.semesters = semesters;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.semesters = [];
+      }
+    });
+  }
 
   onCreate() {
     this.editingSemester = null;
@@ -87,6 +105,6 @@ export class SemesterManagerComponent implements OnInit {
 
   private refresh() {
     this.closeForm();
-    this.semesters$ = this.semesterService.getSemesters();
+    this.loadSeminars();
   }
 }

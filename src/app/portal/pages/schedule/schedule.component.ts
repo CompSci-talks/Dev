@@ -1,27 +1,43 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Seminar } from '../../../core/models/seminar.model';
-import { ISeminarService, SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
+import { SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
 import { SeminarCardComponent } from '../../components/seminar-card/seminar-card.component';
 import { SkeletonCardComponent } from '../../components/skeleton-card/skeleton-card.component';
 import { RouterModule } from '@angular/router';
+import { PaginatedGridComponent } from '../../../shared/components/paginated-grid/paginated-grid.component';
 
 @Component({
     selector: 'app-schedule',
     standalone: true,
-    imports: [CommonModule, SeminarCardComponent, SkeletonCardComponent, RouterModule],
+    imports: [CommonModule, SeminarCardComponent, SkeletonCardComponent, RouterModule, PaginatedGridComponent],
     templateUrl: './schedule.component.html'
 })
 export class ScheduleComponent implements OnInit {
     private seminarService = inject(SEMINAR_SERVICE);
-    upcomingSeminars$!: Observable<Seminar[]>;
+
+    seminars: Seminar[] = [];
+    loading = false;
 
     ngOnInit() {
+        this.loadSeminars();
+    }
+
+    private loadSeminars() {
+        this.loading = true;
         const now = new Date();
-        this.upcomingSeminars$ = this.seminarService.getSeminars().pipe(
+        this.seminarService.getSeminars().pipe(
             map(seminars => seminars.filter(s => new Date(s.date_time) > now))
-        );
+        ).subscribe({
+            next: (data) => {
+                this.seminars = data;
+                this.loading = false;
+            },
+            error: () => {
+                this.loading = false;
+                this.seminars = [];
+            }
+        });
     }
 }

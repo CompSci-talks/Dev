@@ -1,83 +1,67 @@
-# Implementation Plan: Admin User Management
+# Implementation Plan: Refactoring to Paginated Table and Grid Components
 
 **Branch**: `019-admin-user-management` | **Date**: 2026-03-16 | **Spec**: [spec.md](file:///d:/website/compscitalks/specs/019-admin-user-management/spec.md)
-**Input**: Feature specification from `/specs/019-admin-user-management/spec.md`
 
 ## Summary
-
-Implement a centralized user management dashboard for administrators, enabling them to view, filter, and manage user roles and activities. This includes creating reusable pagination and filtering components in the core shared layer, adhering to the project's interface-first and adapter-pattern principles.
+Refactor existing list implementations into reusable `PaginatedTableComponent` and `PaginatedGridComponent`. These components will handle pagination, filtering logic (generic search), and skeleton loading states, ensuring consistency across the Admin Dashboard and Public Schedule.
 
 ## Technical Context
-
-**Language/Version**: TypeScript / Angular 17+  
-**Primary Dependencies**: @angular/core, @angular/fire, Firebase (Auth, Firestore), RxJS, Tailwind CSS  
-**Storage**: Cloud Firestore  
-**Testing**: Cucumber (E2E), Angular Testing Library (Unit)  
-**Target Platform**: Web Browser  
-**Project Type**: Web Application  
-**Performance Goals**: Filter 1,000 users in <500ms (SC-001)  
-**Constraints**: <200ms p95 for service responses, strictly enforced Separation of Concerns  
-**Scale/Scope**: Admin Dashboard (~5 screens/views including user list and details)  
+- **Language/Version**: TypeScript 5.x / Angular 19+
+- **Primary Dependencies**: Tailwind CSS, RxJS, Angular Common
+- **Storage**: Firestore (via Firebase Adapters)
+- **Testing**: Playwright/Cucumber (E2E), Jasmine/Karma (Unit)
+- **Target Platform**: Web
+- **Project Type**: Web Application
+- **Performance Goals**: <500ms filtering for 1k users.
+- **Constraints**: Premium aesthetics, accessibility-first, no `any`.
 
 ## Constitution Check
-
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
-
-- [x] **Separation of Concerns (Adapter Pattern)**: All external service interactions (Auth, Firestore) MUST use interfaces and adapters. (Validated: Port/Adapter pattern in use)
-- [x] **Clean Architecture with Vertical Slicing**: Code MUST be organized by feature slice (`admin`). (Validated: Vertical slicing used for components)
-- [x] **Interface-First Development**: Every service MUST define a port before an adapter. (Validated: Interfaces defined in `contracts/`)
-- [x] **Smart vs. Dumb Components**: Separation MUST be strictly enforced. (Validated: Logic moved to smart components)
-- [x] **Strict Typing**: `any` is forbidden. (Validated: Detailed models in use)
-- [x] **Centralized Styling**: No hardcoded hex values; use Tailwind tokens. (Validated: Tailwind config utilized)
-- [x] **Reusable Shared Components**: Pagination and Filter MUST be moved to `src/app/shared`. (Validated: Components extracted)
+- **Principle I (Adapter Pattern)**: ✅ The components do not interact with Firebase directly; they consume data passed from parent containers.
+- **Principle VII (Strict Typing)**: ✅ Uses specified interfaces and generics where possible.
+- **Principle IX (Error Handling)**: ✅ Components include explicit empty states and will support partial error messaging.
+- **Principle XI (Centralized Styling)**: ✅ Relies on Tailwind utility classes and theme tokens.
+- **Principle XII (Shared Components)**: ✅ This entire task is to promote existing logic to `core/shared` (or `shared/components`).
 
 ## Project Structure
-
-### Documentation (this feature)
-
 ```text
-specs/019-admin-user-management/
-├── spec.md              # Feature specification
-├── plan.md              # This file
-├── research.md          # Implementation research and decisions
-├── data-model.md        # User and Activity models
-├── quickstart.md        # Setup instructions for this feature
-├── contracts/           # Service and Adapter interfaces
-└── tasks.md             # Implementation tasks
+src/app/shared/components/
+├── paginated-table/
+│   ├── paginated-table.component.ts
+│   └── paginated-table.component.html (inline)
+├── paginated-grid/
+│   ├── paginated-grid.component.ts
+│   └── paginated-grid.component.html (inline)
+└── pagination/
+    └── pagination.component.ts
 ```
 
-### Source Code (repository root)
+## Proposed Changes
 
-```text
-src/app/
-├── core/
-│   ├── models/
-│   │   ├── user.model.ts
-│   │   └── user-profile.model.ts
-│   └── services/
-│       └── contracts/
-│           ├── user.service.interface.ts
-│           └── user-activity.service.interface.ts
-├── firebase-adapters/
-│   ├── firebase-auth.service.ts
-│   ├── firebase-user-profile.service.ts
-│   └── firebase-user-activity.service.ts
-├── shared/
-│   └── components/
-│       ├── pagination/
-│       └── text-filter/
-└── admin/
-    ├── components/
-    │   ├── user-list/
-    │   ├── user-detail/
-    │   └── role-toggle/
-    └── pages/
-        ├── user-management-page/
-        └── user-detail-page/
-```
+### [MODIFY] [PaginatedTableComponent](file:///d:/website/compscitalks/src/app/shared/components/paginated-table/paginated-table.component.ts)
+- Add accessibility attributes (ARIA).
+- Ensure consistent styling with platform (dark mode support).
 
-**Structure Decision**: Angular feature-based vertical slicing with a centralized core for shared components and ports. Note: Adapters are colocated in `firebase-adapters` to facilitate provider swapping as per Principle I.
+### [MODIFY] [PaginatedGridComponent](file:///d:/website/compscitalks/src/app/shared/components/paginated-grid/paginated-grid.component.ts)
+- Integrate with `SkeletonCardComponent` as the default skeleton if none provided.
+- Add responsive grid gap tuning.
 
-## Complexity Tracking
+### [REFAC] Administrative Tables
+- **User Management**: `src/app/admin/pages/user-management-page/user-management-page.component.ts`
+- **Seminar Management**: `src/app/admin/pages/seminar-manager/seminar-manager.component.ts`
+- **Semester Management**: `src/app/admin/pages/semester-manager/semester-manager.component.ts`
+- **Speaker Management**: `src/app/admin/pages/speaker-manager/speaker-manager.component.ts`
+- **Tag Management**: `src/app/admin/pages/tag-manager/tag-manager.component.ts`
 
-> **No violations identified.**
+### [REFAC] Public Grid Views
+- **Upcoming Schedule**: `src/app/portal/pages/schedule/schedule.component.ts`
+- **Archive**: `src/app/portal/pages/archive/archive.component.ts`
+
+## Verification Plan
+
+### Automated Tests
+- Run `npm run test` (if available) or existing unit tests for components.
+- playwright/cucumber tests for user list filtering and pagination.
+
+### Manual Verification
+- Verify loading states via "Fast 3G" network throttling in Chrome DevTools.
+- Verify dark mode switch consistency.

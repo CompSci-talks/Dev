@@ -1,26 +1,32 @@
 # Data Model: Admin User Management
 
-## User Profile
-- **uid**: `string` (Primary Key, matches Firebase Auth UID)
-- **displayName**: `string`
-- **email**: `string`
-- **role**: `'admin' | 'authenticated' | 'moderator'` (Updated to match `UserRole` type)
-- **photoURL**: `string` (optional)
-- **createdAt**: `Timestamp`
-- **lastActiveTimestamp**: `Timestamp` (FR-011)
-- **lastLogin**: `Timestamp`
-- **attendanceCount**: `number` (Derived or cached count of seminar participations)
-- **preferredTopicAreas**: `string[]` (FR-011 - Optional list of interests)
+## Entities
 
-## User Activity
-- **id**: `string`
-- **userId**: `string` (Foreign Key to User)
-- **type**: `'seminar_attendance' | 'comment_posted' | 'comment_replied' | 'profile_updated'`
-- **targetId**: `string` (ID of the related seminar or comment)
-- **timestamp**: `Timestamp`
-- **metadata**: `Record<string, any>` (e.g., seminar title, comment snippet)
+### UserProfile (Core)
+- **uid**: string (Primary Key)
+- **displayName**: string
+- **email**: string
+- **role**: 'admin' | 'user'
+- **lastActiveTimestamp**: Timestamp
+- **preferredTopicAreas**: string[]
+- **createdAt**: Timestamp
+
+### SeminarAttendance
+- **userId**: string (Foreign Key to UserProfile.uid)
+- **seminarId**: string (Foreign Key to Seminar.id)
+- **timestamp**: Timestamp
+- **attended**: boolean
+
+### Seminar (Reference)
+- **id**: string
+- **title**: string
+- **date_time**: Timestamp
+- **location**: string
 
 ## Relationships
-- **User** (1) <---> (N) **Seminar Attendance**
-- **User** (1) <---> (N) **Comments**
-- **User** (1) <---> (N) **Activity Logs**
+- **UserProfile** has-many **SeminarAttendance**
+- **UserProfile** has-many **Comments** (stored in `seminars/{id}/comments`)
+
+## Validation Rules
+- **Role**: Must be either 'admin' or 'user'.
+- **Self-Demotion Prevention**: The active user's UID must not match the UID being demoted if the active user is the only admin (soft check in UI/Guard).

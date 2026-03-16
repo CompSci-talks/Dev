@@ -1,32 +1,26 @@
-# Research: Admin User Management
+# Research: Unified Paginated List Components
 
-## Decision 1: Firestore Pagination Strategy
-**Decision**: Use `query.startAfter()` or `query.limit()` with a cursor-based approach.
-**Rationale**: Firestore does not support traditional offset pagination efficiently (you pay for all skipped documents). Cursor-based pagination is the standard and most performant way to handle large collections.
-**Alternatives considered**: 
-- **Offset pagination**: Rejected due to cost and performance issues at scale.
-- **Client-side pagination**: Rejected because the user list could grow beyond a reasonable size for the client to handle efficiently.
+## Technical Context
+- **Framework**: Angular 19+ (Standalone)
+- **Styling**: Tailwind CSS
+- **Data Source**: Firestore (via adapters)
+- **Interaction Pattern**: Template-based content projection for rows/cells.
 
-## Decision 2: Reusable Logic in Core
-**Decision**: Create standalone components for `Pagination` and `Filter` in `core/shared/components`.
-**Rationale**: These are purely presentational/coordinating components (Dumb Components) that can be reused across different feature lists (e.g., Attendees, User Management). Consistent UI and logic propagation.
-**Alternatives considered**:
-- **Logic-only Service**: Rejected because UI consistency is just as important as logic consistency in this project.
+## Decision: Specialized vs Generic Component
+- **Decision**: Implement two specialized components: `PaginatedTableComponent` and `PaginatedGridComponent`.
+- **Rationale**: 
+  - Tables and Grids have fundamentally different DOM structures (`<table>` vs `<div>` grid).
+  - Attempting a single component would lead to complex conditional logic and poor accessibility.
+  - Common logic (pagination, filtering, loading states) can be shared via documentation or a common interface/base class if needed, but simple duplication for specific UI needs is cleaner for Angular components.
+- **Alternatives Considered**: 
+  - One generic `UnifiedListComponent`: Rejected because it makes semantic HTML (`<thead>`, `<tbody>`, etc.) difficult to maintain.
 
-## Decision 3: Role Management
-**Decision**: Use Firestore document-based roles (e.g., `users/{uid}/role`).
-**Rationale**: Easier to manage and query within the application dashboard.
-**Alternatives considered**:
-- **Custom Claims ONLY**: Harder to list all admins/users efficiently without a server-side SDK/Admin SDK.
+## Research Task: Angular Content Projection Best Practices
+- **Goal**: Ensure the component is flexible enough for any row layout.
+- **Finding**: Using `TemplateRef` with `@Input` (as currently implemented) is more flexible than simple `<ng-content>` because it allows the child to pass a "context" (the item data) back to the parent's template.
+- **Decision**: Stick with `itemTemplate: TemplateRef<any>` pattern.
 
-## Decision 4: Multi-Recipient Email
-**Decision**: Pass a list of email strings to the `EmailService.openComposer(recipients: string[])` method.
-**Rationale**: Consistent with how the attendee email feature was intended to work.
-**Alternatives considered**:
-- **Direct Mailgun/SendGrid integration**: Rejected to follow the "No Custom Backend" principle (Constitution VI).
-
-## Decision 5: Real-time Role Synchronization [NEW]
-**Decision**: Use `docData` (Firestore listener) in `FirebaseAuthService` to react to role changes.
-**Rationale**: Solves the "Invisible Admin" bug where manual role promotions in the Google Cloud/Firebase console were not reflected without a manual refresh or logout. Provides a premium, reactive UX.
-**Alternatives considered**:
-- **One-time fetch on login**: Rejected as it leads to stale permissions and poor DX during administrative promotion.
+## Research Task: Skeleton Screens in Tailwind
+- **Goal**: Implement smooth pulse animations.
+- **Finding**: Tailwind's `animate-pulse` is sufficient. Using CSS Grid for skeleton cards and `<tr>` with dummy `<td>` for tables maintains layout stability.
+- **Decision**: Use `animate-pulse` on container elements with fixed heights.

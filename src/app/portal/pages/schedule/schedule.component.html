@@ -7,19 +7,15 @@
         <a routerLink="/archive" class="btn btn-outline">View Previous Talks</a>
     </div>
 
-    <ng-container *ngIf="upcomingSeminars$ | async as seminars; else loading">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <app-seminar-card *ngFor="let sem of seminars" [seminar]="sem"></app-seminar-card>
-        </div>
+    <app-paginated-grid [data]="seminars" [loading]="loading" [itemTemplate]="seminarTmpl"
+        [skeletonTemplate]="skeletonTmpl" emptyMessage="No upcoming seminars found. Check back later!"
+        [showPagination]="false">
+        <ng-template #seminarTmpl let-sem>
+            <app-seminar-card [seminar]="sem"></app-seminar-card>
+        </ng-template>
 
-        <div *ngIf="seminars.length === 0" class="card p-12 text-center text-text-muted">
-            No upcoming seminars found. Check back later!
-        </div>
-    </ng-container>
-
-    <ng-template #loading>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <ng-template #skeletonTmpl>
             <app-skeleton-card *ngFor="let i of [1,2,3,4,5,6]"></app-skeleton-card>
-        </div>
-    </ng-template>
+        </ng-template>
+    </app-paginated-grid>
 </div>

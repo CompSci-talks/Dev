@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SPEAKER_SERVICE } from '../../../core/contracts/speaker.interface';
 import { Speaker } from '../../../core/models/seminar.model';
-import { Observable } from 'rxjs';
+import { SpeakerListComponent } from './speaker-list.component';
 
 @Component({
   selector: 'app-speaker-manager',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SpeakerListComponent],
   template: `
     <div class="max-w-4xl">
       <div class="flex justify-between items-center mb-6">
@@ -57,24 +57,12 @@ import { Observable } from 'rxjs';
       </div>
 
       <!-- List -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden text-sm">
-        <div class="p-4 border-b border-slate-100 bg-slate-50 font-bold grid grid-cols-3 gap-4">
-          <span>Name</span>
-          <span>Affiliation</span>
-          <span>Actions</span>
-        </div>
-        <div *ngFor="let speaker of speakers$ | async" class="p-4 border-b border-slate-100 grid grid-cols-3 gap-4 hover:bg-slate-50 items-center">
-          <div class="font-medium text-slate-900">{{ speaker.name }}</div>
-          <div class="text-slate-600">{{ speaker.affiliation }}</div>
-          <div class="flex space-x-3">
-            <button (click)="editSpeaker(speaker)" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
-            <button (click)="deleteSpeaker(speaker.id)" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
-          </div>
-        </div>
-        <div *ngIf="!(speakers$ | async)?.length" class="p-12 text-center text-slate-400">
-          No speakers found. Create your first speaker to get started.
-        </div>
-      </div>
+      <app-speaker-list
+        [speakers]="speakers"
+        [loading]="loading"
+        (edit)="editSpeaker($event)"
+        (delete)="deleteSpeaker($event)"
+      ></app-speaker-list>
     </div>
   `
 })
@@ -82,7 +70,8 @@ export class SpeakerManagerComponent implements OnInit {
   private speakerService = inject(SPEAKER_SERVICE);
   private fb = inject(FormBuilder);
 
-  speakers$ = this.speakerService.getSpeakers();
+  speakers: Speaker[] = [];
+  loading = false;
   showForm = false;
   editingSpeaker: Speaker | null = null;
   speakerForm: FormGroup = this.fb.group({
@@ -93,7 +82,23 @@ export class SpeakerManagerComponent implements OnInit {
     avatar_url: ['']
   });
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.loadSpeakers();
+  }
+
+  private loadSpeakers() {
+    this.loading = true;
+    this.speakerService.getSpeakers().subscribe({
+      next: (speakers) => {
+        this.speakers = speakers;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.speakers = [];
+      }
+    });
+  }
 
   editSpeaker(speaker: Speaker) {
     this.editingSpeaker = speaker;
@@ -115,7 +120,7 @@ export class SpeakerManagerComponent implements OnInit {
 
       operation.subscribe(() => {
         this.cancelEdit();
-        this.speakers$ = this.speakerService.getSpeakers();
+        this.loadSpeakers();
       });
     }
   }
@@ -123,7 +128,7 @@ export class SpeakerManagerComponent implements OnInit {
   deleteSpeaker(id: string) {
     if (confirm('Are you sure?')) {
       this.speakerService.deleteSpeaker(id).subscribe(() => {
-        this.speakers$ = this.speakerService.getSpeakers();
+        this.loadSpeakers();
       });
     }
   }

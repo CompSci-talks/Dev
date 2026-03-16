@@ -11,6 +11,8 @@
 
 - Q: What is the permission hierarchy for role management? → A: Flattened Hierarchy: All users with 'admin' role can promote others to 'admin' or demote them. No 'super-admin' role is required.
 - Q: How is the initial admin bootstrapped? → A: CLI/Script: A separate utility script is used to promote the first user UID to 'admin' in Firestore.
+- Q: What loading state should the unified paginated list use? → A: **Skeleton Screens**: Placeholder rows or cards that pulse while data is fetching. [CLARIFIED: 2026-03-16]
+- Q: How will the specialized components support different visual layouts (e.g., Tables vs. Cards)? → A: **Template-Based Projection**: Using `<ng-template>` to allow parent components to define the inner UI while the base components (`PaginatedTableComponent`, `PaginatedGridComponent`) handle logic. [CLARIFIED: 2026-03-16]
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -107,7 +109,10 @@ As an administrator, I want to click on a user profile to view their detailed ac
 - **FR-015**: System MUST prevent an Admin from changing their own role (self-demotion). [NEW]
 - **FR-016**: The User Detail view MUST use skeleton screens during initial data fetch. [NEW]
 - **FR-017**: All interactive elements MUST be keyboard-accessible and include ARIA labels. [NEW]
-- **FR-018**: System MUST display specific error messages if only a part of the user activity fails to load. [NEW]
+- FR-018: System MUST display specific error messages if only a part of the user activity fails to load. [NEW]
+- FR-021: System MUST refactor all administrative tables (Seminars, Semesters, Speakers, Tags) to use `PaginatedTableComponent`. [NEW: 2026-03-16]
+- FR-022: System MUST refactor all public grid views (Upcoming Seminars, Archive) to use `PaginatedGridComponent`. [NEW: 2026-03-16]
+- FR-023: Specialized components MUST support custom empty states and loading skeletons specific to the content type (e.g., Seminar skeletons vs User skeletons). [NEW: 2026-03-16]
 
 ### Key Entities
 

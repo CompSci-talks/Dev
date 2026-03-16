@@ -13,7 +13,7 @@ import { BehaviorSubject, combineLatest, debounceTime, map, startWith, switchMap
 @Component({
     selector: 'app-user-management-page',
     standalone: true,
-    imports: [CommonModule, UserListComponent, TextFilterComponent, PaginationComponent],
+    imports: [CommonModule, UserListComponent, TextFilterComponent],
     template: `
     <div class="p-6">
       <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
@@ -39,18 +39,13 @@ import { BehaviorSubject, combineLatest, debounceTime, map, startWith, switchMap
         [loading]="loading"
         [selectedUserIds]="selectedUserIds"
         [currentUserId]="currentUserId"
+        [currentPage]="currentPage"
+        [hasMore]="hasMore"
         (viewDetail)="onViewDetail($event)"
         (selectionChange)="onSelectionChange($event)"
         (roleChange)="onRoleChange($event)"
+        (pageChange)="onPageChange($event)"
       ></app-user-list>
-
-      <div class="mt-4">
-        <app-pagination
-          [currentPage]="currentPage"
-          [hasMore]="hasMore"
-          (pageChange)="onPageChange($event)"
-        ></app-pagination>
-      </div>
     </div>
   `
 })

@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TAG_SERVICE } from '../../../core/contracts/tag.interface';
 import { Tag } from '../../../core/models/seminar.model';
-import { Observable } from 'rxjs';
+import { TagListComponent } from './tag-list.component';
 
 @Component({
   selector: 'app-tag-manager',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TagListComponent],
   template: `
     <div class="max-w-4xl">
       <div class="flex justify-between items-center mb-6">
@@ -51,28 +51,12 @@ import { Observable } from 'rxjs';
       </div>
 
       <!-- List -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden text-sm">
-        <div class="p-4 border-b border-slate-100 bg-slate-50 font-bold grid grid-cols-3 gap-4">
-          <span>Preview</span>
-          <span>Name</span>
-          <span>Actions</span>
-        </div>
-        <div *ngFor="let tag of tags$ | async" class="p-4 border-b border-slate-100 grid grid-cols-3 gap-4 hover:bg-slate-50 items-center">
-          <div>
-             <span [style.backgroundColor]="tag.color_code" class="px-3 py-1 rounded-full text-white text-xs font-bold shadow-sm">
-               {{ tag.name }}
-             </span>
-          </div>
-          <div class="font-medium text-slate-900 font-mono">{{ tag.color_code }}</div>
-          <div class="flex space-x-3">
-            <button (click)="editTag(tag)" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
-            <button (click)="deleteTag(tag.id)" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
-          </div>
-        </div>
-        <div *ngIf="!(tags$ | async)?.length" class="p-12 text-center text-slate-400">
-          No tags found. Create your first tag to get started.
-        </div>
-      </div>
+      <app-tag-list
+        [tags]="tags"
+        [loading]="loading"
+        (edit)="editTag($event)"
+        (delete)="deleteTag($event)"
+      ></app-tag-list>
     </div>
   `
 })
@@ -80,7 +64,8 @@ export class TagManagerComponent implements OnInit {
   private tagService = inject(TAG_SERVICE);
   private fb = inject(FormBuilder);
 
-  tags$ = this.tagService.getTags();
+  tags: Tag[] = [];
+  loading = false;
   showForm = false;
   editingTag: Tag | null = null;
   tagForm: FormGroup = this.fb.group({
@@ -88,7 +73,23 @@ export class TagManagerComponent implements OnInit {
     color_code: ['#3B82F6', Validators.required]
   });
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.loadTags();
+  }
+
+  private loadTags() {
+    this.loading = true;
+    this.tagService.getTags().subscribe({
+      next: (tags) => {
+        this.tags = tags;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.tags = [];
+      }
+    });
+  }
 
   editTag(tag: Tag) {
     this.editingTag = tag;
@@ -110,7 +111,7 @@ export class TagManagerComponent implements OnInit {
 
       operation.subscribe(() => {
         this.cancelEdit();
-        this.tags$ = this.tagService.getTags();
+        this.loadTags();
       });
     }
   }
@@ -118,7 +119,7 @@ export class TagManagerComponent implements OnInit {
   deleteTag(id: string) {
     if (confirm('Are you sure?')) {
       this.tagService.deleteTag(id).subscribe(() => {
-        this.tags$ = this.tagService.getTags();
+        this.loadTags();
       });
     }
   }
