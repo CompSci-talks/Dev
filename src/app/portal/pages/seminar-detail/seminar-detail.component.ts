@@ -10,11 +10,12 @@ import { VideoPlayerComponent } from '../../../seminar-room/components/video-pla
 import { SlideViewerComponent } from '../../../seminar-room/components/slide-viewer/slide-viewer.component';
 import { RsvpButtonComponent } from '../../components/rsvp-button/rsvp-button.component';
 import { CommentsContainerComponent } from '../../../seminar-room/components/comments-container/comments-container.component';
+import { MarkdownPipe } from "../../../shared/pipes/markdown-pipe";
 
 @Component({
     selector: 'app-seminar-detail',
     standalone: true,
-    imports: [CommonModule, RouterModule, SeminarStatusPipe, VideoPlayerComponent, SlideViewerComponent, RsvpButtonComponent, CommentsContainerComponent],
+    imports: [CommonModule, RouterModule, SeminarStatusPipe, VideoPlayerComponent, SlideViewerComponent, RsvpButtonComponent, CommentsContainerComponent, MarkdownPipe],
     templateUrl: './seminar-detail.component.html'
 })
 export class SeminarDetailComponent implements OnInit {

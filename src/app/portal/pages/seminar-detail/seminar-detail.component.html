@@ -79,7 +79,7 @@
                 </div>
             </div>
 
-            <div class="prose max-w-none mb-12 text-text-main" [innerHTML]="seminar.data.abstract"></div>
+            <div class="prose max-w-none mb-12 text-text-main" [innerHTML]="seminar.data.abstract | markdown"></div>
 
             <!-- Materials section -->
             <ng-container *ngIf="isAuthenticated$ | async; else guestState">
