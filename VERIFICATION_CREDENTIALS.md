@@ -3,10 +3,14 @@
 These credentials are used for the automated and manual verification of the Firebase backend migration.
 
 ## Admin User
-- **Email**: `admin@compsci.test`
-- **Password**: `TestPassword123!`
+- **Email**: `user83@compsci.test`
+- **Password**: `password`
 - **Role**: `admin`
 
+## Regular User
+- **Email**: `admin@compsci.test`
+- **Password**: `TestPassword123!`
+- **Role**: `authenticated`
 ## Regular User
 - **Email**: `user@compsci.test`
 - **Password**: `TestPassword123!`
