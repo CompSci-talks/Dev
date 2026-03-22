@@ -162,14 +162,23 @@ export class SeminarFormComponent implements OnInit {
     d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
     return d.toISOString().slice(0, 16);
   }
-
   onSubmit() {
     if (this.seminarForm.valid) {
       const val = this.seminarForm.value;
       this.onSave.emit({
         ...val,
-        date_time: new Date(val.date_time)
+        date_time: new Date(val.date_time),
+        video_material_id: this.extractDriveId(val.video_material_id),
+        presentation_material_id: this.extractDriveId(val.presentation_material_id),
+        thumbnail_url: val.thumbnail_url?.trim() || null
       });
     }
+  }
+
+  private extractDriveId(input: string): string | null {
+    if (!input || !input.trim()) return null;
+    if (/^[a-zA-Z0-9_-]{25,}$/.test(input)) return input;
+    const match = input.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    return match ? match[1] : input;
   }
 }
