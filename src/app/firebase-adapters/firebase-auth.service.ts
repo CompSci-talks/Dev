@@ -37,7 +37,7 @@ export class FirebaseAuthService implements IAuthService {
                 this.profileSub = this.userService.getUserById$(firebaseUser.uid).subscribe(profile => {
                     console.log('[FirebaseAuthService] Received profile update:', profile);
                     this.zone.run(() => {
-                        const mappedUser = this.mapFirebaseUser(firebaseUser, profile?.role);
+                        const mappedUser = this.mapFirebaseUser(firebaseUser, profile?.role, profile?.photo_url);
                         console.log('[FirebaseAuthService] Emitting user with role:', mappedUser.role);
                         this.userSubject.next(mappedUser);
                         this.currentUserSignal.set(mappedUser);
