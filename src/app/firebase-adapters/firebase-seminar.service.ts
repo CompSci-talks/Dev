@@ -2,7 +2,7 @@ import { Injectable, inject, Injector, runInInjectionContext } from '@angular/co
 import { Firestore, collectionData, docData } from '@angular/fire/firestore';
 import { collection, doc, addDoc, updateDoc, deleteDoc, query, where, getDoc, getDocs, writeBatch, limit, serverTimestamp, orderBy } from 'firebase/firestore';
 // Added catchError to the rxjs imports
-import { Observable, from, map, switchMap, combineLatest, of, catchError } from 'rxjs';
+import { Observable, from, map, switchMap, combineLatest, of, catchError, take } from 'rxjs';
 import { ISeminarService } from '../core/contracts/seminar.interface';
 import { Seminar } from '../core/models/seminar.model';
 import { Attendee } from '../core/models/attendance.model';
@@ -97,7 +97,7 @@ export class FirebaseSeminarService implements ISeminarService {
             }),
             map(enriched => sanitizeForFirestore(enriched)),
             switchMap(sanitized => from(updateDoc(seminarDoc, sanitized))),
-            switchMap(() => this.getSeminarById(id).pipe(map(s => s!)))
+            switchMap(() => this.getSeminarById(id).pipe(take(1), map(s => s!)))
         );
     }
 

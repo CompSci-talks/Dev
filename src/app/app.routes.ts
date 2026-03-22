@@ -42,11 +42,12 @@ export const routes: Routes = [
         canActivate: [AdminGuard],
         loadComponent: () => import('./admin/components/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
         children: [
-            { path: '', redirectTo: 'semesters', pathMatch: 'full' },
-            {
-                path: 'semesters',
-                loadComponent: () => import('./admin/pages/semester-manager/semester-manager.component').then(m => m.SemesterManagerComponent)
-            },
+            { path: '', redirectTo: 'seminars', pathMatch: 'full' },
+            // TODO: implement semester manager
+            // {
+            //     path: 'semesters',
+            //     loadComponent: () => import('./admin/pages/semester-manager/semester-manager.component').then(m => m.SemesterManagerComponent)
+            // },
             {
                 path: 'seminars',
                 loadComponent: () => import('./admin/pages/seminar-manager/seminar-manager.component').then(m => m.SeminarManagerComponent)

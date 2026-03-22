@@ -22,13 +22,14 @@ import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
         <!-- Nav -->
         <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
 
-          <a routerLink="semesters" routerLinkActive="bg-slate-800 text-white"
+          <!-- TODO: implement semester manager -->
+          <!-- <a routerLink="semesters" routerLinkActive="bg-slate-800 text-white"
              class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-800 hover:text-white transition-colors group">
             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
             Semester Manager
-          </a>
+          </a> -->
 
           <a routerLink="seminars" routerLinkActive="bg-slate-800 text-white"
              class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-800 hover:text-white transition-colors group">
