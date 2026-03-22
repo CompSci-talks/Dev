@@ -103,7 +103,7 @@ import { AUTH_SERVICE } from '../../../contracts/auth.interface';
             <!-- Desktop loading skeleton -->
             <div class="flex items-center gap-4">
               <div class="h-4 w-16 bg-slate-200 rounded animate-pulse"></div>
-              <div class="h-4 w-16 bg-slate-200 rounded animate-pulse"></div>
+              <!-- <div class="h-4 w-16 bg-slate-200 rounded animate-pulse"></div> -->
               <div class="w-8 h-8 rounded-full bg-slate-200 animate-pulse"></div>
             </div>
 
