@@ -8,7 +8,7 @@ export interface IAuthService {
 
     /** Emits true when the initial session check has completed */
     isInitialized$: Observable<boolean>;
-
+    currentUser(): User | null;
     signIn(email: string, password: string): Observable<User>;
     signUp(email: string, password: string, displayName: string): Observable<User>;
     signOut(): Observable<void>;

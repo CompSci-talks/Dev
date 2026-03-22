@@ -1,9 +1,9 @@
-import { Injectable, inject, NgZone } from '@angular/core';
+import { Injectable, inject, NgZone, signal } from '@angular/core';
 import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, User as FirebaseUser, setPersistence, browserLocalPersistence } from '@angular/fire/auth';
 import { BehaviorSubject, Observable, from, map, take, tap, switchMap, Subscription, throwError } from 'rxjs';
 import { IAuthService } from '../core/contracts/auth.interface';
 import { USER_SERVICE } from '../core/contracts/user.service.interface';
-import { User } from '../core/models/user.model';
+import { User, UserRole } from '../core/models/user.model';
 import { Firestore } from '@angular/fire/firestore';
 import { isNameUnique } from '../core/utils/firestore-utils';
 
@@ -23,6 +23,7 @@ export class FirebaseAuthService implements IAuthService {
     isInitialized$ = this.initializedSubject.asObservable();
 
     private profileSub?: Subscription;
+    currentUserSignal = signal<User | null>(null);
 
     constructor() {
         // Listen to Firebase Auth state changes
@@ -39,6 +40,7 @@ export class FirebaseAuthService implements IAuthService {
                         const mappedUser = this.mapFirebaseUser(firebaseUser, profile?.role);
                         console.log('[FirebaseAuthService] Emitting user with role:', mappedUser.role);
                         this.userSubject.next(mappedUser);
+                        this.currentUserSignal.set(mappedUser);
 
                         if (!this.initializedSubject.value) {
                             this.initializedSubject.next(true);
@@ -48,6 +50,7 @@ export class FirebaseAuthService implements IAuthService {
             } else {
                 this.zone.run(() => {
                     this.userSubject.next(null);
+                    this.currentUserSignal.set(null);
                     if (!this.initializedSubject.value) {
                         this.initializedSubject.next(true);
                     }
@@ -56,10 +59,13 @@ export class FirebaseAuthService implements IAuthService {
         });
     }
 
+    currentUser(): User | null {
+        return this.currentUserSignal();
+    }
     signIn(email: string, password: string): Observable<User> {
         return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
             switchMap(credential => this.userService.getUserById(credential.user.uid).pipe(
-                map(profile => this.mapFirebaseUser(credential.user, profile?.role))
+                map(profile => this.mapFirebaseUser(credential.user, profile?.role, profile?.photo_url))
             )),
             tap(user => this.userSubject.next(user))
         );
@@ -97,12 +103,13 @@ export class FirebaseAuthService implements IAuthService {
         return from(signOut(this.auth));
     }
 
-    private mapFirebaseUser(firebaseUser: FirebaseUser, role?: 'admin' | 'moderator' | 'authenticated'): User {
+    private mapFirebaseUser(firebaseUser: FirebaseUser, role?: UserRole, photoURL?: string | null): User {
         return {
             id: firebaseUser.uid,
             email: firebaseUser.email || '',
             display_name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
             role: role || 'authenticated',
+            photo_url: photoURL || firebaseUser.photoURL || null,
             created_at: new Date()
         };
     }

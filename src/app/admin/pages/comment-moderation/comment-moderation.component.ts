@@ -38,9 +38,7 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
         <ng-template #row let-item>
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
-              <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs mr-3">
-                {{ item.comment.author_name.charAt(0) }}
-              </div>
+              <img class="w-10 h-10 rounded-full" [src]="item.comment.author_photoURL || 'https://ui-avatars.com/api/?name=' + item.comment.author_name" alt="{{item.comment.author_name}} image">
               <div>
                 <div class="text-sm font-medium text-slate-900">{{ item.comment.author_name }}</div>
                 <div class="text-[10px] text-slate-400">ID: {{ item.comment.author_id.substring(0, 8) }}...</div>

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RoleToggleComponent } from '../role-toggle/role-toggle.component';
 import { PaginatedTableComponent } from '../../../shared/components/paginated-table/paginated-table.component';
-import { User } from 'firebase/auth';
+import { User } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-user-list',
@@ -41,14 +41,14 @@ import { User } from 'firebase/auth';
       <ng-template #row let-user>
         <td class="w-4 p-4">
           <div class="flex items-center">
-            <input [id]="'checkbox-' + user.uid" type="checkbox" [checked]="selectedUserIds.has(user.uid)" (change)="toggleUser(user.uid)" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-            <label [for]="'checkbox-' + user.uid" class="sr-only">Select {{ user.displayName }}</label>
+            <input [id]="'checkbox-' + user.id" type="checkbox" [checked]="selectedUserIds.has(user.id)" (change)="toggleUser(user.id)" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            <label [for]="'checkbox-' + user.id" class="sr-only">Select {{ user.display_name }}</label>
           </div>
         </td>
         <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-          <img class="w-10 h-10 rounded-full" [src]="user.photoURL || 'https://ui-avatars.com/api/?name=' + user.displayName" alt="{{user.displayName}} image">
+          <img class="w-10 h-10 rounded-full" [src]="user.photoURL || 'https://ui-avatars.com/api/?name=' + user.display_name" alt="{{user.display_name}} image">
           <div class="pl-3">
-            <div class="text-base font-semibold">{{user.displayName}}</div>
+            <div class="text-base font-semibold">{{user.display_name}}</div>
             <div class="font-normal text-gray-500">Last active: {{user.lastActiveTimestamp | date:'short'}}</div>
           </div>
         </th>
@@ -56,8 +56,8 @@ import { User } from 'firebase/auth';
         <td class="px-6 py-4">
            <app-role-toggle 
              [role]="user.role" 
-             [disabled]="user.uid === currentUserId"
-             (roleChange)="onRoleUpdate(user.uid, $event)"
+             [disabled]="user.id === currentUserId"
+             (roleChange)="onRoleUpdate(user.id, $event)"
            ></app-role-toggle>
         </td>
         <td class="px-6 py-4 text-center text-sm font-medium text-gray-900 dark:text-white">
@@ -65,7 +65,7 @@ import { User } from 'firebase/auth';
         </td>
         <td class="px-6 py-4">{{user.createdAt | date:'mediumDate'}}</td>
         <td class="px-6 py-4">
-          <button (click)="viewDetail.emit(user.uid)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View details</button>
+          <button (click)="viewDetail.emit(user.id)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View details</button>
         </td>
       </ng-template>
 
@@ -117,7 +117,7 @@ export class UserListComponent {
 
   toggleAll(event: any): void {
     if (event.target.checked) {
-      this.users.forEach((u) => this.selectedUserIds.add(u.uid));
+      this.users.forEach((u) => this.selectedUserIds.add(u.id));
     } else {
       this.selectedUserIds.clear();
     }

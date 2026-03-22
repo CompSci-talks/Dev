@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { USER_SERVICE } from '../../../core/contracts/user.service.interface';
 import { COMMENT_SERVICE } from '../../../core/contracts/comment.interface';
-import { UserProfile } from '../../../core/models/user-profile.model';
 import { UserActivity } from '../../../core/models/user-activity.model';
 import { UserDetailComponent } from '../../components/user-detail/user-detail.component';
 import { ActivityHistoryComponent } from '../../components/user-activity/activity-history.component';
 import { of, switchMap, catchError, finalize } from 'rxjs';
 import { Comment } from '../../../core/models/comment.model';
+import { User } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-user-detail-page',
@@ -50,11 +50,11 @@ import { Comment } from '../../../core/models/comment.model';
              <div class="space-y-3">
                 <div class="flex justify-between items-center">
                   <span class="text-gray-500 dark:text-gray-400 text-sm">Attendance</span>
-                  <span class="text-blue-600 dark:text-blue-400 font-bold">{{ user.attendanceCount || 0 }} Seminars</span>
+                  <span class="text-blue-600 dark:text-blue-400 font-bold">{{ user.attendance_count || 0 }} Seminars</span>
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-gray-500 dark:text-gray-400 text-sm">Member Since</span>
-                  <span class="text-gray-900 dark:text-white text-sm">{{ user.createdAt | date:'mediumDate' }}</span>
+                  <span class="text-gray-900 dark:text-white text-sm">{{ user.created_at | date:'mediumDate' }}</span>
                 </div>
              </div>
           </div>
@@ -127,7 +127,7 @@ export class UserDetailPageComponent implements OnInit {
   private commentService = inject(COMMENT_SERVICE);
   private route = inject(ActivatedRoute);
 
-  user: UserProfile | null = null;
+  user: User | null = null;
   comments: Comment[] = [];
   loading = true;
   loadingActivity = false;

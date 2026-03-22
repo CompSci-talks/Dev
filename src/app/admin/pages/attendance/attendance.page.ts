@@ -10,6 +10,7 @@ import { Seminar } from '../../../core/models/seminar.model';
 import { Observable, combineLatest } from 'rxjs';
 import { Router } from '@angular/router';
 import { EmailSelectionService } from '../../services/email-selection.service';
+import { User } from '../../../core/models/user.model';
 @Component({
     selector: 'app-attendance-page',
     standalone: true,
@@ -122,15 +123,15 @@ export class AttendancePageComponent implements OnInit {
         if (selected.length === 0) return;
 
         // Map attendees to UserProfile shape expected by EmailSelectionService
-        const profiles = selected.map(a => ({
-            uid: a.id,
-            displayName: a.display_name,
+        const profiles: User[] = selected.map(a => ({
+            id: a.id,
+            display_name: a.display_name,
             email: a.email,
             role: 'authenticated' as const,
-            createdAt: new Date(),
-            lastLogin: new Date(),
-            lastActiveTimestamp: new Date(),
-            attendanceCount: 0
+            created_at: new Date(),
+            last_login: new Date(),
+            last_active_timestamp: new Date(),
+            attendance_count: 0
         }));
 
         this.emailSelectionService.setSelectedUsers(profiles);

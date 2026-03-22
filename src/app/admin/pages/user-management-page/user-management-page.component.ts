@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { USER_SERVICE } from '../../../core/contracts/user.service.interface';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
-import { UserProfile } from '../../../core/models/user-profile.model';
+import { User as AppUser } from '../../../core/models/user.model';
 import { UserListComponent } from '../../components/user-list/user-list.component';
 import { TextFilterComponent } from '../../../shared/components/text-filter/text-filter.component';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
@@ -57,7 +57,7 @@ export class UserManagementPageComponent implements OnInit {
     private router = inject(Router);
     private emailSelectionService = inject(EmailSelectionService);
 
-    users: UserProfile[] = [];
+    users: AppUser[] = [];
     loading = true;
     currentPage = 1;
     hasMore = false;
@@ -67,7 +67,7 @@ export class UserManagementPageComponent implements OnInit {
     private filter$ = new BehaviorSubject<string>('');
     private page$ = new BehaviorSubject<number>(1);
     private pageSize = 10;
-    private lastUsers: (UserProfile | undefined)[] = [undefined]; // For back navigation cursor tracking
+    private lastUsers: (AppUser | undefined)[] = [undefined]; // For back navigation cursor tracking
 
     ngOnInit(): void {
         // Get current user for self-demotion check
@@ -138,7 +138,7 @@ export class UserManagementPageComponent implements OnInit {
         if (this.selectedUserIds.size === 0) return;
 
         // Build full UserProfile objects for the selected UIDs from the current page
-        const selectedProfiles = this.users.filter(u => this.selectedUserIds.has(u.uid));
+        const selectedProfiles = this.users.filter(u => this.selectedUserIds.has(u.id));
         this.emailSelectionService.setSelectedUsers(selectedProfiles);
         this.router.navigate(['/admin/email-composer']);
     }

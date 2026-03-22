@@ -5,16 +5,15 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { QuillModule } from 'ngx-quill';
 // No lucide-angular import
 import { EmailSelectionService } from '../../services/email-selection.service';
-import { UserProfile } from '../../../core/models/user-profile.model';
 import { ToastService } from '../../../core/services/toast.service';
 import { EMAIL_SERVICE } from '../../services/email.service';
+import { User } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-email-composer-page',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, QuillModule],
   templateUrl: './email-composer-page.html',
-  styleUrl: './email-composer-page.scss'
 })
 export class EmailComposerPage implements OnInit {
   private fb = inject(FormBuilder);
@@ -24,7 +23,7 @@ export class EmailComposerPage implements OnInit {
   private emailService = inject(EMAIL_SERVICE);
 
   emailForm!: FormGroup;
-  selectedRecipients: UserProfile[] = [];
+  selectedRecipients: User[] = [];
   isSending = false;
 
   ngOnInit() {
