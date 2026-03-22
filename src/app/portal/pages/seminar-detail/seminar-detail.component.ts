@@ -16,7 +16,8 @@ import { MarkdownPipe } from "../../../shared/pipes/markdown-pipe";
     selector: 'app-seminar-detail',
     standalone: true,
     imports: [CommonModule, RouterModule, SeminarStatusPipe, VideoPlayerComponent, SlideViewerComponent, RsvpButtonComponent, CommentsContainerComponent, MarkdownPipe],
-    templateUrl: './seminar-detail.component.html'
+    templateUrl: './seminar-detail.component.html',
+    styleUrl: './seminar-detail.component.css'
 })
 export class SeminarDetailComponent implements OnInit {
     private seminarService = inject(SEMINAR_SERVICE);
@@ -25,7 +26,7 @@ export class SeminarDetailComponent implements OnInit {
 
     seminar$!: Observable<Seminar | null>;
     isAuthenticated$!: Observable<boolean>;
-
+    seminar: Seminar | null = null;
     isLoading = true;
     imageLoaded = false;
 
@@ -37,10 +38,13 @@ export class SeminarDetailComponent implements OnInit {
                 const id = params.get('id');
                 if (!id) {
                     this.isLoading = false;
+                    this.seminar = null;
                     return of(null);
                 }
 
                 this.isLoading = true;
+                this.seminar = null;
+                this.imageLoaded = false;
 
                 return this.seminarService.getSeminarById(id).pipe(
                     catchError(error => {
@@ -49,9 +53,14 @@ export class SeminarDetailComponent implements OnInit {
                     })
                 );
             }),
-            tap(() => this.isLoading = false),
+            tap((data) => {
+                this.seminar = data;
+                this.isLoading = false;
+            }),
             shareReplay(1)
         );
+
+        this.seminar$.subscribe();
     }
 
     getSpeakerNames(speakers: any[] | undefined): string {
