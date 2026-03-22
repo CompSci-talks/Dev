@@ -135,9 +135,9 @@ export class MultiSelectComponent implements ControlValueAccessor {
         return this.selectedIds.includes(id);
     }
 
-    // ControlValueAccessor methods
+    // ControlValueAccessor methods    
     writeValue(value: any): void {
-        this.selectedIds = Array.isArray(value) ? value : [];
+        this.selectedIds = Array.isArray(value) ? value.filter((id: string) => !!id) : [];
     }
 
     registerOnChange(fn: any): void {

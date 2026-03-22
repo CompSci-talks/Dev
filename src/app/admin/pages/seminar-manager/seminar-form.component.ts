@@ -168,13 +168,14 @@ export class SeminarFormComponent implements OnInit {
       this.onSave.emit({
         ...val,
         date_time: new Date(val.date_time),
+        speaker_ids: val.speaker_ids.filter((id: string) => !!id),
+        tag_ids: val.tag_ids.filter((id: string) => !!id),
         video_material_id: this.extractDriveId(val.video_material_id),
         presentation_material_id: this.extractDriveId(val.presentation_material_id),
         thumbnail_url: val.thumbnail_url?.trim() || null
       });
     }
   }
-
   private extractDriveId(input: string): string | null {
     if (!input || !input.trim()) return null;
     if (/^[a-zA-Z0-9_-]{25,}$/.test(input)) return input;
