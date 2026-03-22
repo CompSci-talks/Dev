@@ -2,14 +2,14 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AUTH_SERVICE } from '../../core/contracts/auth.interface';
-import { USER_SERVICE } from '../../core/contracts/user.service.interface';
+import { USER_SERVICE, IUserService } from '../../core/contracts/user.service.interface';
 import { COMMENT_SERVICE } from '../../core/contracts/comment.interface';
 import { SEMINAR_SERVICE } from '../../core/contracts/seminar.interface';
 import { UserDetailComponent } from '../../admin/components/user-detail/user-detail.component';
 import { UserProfile } from '../../core/models/user-profile.model';
 import { Comment } from '../../core/models/comment.model';
 import { Seminar } from '../../core/models/seminar.model';
-import { switchMap, of, catchError, finalize, take, combineLatest } from 'rxjs';
+import { of, catchError, finalize, take, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-profile-page',
@@ -35,7 +35,11 @@ import { switchMap, of, catchError, finalize, take, combineLatest } from 'rxjs';
 
           <!-- Left column -->
           <div class="lg:col-span-1 space-y-6">
-            <app-user-detail [user]="user"></app-user-detail>
+            <app-user-detail
+              [user]="user"
+              [allowEdit]="true"
+              (onEditPhoto)="openModal()">
+            </app-user-detail>
 
             <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
               <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Quick Stats</h3>
@@ -95,7 +99,6 @@ import { switchMap, of, catchError, finalize, take, combineLatest } from 'rxjs';
               </div>
 
               <div class="p-6">
-
                 <!-- Loading -->
                 @if (loadingActivity) {
                   <div class="space-y-4">
@@ -152,11 +155,9 @@ import { switchMap, of, catchError, finalize, take, combineLatest } from 'rxjs';
                   @for (seminar of attendedSeminars; track seminar.id) {
                     <a [routerLink]="['/seminar', seminar.id]"
                        class="flex gap-4 py-3 border-b border-gray-100 dark:border-gray-700 last:border-0 hover:bg-slate-50 rounded-lg px-2 transition-colors group">
-                      <!-- Thumbnail -->
                       <div class="w-20 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-slate-200">
                         @if (seminar.thumbnail_url) {
-                          <img [src]="seminar.thumbnail_url" [alt]="seminar.title"
-                               class="w-full h-full object-cover">
+                          <img [src]="seminar.thumbnail_url" [alt]="seminar.title" class="w-full h-full object-cover">
                         } @else {
                           <div class="w-full h-full flex items-center justify-center text-slate-300">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,7 +167,6 @@ import { switchMap, of, catchError, finalize, take, combineLatest } from 'rxjs';
                           </div>
                         }
                       </div>
-                      <!-- Info -->
                       <div class="flex-1 min-w-0">
                         <h4 class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors truncate">
                           {{ seminar.title }}
@@ -181,7 +181,6 @@ import { switchMap, of, catchError, finalize, take, combineLatest } from 'rxjs';
                     </a>
                   }
                 }
-
               </div>
             </div>
           </div>
@@ -194,11 +193,84 @@ import { switchMap, of, catchError, finalize, take, combineLatest } from 'rxjs';
         </div>
       }
     </div>
+
+    <!-- Photo URL Modal -->
+    @if (modalOpen()) {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+           (click)="closeModal()">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-sm p-6"
+             (click)="$event.stopPropagation()">
+
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Update Profile Picture</h3>
+            <button (click)="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Preview -->
+          <div class="flex justify-center mb-4">
+            @if (previewUrl()) {
+              <img [src]="previewUrl()!"
+                   class="w-24 h-24 rounded-full object-cover border-4 border-blue-100"
+                   (error)="onPreviewError()">
+            } @else if (user?.photoURL) {
+              <img [src]="user?.photoURL" class="w-24 h-24 rounded-full object-cover border-4 border-gray-100">
+            } @else {
+              <div class="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl font-bold border-4 border-gray-100">
+                {{ user?.displayName?.charAt(0)?.toUpperCase() }}
+              </div>
+            }
+          </div>
+
+          <!-- URL input -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Image URL
+            </label>
+            <input type="url"
+                   [value]="photoUrlInput()"
+                   (input)="onUrlInput($event)"
+                   placeholder="https://example.com/avatar.jpg"
+                   class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            <p class="text-xs text-slate-400 mt-1">Paste a direct link to an image (jpg, png, webp)</p>
+          </div>
+
+          <!-- Error -->
+          @if (uploadError()) {
+            <p class="text-xs text-red-500 mt-2 text-center">{{ uploadError() }}</p>
+          }
+
+          <!-- Actions -->
+          <div class="flex gap-3 mt-4">
+            <button (click)="closeModal()"
+                    class="flex-1 px-4 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+              Cancel
+            </button>
+            <button (click)="savePhotoUrl()"
+                    [disabled]="!photoUrlInput() || uploading()"
+                    class="flex-1 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
+              @if (uploading()) {
+                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                </svg>
+                Saving...
+              } @else {
+                Save
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    }
   `
 })
 export class ProfilePageComponent implements OnInit {
   private authService = inject(AUTH_SERVICE);
-  private userService = inject(USER_SERVICE);
+  private userService = inject<IUserService>(USER_SERVICE);
   private commentService = inject(COMMENT_SERVICE);
   private seminarService = inject(SEMINAR_SERVICE);
 
@@ -208,6 +280,13 @@ export class ProfilePageComponent implements OnInit {
   loading = true;
   loadingActivity = false;
   activeTab = signal<'comments' | 'seminars'>('comments');
+
+  // Modal state
+  modalOpen = signal(false);
+  previewUrl = signal<string | null>(null);
+  photoUrlInput = signal<string>('');
+  uploading = signal(false);
+  uploadError = signal<string | null>(null);
 
   ngOnInit() {
     this.authService.currentUser$.pipe(take(1)).subscribe(authUser => {
@@ -250,6 +329,50 @@ export class ProfilePageComponent implements OnInit {
       this.attendedSeminars = seminars.filter((s: Seminar) =>
         attendedIds.includes(s.id)
       );
+    });
+  }
+
+  openModal() {
+    this.photoUrlInput.set(this.user?.photoURL || '');
+    this.previewUrl.set(this.user?.photoURL || null);
+    this.uploadError.set(null);
+    this.modalOpen.set(true);
+  }
+
+  closeModal() {
+    if (this.uploading()) return;
+    this.modalOpen.set(false);
+  }
+
+  onUrlInput(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.photoUrlInput.set(value);
+    this.previewUrl.set(value || null);
+  }
+
+  onPreviewError() {
+    this.uploadError.set('Could not load image from this URL. Please check the link.');
+    this.previewUrl.set(null);
+  }
+
+  savePhotoUrl() {
+    const url = this.photoUrlInput().trim();
+    if (!url || !this.user) return;
+
+    this.uploading.set(true);
+    this.uploadError.set(null);
+
+    this.userService.updatePhotoURL(this.user.uid, url).subscribe({
+      next: () => {
+        this.user!.photoURL = url;
+        this.uploading.set(false);
+        this.modalOpen.set(false);
+      },
+      error: (err) => {
+        console.error('Failed to save photo URL:', err);
+        this.uploadError.set('Failed to save. Please try again.');
+        this.uploading.set(false);
+      }
     });
   }
 

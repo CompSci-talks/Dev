@@ -13,4 +13,5 @@ export interface IUserService {
     createUserProfile(profile: UserProfile): Observable<void>;
     updateAttendanceCount(uid: string, delta: number): Observable<void>;
     updateAttendedSeminars(uid: string, seminarId: string, action: 'add' | 'remove'): Observable<void>;
+    updatePhotoURL(uid: string, photoURL: string): Observable<void>;
 }

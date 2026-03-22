@@ -30,6 +30,10 @@ import { USER_SERVICE } from './core/contracts/user.service.interface';
 import { USER_ACTIVITY_SERVICE } from './core/contracts/user-activity.service.interface';
 import { FirebaseUserProfileService } from './firebase-adapters/firebase-user-profile.service';
 import { FirebaseUserActivityService } from './firebase-adapters/firebase-user-activity.service';
+import { provideStorage, getStorage } from '@angular/fire/storage';
+import { STORAGE_SERVICE } from './core/contracts/storage.interface';
+import { FirebaseStorageService } from './firebase-adapters/firebase-storage.service';
+
 // No activity service yet, but let's assume we'll use a mock or similar soon, 
 // for now let's only provide USER_SERVICE if we haven't created the other implementation.
 // Actually T020 says FirebaseUserActivityService, but I haven't written it.
@@ -37,6 +41,7 @@ import { FirebaseUserActivityService } from './firebase-adapters/firebase-user-a
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideStorage(() => getStorage()),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     // Firebase Setup
@@ -45,6 +50,7 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
     provideAnimations(),
     // Core Firebase Service Injection
+    { provide: STORAGE_SERVICE, useClass: FirebaseStorageService },
     { provide: SEMESTER_SERVICE, useClass: FirebaseSemesterService },
     { provide: SEMINAR_SERVICE, useClass: FirebaseSeminarService },
     { provide: AUTH_SERVICE, useClass: FirebaseAuthService },

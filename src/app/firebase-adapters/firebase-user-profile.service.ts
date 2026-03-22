@@ -143,4 +143,8 @@ export class FirebaseUserProfileService implements IUserService {
         if (field instanceof Date) return field;
         return new Date(field);
     }
+    updatePhotoURL(uid: string, photoURL: string): Observable<void> {
+        const userDoc = doc(this.firestore, `users/${uid}`);
+        return from(updateDoc(userDoc, { photoURL }));
+    }
 }
