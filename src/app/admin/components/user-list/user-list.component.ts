@@ -46,10 +46,10 @@ import { User } from '../../../core/models/user.model';
           </div>
         </td>
         <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-          <img class="w-10 h-10 rounded-full" [src]="user.photoURL || 'https://ui-avatars.com/api/?name=' + user.display_name" alt="{{user.display_name}} image">
+          <img class="w-10 h-10 rounded-full" [src]="user.photo_url || 'https://ui-avatars.com/api/?name=' + user.display_name" alt="{{user.display_name}} image">
           <div class="pl-3">
             <div class="text-base font-semibold">{{user.display_name}}</div>
-            <div class="font-normal text-gray-500">Last active: {{user.lastActiveTimestamp | date:'short'}}</div>
+            <div class="font-normal text-gray-500">Last active: {{user.last_active_at | date:'short'}}</div>
           </div>
         </th>
         <td class="px-6 py-4">{{user.email}}</td>
