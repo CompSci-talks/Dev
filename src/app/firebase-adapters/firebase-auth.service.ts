@@ -76,18 +76,17 @@ export class FirebaseAuthService implements IAuthService {
                 const user = this.mapFirebaseUser(firebaseUser);
 
                 // Real implementation: create Firestore profile
-                const profile = {
-                    uid: firebaseUser.uid,
-                    displayName: displayName || firebaseUser.displayName || 'Authenticated User',
+                const profile: User = {
+                    id: firebaseUser.uid,
+                    display_name: displayName || firebaseUser.displayName || 'Authenticated User',
                     email: firebaseUser.email || email,
-                    role: 'authenticated' as const,
-                    createdAt: new Date(),
-                    lastLogin: new Date(),
-                    lastActiveTimestamp: new Date(),
-                    attendanceCount: 0
+                    role: 'authenticated',
+                    created_at: new Date(),
+                    last_active_at: new Date(),
+                    attendance_count: 0
                 };
 
-                return this.userService.createUserProfile(profile).pipe(
+                return this.userService.createUser(profile).pipe(
                     map(() => user)
                 );
             })

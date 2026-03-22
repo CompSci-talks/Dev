@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserProfile } from '../../../core/models/user-profile.model';
+import { User } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-user-detail',
@@ -12,17 +12,17 @@ import { UserProfile } from '../../../core/models/user-profile.model';
 
         <!-- Avatar -->
         <div class="relative mb-3">
-          @if (user.photoURL) {
-            <img [src]="user.photoURL" [alt]="user.displayName"
+          @if (user.photo_url) {
+            <img [src]="user.photo_url" [alt]="user.display_name"
                  class="w-20 h-20 rounded-full object-cover">
           } @else {
             <div class="w-20 h-20 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 text-2xl font-bold">
-              {{ user.displayName.charAt(0).toUpperCase() }}
+              {{ user.display_name.charAt(0).toUpperCase() }}
             </div>
           }
         </div>
 
-        <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ user.displayName }}</h2>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ user.display_name }}</h2>
         <span class="mt-1 px-3 py-0.5 rounded-full text-xs font-semibold capitalize"
           [class.bg-red-100]="user.role === 'admin'"
           [class.text-red-700]="user.role === 'admin'"
@@ -52,20 +52,20 @@ import { UserProfile } from '../../../core/models/user-profile.model';
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Enrollment Date</label>
-          <p class="text-sm text-gray-900 dark:text-white mt-0.5">{{ user.enrollmentDate | date:'mediumDate' }}</p>
+          <p class="text-sm text-gray-900 dark:text-white mt-0.5">{{ user.enrollment_date | date:'mediumDate' }}</p>
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Last Active</label>
-          <p class="text-sm text-gray-900 dark:text-white mt-0.5">{{ user.lastActiveTimestamp | date:'medium' }}</p>
+          <p class="text-sm text-gray-900 dark:text-white mt-0.5">{{ user.last_active_at | date:'medium' }}</p>
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Preferred Topics</label>
           <div class="flex flex-wrap gap-2 mt-1">
-            <span *ngFor="let topic of user.preferredTopicAreas"
+            <span *ngFor="let topic of user.preferred_topic_areas"
               class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded-full text-gray-600 dark:text-gray-300">
               {{ topic }}
             </span>
-            <span *ngIf="!user.preferredTopicAreas?.length" class="text-sm text-gray-400 italic">
+            <span *ngIf="!user.preferred_topic_areas?.length" class="text-sm text-gray-400 italic">
               None specified
             </span>
           </div>
@@ -75,7 +75,7 @@ import { UserProfile } from '../../../core/models/user-profile.model';
   `
 })
 export class UserDetailComponent {
-  @Input({ required: true }) user!: UserProfile;
+  @Input({ required: true }) user!: User;
   @Input() allowEdit = false;
   @Output() onEditPhoto = new EventEmitter<void>();
 }

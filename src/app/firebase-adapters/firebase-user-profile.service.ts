@@ -3,7 +3,7 @@ import { Firestore, collectionData, docData } from '@angular/fire/firestore';
 import { collection, doc, query, where, getDoc, getDocs, updateDoc, setDoc, limit, startAfter, orderBy, arrayUnion, arrayRemove, increment } from 'firebase/firestore';
 import { Observable, from, map, of, catchError } from 'rxjs';
 import { IUserService } from '../core/contracts/user.service.interface';
-import { UserProfile } from '../core/models/user-profile.model';
+import { User } from '../core/models/user.model';
 import { sanitizeForFirestore } from '../core/utils/firestore-utils';
 
 @Injectable({
@@ -13,7 +13,7 @@ export class FirebaseUserProfileService implements IUserService {
     private firestore = inject(Firestore);
     private usersCollection = collection(this.firestore, 'users');
 
-    getUsers(pageSize: number, lastUser?: UserProfile, filter?: string): Observable<UserProfile[]> {
+    getUsers(pageSize: number, lastUser?: User, filter?: string): Observable<User[]> {
         let q = query(this.usersCollection, orderBy('displayName'), limit(pageSize));
 
         if (filter) {
@@ -41,9 +41,9 @@ export class FirebaseUserProfileService implements IUserService {
         );
     }
 
-    private async fetchWithCursor(q: any, lastUser?: UserProfile) {
+    private async fetchWithCursor(q: any, lastUser?: User) {
         if (lastUser) {
-            const lastDoc = await getDoc(doc(this.firestore, `users/${lastUser.uid}`));
+            const lastDoc = await getDoc(doc(this.firestore, `users/${lastUser.id}`));
             if (lastDoc.exists()) {
                 q = query(q, startAfter(lastDoc));
             }
@@ -51,7 +51,7 @@ export class FirebaseUserProfileService implements IUserService {
         return getDocs(q);
     }
 
-    getUserById(uid: string): Observable<UserProfile | null> {
+    getUserById(uid: string): Observable<User | null> {
         const userDoc = doc(this.firestore, `users/${uid}`);
         return from(getDoc(userDoc)).pipe(
             map(snapshot => snapshot.exists() ? this.mapToProfile({ ...snapshot.data(), uid: snapshot.id }) : null),
@@ -59,7 +59,7 @@ export class FirebaseUserProfileService implements IUserService {
         );
     }
 
-    getUserById$(uid: string): Observable<UserProfile | null> {
+    getUserById$(uid: string): Observable<User | null> {
         const userDoc = doc(this.firestore, `users/${uid}`);
         return (docData(userDoc, { idField: 'uid' }) as Observable<any>).pipe(
             map(data => data ? this.mapToProfile(data) : null),
@@ -76,8 +76,8 @@ export class FirebaseUserProfileService implements IUserService {
         return from(updateDoc(userDoc, cleanUpdates));
     }
 
-    createUserProfile(profile: UserProfile): Observable<void> {
-        const userDoc = doc(this.firestore, `users/${profile.uid}`);
+    createUser(profile: User): Observable<void> {
+        const userDoc = doc(this.firestore, `users/${profile.id}`);
         // Convert to plain object and sanitize
         const data = sanitizeForFirestore(profile);
         return from(setDoc(userDoc, data));
@@ -119,20 +119,19 @@ export class FirebaseUserProfileService implements IUserService {
         return emails;
     }
 
-    private mapToProfile(data: any): UserProfile {
+    private mapToProfile(data: any): User {
         return {
-            uid: data.uid || data.id,
-            displayName: data.displayName || data.display_name || 'User',
+            id: data.uid || data.id,
+            display_name: data.displayName || data.display_name || 'User',
             email: data.email || '',
             role: data.role || 'authenticated',
-            photoURL: data.photoURL || data.photo_url,
-            createdAt: this.toDate(data.createdAt || data.created_at),
-            lastLogin: this.toDate(data.lastLogin || data.last_login),
-            enrollmentDate: this.toDate(data.enrollmentDate),
-            lastActiveTimestamp: this.toDate(data.lastActiveTimestamp || data.last_active_timestamp),
-            preferredTopicAreas: data.preferredTopicAreas || [],
-            attendanceCount: data.attendanceCount || data.attendance_count || 0,
-            attendedSeminarIds: data.attendedSeminarIds || []
+            photo_url: data.photoURL || data.photo_url,
+            created_at: this.toDate(data.createdAt || data.created_at),
+            last_active_at: this.toDate(data.lastLogin || data.last_login),
+            enrollment_date: this.toDate(data.enrollmentDate),
+            preferred_topic_areas: data.preferredTopicAreas || [],
+            attendance_count: data.attendanceCount || data.attendance_count || 0,
+            attended_seminar_ids: data.attendedSeminarIds || []
 
         };
     }

@@ -6,7 +6,7 @@ import { USER_SERVICE, IUserService } from '../../core/contracts/user.service.in
 import { COMMENT_SERVICE } from '../../core/contracts/comment.interface';
 import { SEMINAR_SERVICE } from '../../core/contracts/seminar.interface';
 import { UserDetailComponent } from '../../admin/components/user-detail/user-detail.component';
-import { UserProfile } from '../../core/models/user-profile.model';
+import { User } from '../../core/models/user.model';
 import { Comment } from '../../core/models/comment.model';
 import { Seminar } from '../../core/models/seminar.model';
 import { of, catchError, finalize, take, combineLatest } from 'rxjs';
@@ -54,7 +54,7 @@ import { of, catchError, finalize, take, combineLatest } from 'rxjs';
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-gray-500 dark:text-gray-400 text-sm">Member Since</span>
-                  <span class="text-gray-900 dark:text-white text-sm">{{ user.createdAt | date:'mediumDate' }}</span>
+                  <span class="text-gray-900 dark:text-white text-sm">{{ user.enrollment_date | date:'mediumDate' }}</span>
                 </div>
               </div>
             </div>
@@ -216,11 +216,11 @@ import { of, catchError, finalize, take, combineLatest } from 'rxjs';
               <img [src]="previewUrl()!"
                    class="w-24 h-24 rounded-full object-cover border-4 border-blue-100"
                    (error)="onPreviewError()">
-            } @else if (user?.photoURL) {
-              <img [src]="user?.photoURL" class="w-24 h-24 rounded-full object-cover border-4 border-gray-100">
+            } @else if (user?.photo_url) {
+              <img [src]="user?.photo_url" class="w-24 h-24 rounded-full object-cover border-4 border-gray-100">
             } @else {
               <div class="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl font-bold border-4 border-gray-100">
-                {{ user?.displayName?.charAt(0)?.toUpperCase() }}
+                {{ user?.display_name?.charAt(0)?.toUpperCase() }}
               </div>
             }
           </div>
@@ -274,7 +274,7 @@ export class ProfilePageComponent implements OnInit {
   private commentService = inject(COMMENT_SERVICE);
   private seminarService = inject(SEMINAR_SERVICE);
 
-  user: UserProfile | null = null;
+  user: User | null = null;
   comments: Comment[] = [];
   attendedSeminars: Seminar[] = [];
   loading = true;
@@ -300,7 +300,7 @@ export class ProfilePageComponent implements OnInit {
       this.userService.getUserById(uid).pipe(take(1)).subscribe(profile => {
         this.user = profile;
         this.loading = false;
-        if (profile) this.loadActivity(uid, profile.attendedSeminarIds || []);
+        if (profile) this.loadActivity(uid, profile.attended_seminar_ids || []);
       });
     });
   }
@@ -333,8 +333,8 @@ export class ProfilePageComponent implements OnInit {
   }
 
   openModal() {
-    this.photoUrlInput.set(this.user?.photoURL || '');
-    this.previewUrl.set(this.user?.photoURL || null);
+    this.photoUrlInput.set(this.user?.photo_url || '');
+    this.previewUrl.set(this.user?.photo_url || null);
     this.uploadError.set(null);
     this.modalOpen.set(true);
   }
@@ -362,9 +362,9 @@ export class ProfilePageComponent implements OnInit {
     this.uploading.set(true);
     this.uploadError.set(null);
 
-    this.userService.updatePhotoURL(this.user.uid, url).subscribe({
+    this.userService.updatePhotoURL(this.user.id, url).subscribe({
       next: () => {
-        this.user!.photoURL = url;
+        this.user!.photo_url = url;
         this.uploading.set(false);
         this.modalOpen.set(false);
       },

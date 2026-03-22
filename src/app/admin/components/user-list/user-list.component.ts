@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserProfile } from '../../../core/models/user-profile.model';
 import { RoleToggleComponent } from '../role-toggle/role-toggle.component';
 import { PaginatedTableComponent } from '../../../shared/components/paginated-table/paginated-table.component';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-user-list',
@@ -90,7 +90,7 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
   `,
 })
 export class UserListComponent {
-  @Input() users: UserProfile[] = [];
+  @Input() users: User[] = [];
   @Input() loading: boolean = false;
   @Input() selectedUserIds: Set<string> = new Set();
   @Input() currentUserId: string | null = null;
