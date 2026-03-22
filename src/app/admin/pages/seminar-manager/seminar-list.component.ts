@@ -33,7 +33,7 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
           {{ seminar.date_time | date:'short' }}
         </td>
         <td class="px-6 py-4">
-          <div class="font-medium text-slate-900">{{ seminar.title }}</div>
+          <a [routerLink]="['/seminar', seminar.id]" class="font-medium text-slate-900">{{ seminar.title }}</a>
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
           {{ seminar.location }}
