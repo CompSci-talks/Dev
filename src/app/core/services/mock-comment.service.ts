@@ -60,7 +60,7 @@ export class MockCommentService implements ICommentService {
         );
     }
 
-    submitComment(seminarId: string, text: string, parentId?: string): Observable<Comment> {
+    submitComment(seminarId: string, seminar_title: string, text: string, parentId?: string): Observable<Comment> {
         return this.auth.currentUser$.pipe(
             switchMap(user => {
                 if (!user) throw new Error("Must be logged in to leave a comment.");

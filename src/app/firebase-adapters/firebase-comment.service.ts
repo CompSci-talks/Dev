@@ -1,6 +1,6 @@
 import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, collection, collectionData, addDoc, query, where, orderBy, deleteDoc, doc, getDocs, writeBatch, serverTimestamp, updateDoc, increment, getDoc } from '@angular/fire/firestore';
-import { Observable, from, map, switchMap, take } from 'rxjs';
+import { Observable, catchError, from, map, of, switchMap, take } from 'rxjs';
 import { ICommentService } from '../core/contracts/comment.interface';
 import { Comment } from '../core/models/comment.model';
 import { AUTH_SERVICE } from '../core/contracts/auth.interface';
@@ -23,7 +23,7 @@ export class FirebaseCommentService implements ICommentService {
         });
     }
 
-    submitComment(seminarId: string, text: string, parentId?: string): Observable<Comment> {
+    submitComment(seminarId: string, seminar_title: string, text: string, parentId?: string): Observable<Comment> {
         return this.authService.currentUser$.pipe(
             take(1),
             switchMap(user => {
@@ -36,7 +36,8 @@ export class FirebaseCommentService implements ICommentService {
                     text,
                     parent_id: parentId || null,
                     created_at: new Date(),
-                    is_hidden: false
+                    is_hidden: false,
+                    seminar_title: seminar_title
                 };
 
                 const batch = writeBatch(this.firestore);
@@ -53,15 +54,24 @@ export class FirebaseCommentService implements ICommentService {
             })
         );
     }
-
     getAllComments(): Observable<Comment[]> {
-        return runInInjectionContext(this.injector, () => {
-            const q = query(this.commentsCollection, orderBy('created_at', 'desc'));
-            return collectionData(q, { idField: 'id' }).pipe(
-                map(comments => comments.map(c => this.mapTimestamps(c)))
-            ) as Observable<Comment[]>;
-        });
+        const q = query(this.commentsCollection, orderBy('created_at', 'desc'));
+        return from(getDocs(q)).pipe(
+            map(snapshot => snapshot.docs.map(d => this.mapTimestamps({ ...d.data(), id: d.id }))),
+            catchError(err => {
+                console.error('Failed to fetch all comments:', err);
+                return of([]);
+            })
+        );
     }
+    // getAllComments(): Observable<Comment[]> {
+    //     return runInInjectionContext(this.injector, () => {
+    //         const q = query(this.commentsCollection, orderBy('created_at', 'desc'));
+    //         return collectionData(q, { idField: 'id' }).pipe(
+    //             map(comments => comments.map(c => this.mapTimestamps(c)))
+    //         ) as Observable<Comment[]>;
+    //     });
+    // }
 
     deleteComment(commentId: string): Observable<void> {
         const commentDoc = doc(this.firestore, `comments/${commentId}`);

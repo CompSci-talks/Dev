@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collectionData, docData } from '@angular/fire/firestore';
-import { collection, doc, query, where, getDoc, getDocs, updateDoc, setDoc, limit, startAfter, orderBy, DocumentSnapshot } from 'firebase/firestore';
+import { collection, doc, query, where, getDoc, getDocs, updateDoc, setDoc, limit, startAfter, orderBy, arrayUnion, arrayRemove, increment } from 'firebase/firestore';
 import { Observable, from, map, of, catchError } from 'rxjs';
 import { IUserService } from '../core/contracts/user.service.interface';
 import { UserProfile } from '../core/models/user-profile.model';
@@ -82,7 +82,19 @@ export class FirebaseUserProfileService implements IUserService {
         const data = sanitizeForFirestore(profile);
         return from(setDoc(userDoc, data));
     }
+    updateAttendanceCount(uid: string, delta: number): Observable<void> {
+        const userDoc = doc(this.firestore, `users/${uid}`);
+        return from(updateDoc(userDoc, {
+            attendanceCount: increment(delta)
+        }));
+    }
 
+    updateAttendedSeminars(uid: string, seminarId: string, action: 'add' | 'remove'): Observable<void> {
+        const userDoc = doc(this.firestore, `users/${uid}`);
+        return from(updateDoc(userDoc, {
+            attendedSeminarIds: action === 'add' ? arrayUnion(seminarId) : arrayRemove(seminarId)
+        }));
+    }
     sendBulkEmail(uids: string[], subject: string, body: string): Observable<void> {
         // Implementation for FR-014: Mapping UIDs to emails for mailto
         // In a real app, this might call a backend service, but for now we follow the mailto pattern.
@@ -119,7 +131,9 @@ export class FirebaseUserProfileService implements IUserService {
             enrollmentDate: this.toDate(data.enrollmentDate),
             lastActiveTimestamp: this.toDate(data.lastActiveTimestamp || data.last_active_timestamp),
             preferredTopicAreas: data.preferredTopicAreas || [],
-            attendanceCount: data.attendanceCount || data.attendance_count || 0
+            attendanceCount: data.attendanceCount || data.attendance_count || 0,
+            attendedSeminarIds: data.attendedSeminarIds || []
+
         };
     }
 

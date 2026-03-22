@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Seminar } from '../../../core/models/seminar.model';
 import { IRsvpService, RSVP_SERVICE } from '../../../core/contracts/rsvp.interface';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
-import { Observable, combineLatest, map, switchMap, of } from 'rxjs';
+import { Observable, map, switchMap, of, take } from 'rxjs';
+import { IUserService, USER_SERVICE } from '../../../core/contracts/user.service.interface';
 
 @Component({
     selector: 'app-rsvp-button',
@@ -16,6 +17,7 @@ export class RsvpButtonComponent implements OnInit {
 
     private rsvpService = inject(RSVP_SERVICE);
     private authService = inject(AUTH_SERVICE);
+    private userService = inject<IUserService>(USER_SERVICE);
 
     isAttending$!: Observable<boolean>;
     isAuthenticated$!: Observable<boolean>;
@@ -30,11 +32,32 @@ export class RsvpButtonComponent implements OnInit {
 
     toggleRsvp(currentlyAttending: boolean) {
         this.isLoading = true;
-        if (currentlyAttending) {
-            this.rsvpService.removeRsvp(this.seminar.id).subscribe(() => this.isLoading = false);
-        } else {
-            this.rsvpService.addRsvp(this.seminar.id).subscribe(() => this.isLoading = false);
-        }
+
+        this.authService.currentUser$.pipe(take(1)).subscribe(user => {
+            if (!user) {
+                this.isLoading = false;
+                return;
+            }
+
+            const uid = (user as any).id || (user as any).uid;
+            const action = currentlyAttending ? 'remove' : 'add';
+            const delta = currentlyAttending ? -1 : 1;
+
+            const rsvp$ = currentlyAttending
+                ? this.rsvpService.removeRsvp(this.seminar.id)
+                : this.rsvpService.addRsvp(this.seminar.id);
+
+            rsvp$.pipe(
+                switchMap(() => this.userService.updateAttendanceCount(uid, delta)),
+                switchMap(() => this.userService.updateAttendedSeminars(uid, this.seminar.id, action))
+            ).subscribe({
+                next: () => this.isLoading = false,
+                error: (err) => {
+                    console.error('RSVP update failed:', err);
+                    this.isLoading = false;
+                }
+            });
+        });
     }
 
     get calendarLink(): string {

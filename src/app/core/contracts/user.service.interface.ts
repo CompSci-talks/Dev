@@ -11,4 +11,6 @@ export interface IUserService {
     updateUserRole(uid: string, role: 'admin' | 'moderator' | 'authenticated'): Observable<void>;
     sendBulkEmail(uids: string[], subject: string, body: string): Observable<void>;
     createUserProfile(profile: UserProfile): Observable<void>;
+    updateAttendanceCount(uid: string, delta: number): Observable<void>;
+    updateAttendedSeminars(uid: string, seminarId: string, action: 'add' | 'remove'): Observable<void>;
 }

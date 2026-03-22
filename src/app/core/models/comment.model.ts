@@ -1,6 +1,7 @@
 export interface Comment {
   id: string;
   seminar_id: string;
+  seminar_title?: string;
   author_id: string;
   author_name: string;
   text: string;

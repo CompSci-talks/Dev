@@ -6,7 +6,7 @@ export interface ICommentService {
     getCommentsForSeminar$(seminarId: string): Observable<Comment[]>;
 
     /** Submit a new comment to a seminar, optionally as a reply */
-    submitComment(seminarId: string, text: string, parentId?: string): Observable<Comment>;
+    submitComment(seminarId: string, seminar_title: string, text: string, parentId?: string): Observable<Comment>;
 
     /** Admin: Fetch all comments across all seminars */
     getAllComments(): Observable<Comment[]>;

@@ -8,4 +8,5 @@ export interface UserProfile {
     lastActiveTimestamp: Date;
     preferredTopicIds: string[];
     attendanceCount: number;
+    attendedSeminarIds: string[];
 }

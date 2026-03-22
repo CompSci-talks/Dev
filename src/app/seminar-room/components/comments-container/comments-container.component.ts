@@ -16,6 +16,7 @@ import { ToastService } from '../../../core/services/toast.service';
 })
 export class CommentsContainerComponent implements OnInit {
     @Input({ required: true }) seminarId!: string;
+    @Input({ required: true }) seminar_title!: string;
 
     private commentService = inject(COMMENT_SERVICE);
     private authService = inject(AUTH_SERVICE);
@@ -42,7 +43,7 @@ export class CommentsContainerComponent implements OnInit {
 
     onCommentSubmitted(event: { text: string; parentId?: string }) {
         this.isSubmitting = true;
-        this.commentService.submitComment(this.seminarId, event.text, event.parentId).subscribe({
+        this.commentService.submitComment(this.seminarId, this.seminar_title, event.text, event.parentId).subscribe({
             next: () => {
                 this.isSubmitting = false;
                 this.toastService.success('Comment posted successfully.');
