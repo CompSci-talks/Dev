@@ -28,12 +28,10 @@ import { AUTH_SERVICE } from '../../../contracts/auth.interface';
           </a>
 
           @if (auth.currentUser$ | async; as user) {
-            <!-- @if (user.role === 'admin') {
-              <a routerLink="/admin" routerLinkActive="text-primary font-semibold border-b-2 border-primary"
-                 class="text-sm font-medium text-text-muted hover:text-primary transition-colors pb-0.5">
-                Admin
-              </a>
-            } -->
+            <a routerLink="/profile" routerLinkActive="text-primary font-semibold border-b-2 border-primary"
+              class="text-sm font-medium text-text-muted hover:text-primary transition-colors pb-0.5">
+              My Profile
+            </a>
 
             <a routerLink="/dashboard" routerLinkActive="text-primary font-semibold border-b-2 border-primary"
                class="text-sm font-medium text-text-muted hover:text-primary transition-colors pb-0.5">
@@ -69,6 +67,13 @@ import { AUTH_SERVICE } from '../../../contracts/auth.interface';
                       [class.text-green-700]="user.role === 'authenticated'"
                     >{{ user.role }}</span>
                   </div>
+                  <a routerLink="/profile" (click)="closeDropdown()"
+                    class="flex items-center gap-2 px-4 py-2 text-sm text-text-muted hover:text-primary hover:bg-slate-50 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    My Profile
+                  </a>
                   <a routerLink="/dashboard" (click)="closeDropdown()"
                      class="flex items-center gap-2 px-4 py-2 text-sm text-text-muted hover:text-primary hover:bg-slate-50 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,6 +156,12 @@ import { AUTH_SERVICE } from '../../../contracts/auth.interface';
           </a>
 
           @if (auth.currentUser$ | async; as user) {
+            
+            <a routerLink="/profile" routerLinkActive="text-primary font-semibold bg-slate-50"
+              (click)="closeMobile()"
+              class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-text-muted hover:text-primary hover:bg-slate-50 transition-colors">
+              My Profile
+            </a>
             <a routerLink="/dashboard" routerLinkActive="text-primary font-semibold bg-slate-50"
                (click)="closeMobile()"
                class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-text-muted hover:text-primary hover:bg-slate-50 transition-colors">
