@@ -54,7 +54,8 @@ export class FirebaseRsvpService implements IRsvpService {
                 batch.set(rsvpRef, {
                     seminar_id: seminarId,
                     user_id: user.id,
-                    created_at: new Date()
+                    created_at: new Date(),
+                    status: 'pending'
                 });
 
                 const seminarRef = doc(this.firestore, `seminars/${seminarId}`);

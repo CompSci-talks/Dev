@@ -24,7 +24,7 @@ export class FirebaseAttendanceService implements IAttendanceService {
                         email: u?.email || '',
                         display_name: u?.display_name || 'User',
                         marked_at: r['created_at']?.toDate ? r['created_at'].toDate() : new Date(),
-                        status: (r['status'] as any) || 'confirmed'
+                        status: (r['status'] as any) || 'pending'
                     } as Attendee))
                 ));
                 return combineLatest(userQueries);
