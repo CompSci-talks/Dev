@@ -14,14 +14,13 @@ export class FirebaseUserProfileService implements IUserService {
     private usersCollection = collection(this.firestore, 'users');
 
     getUsers(pageSize: number, lastUser?: User, filter?: string): Observable<User[]> {
-        let q = query(this.usersCollection, orderBy('displayName'), limit(pageSize));
+        let q = query(this.usersCollection, orderBy('display_name'), limit(pageSize));
 
         if (filter) {
-            // Simple prefix search for displayName
             q = query(this.usersCollection,
-                where('displayName', '>=', filter),
-                where('displayName', '<=', filter + '\uf8ff'),
-                orderBy('displayName'),
+                where('display_name', '>=', filter),
+                where('display_name', '<=', filter + '\uf8ff'),
+                orderBy('display_name'),
                 limit(pageSize)
             );
         }
@@ -40,7 +39,6 @@ export class FirebaseUserProfileService implements IUserService {
             })
         );
     }
-
     private async fetchWithCursor(q: any, lastUser?: User) {
         if (lastUser) {
             const lastDoc = await getDoc(doc(this.firestore, `users/${lastUser.id}`));

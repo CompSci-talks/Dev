@@ -26,14 +26,12 @@ export class FirebaseAuthService implements IAuthService {
     currentUserSignal = signal<User | null>(null);
 
     constructor() {
-        // Listen to Firebase Auth state changes
         onAuthStateChanged(this.auth, (firebaseUser) => {
             console.log('[FirebaseAuthService] Auth state changed. User:', firebaseUser?.email);
             this.profileSub?.unsubscribe();
 
             if (firebaseUser) {
                 console.log('[FirebaseAuthService] Subscribing to profile for UID:', firebaseUser.uid);
-                // Enrich user with real-time role from Firestore
                 this.profileSub = this.userService.getUserById$(firebaseUser.uid).subscribe(profile => {
                     console.log('[FirebaseAuthService] Received profile update:', profile);
                     this.zone.run(() => {
@@ -62,6 +60,7 @@ export class FirebaseAuthService implements IAuthService {
     currentUser(): User | null {
         return this.currentUserSignal();
     }
+
     signIn(email: string, password: string): Observable<User> {
         return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
             switchMap(credential => this.userService.getUserById(credential.user.uid).pipe(
@@ -72,7 +71,7 @@ export class FirebaseAuthService implements IAuthService {
     }
 
     signUp(email: string, password: string, displayName: string): Observable<User> {
-        return from(isNameUnique(this.firestore, 'users', 'displayName', displayName)).pipe(
+        return from(isNameUnique(this.firestore, 'users', 'display_name', displayName)).pipe(
             switchMap(isUnique => {
                 if (!isUnique) return throwError(() => new Error('This display name is already taken.'));
                 return from(createUserWithEmailAndPassword(this.auth, email, password));
@@ -81,7 +80,6 @@ export class FirebaseAuthService implements IAuthService {
                 const firebaseUser = credential.user;
                 const user = this.mapFirebaseUser(firebaseUser);
 
-                // Real implementation: create Firestore profile
                 const profile: User = {
                     id: firebaseUser.uid,
                     display_name: displayName || firebaseUser.displayName || 'Authenticated User',
@@ -89,7 +87,9 @@ export class FirebaseAuthService implements IAuthService {
                     role: 'authenticated',
                     created_at: new Date(),
                     last_active_at: new Date(),
-                    attendance_count: 0
+                    attendance_count: 0,
+                    attended_seminar_ids: [],
+                    preferred_topic_areas: []
                 };
 
                 return this.userService.createUser(profile).pipe(
