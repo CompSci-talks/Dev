@@ -43,7 +43,11 @@ import { AUTH_SERVICE } from '../../../contracts/auth.interface';
               <button (click)="toggleDropdown()"
                       class="flex items-center gap-2 hover:opacity-80 transition-opacity">
                 <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
-                 <img [src]="user.photo_url" alt="{{user.display_name}}" class="w-8 h-8 rounded-full">
+                  <img 
+                    class="w-8 h-8 rounded-full" 
+                    [src]="(user.photo_url && user.photo_url.trim()) ? user.photo_url : 'https://ui-avatars.com/api/?name=' + user.display_name" 
+                    alt="{{user.display_name}} image"
+                  >
                 </div>
                 <span class="text-sm font-medium text-text-main">{{ user.display_name }}</span>
                 <svg class="w-4 h-4 text-text-muted transition-transform duration-200"
@@ -121,7 +125,11 @@ import { AUTH_SERVICE } from '../../../contracts/auth.interface';
         <div class="flex md:hidden items-center gap-3">
           @if (auth.currentUser$ | async; as user) {
             <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
-              <img class="w-8 h-8 rounded-full" [src]="user.photo_url || 'https://ui-avatars.com/api/?name=' + user.display_name" alt="{{user.display_name}} image">
+              <img 
+                class="w-8 h-8 rounded-full" 
+                [src]="(user.photo_url && user.photo_url.trim()) ? user.photo_url : 'https://ui-avatars.com/api/?name=' + user.display_name" 
+                alt="{{user.display_name}} image"
+              >
             </div>
           } @else if (!(auth.isInitialized$ | async)) {
             <div class="w-8 h-8 rounded-full bg-slate-200 animate-pulse"></div>
