@@ -23,7 +23,7 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
         <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date & Time</th>
         <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Seminar Title</th>
         <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Location</th>
-        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">RSVPs</th>
+        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Attendees</th>
         <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
         <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
       </ng-template>
