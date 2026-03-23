@@ -7,3 +7,7 @@
 
 # should any update on any entity loop on all other entities and see if it uses it and update it
 - in all the denormalized fields?
+
+
+# server side pagination
+- now it is just client side one

@@ -1,10 +1,11 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ICommentService, COMMENT_SERVICE } from '../../../core/contracts/comment.interface';
-import { ISeminarService, SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
+import { COMMENT_SERVICE } from '../../../core/contracts/comment.interface';
+import { SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
 import { Comment } from '../../../core/models/comment.model';
-import { Observable, combineLatest, map } from 'rxjs';
+import { DocumentSnapshot } from '@angular/fire/firestore';
+import { combineLatest, map } from 'rxjs';
 import { PaginatedTableComponent } from '../../../shared/components/paginated-table/paginated-table.component';
 
 @Component({
@@ -12,20 +13,22 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
   standalone: true,
   imports: [CommonModule, RouterModule, PaginatedTableComponent],
   template: `
-    <div class="max-w-4xl">
+    <div class="w-full">
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Comment Moderation</h1>
         <p class="text-slate-500 mt-1">Review and manage community discussions across all seminars.</p>
       </div>
 
       <app-paginated-table
-        [data]="(enrichedComments$ | async) ?? []"
+        [data]="enrichedComments"
         [loading]="loading"
         [columnCount]="4"
+        [currentPage]="currentPage"
+        [hasMore]="hasMore"
         [headerTemplate]="header"
         [rowTemplate]="row"
         [skeletonTemplate]="skeleton"
-        [showPagination]="false"
+        (pageChange)="onPageChange($event)"
         emptyMessage="No comments found for moderation."
       >
         <ng-template #header>
@@ -38,7 +41,9 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
         <ng-template #row let-item>
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
-              <img class="w-10 h-10 rounded-full" [src]="item.comment.author_photoURL || 'https://ui-avatars.com/api/?name=' + item.comment.author_name" alt="{{item.comment.author_name}} image">
+              <img class="w-10 h-10 rounded-full mr-3"
+                   [src]="item.comment.author_photoURL || 'https://ui-avatars.com/api/?name=' + item.comment.author_name"
+                   alt="{{item.comment.author_name}} image">
               <div>
                 <div class="text-sm font-medium text-slate-900">{{ item.comment.author_name }}</div>
                 <div class="text-[10px] text-slate-400">ID: {{ item.comment.author_id.substring(0, 8) }}...</div>
@@ -82,33 +87,59 @@ export class CommentModerationComponent implements OnInit {
   private commentService = inject(COMMENT_SERVICE);
   private seminarService = inject(SEMINAR_SERVICE);
 
-  enrichedComments$!: Observable<{ comment: Comment, seminarName: string }[]>;
+  readonly pageSize = 5;
+
+  enrichedComments: { comment: Comment, seminarName: string }[] = [];
   loading = true;
+  currentPage = 1;
+  hasMore = false;
+
+  // cursor stack: index 0 = null (first page), index N = lastDoc of page N-1
+  private cursorStack: (DocumentSnapshot | null)[] = [null];
+  private seminars: any[] = [];
 
   ngOnInit() {
-    this.loadComments();
+    // load seminars once, then fetch first page
+    this.seminarService.getSeminars().subscribe(seminars => {
+      this.seminars = seminars;
+      this.fetchPage(null);
+    });
   }
 
-  private loadComments() {
+  private fetchPage(cursor: DocumentSnapshot | null) {
     this.loading = true;
-    this.enrichedComments$ = combineLatest([
-      this.commentService.getAllComments(),
-      this.seminarService.getSeminars()
-    ]).pipe(
-      map(([comments, seminars]) => {
-        this.loading = false;
-        return comments.map(comment => ({
-          comment,
-          seminarName: seminars.find(s => s.id === comment.seminar_id)?.title || 'Unknown Seminar'
-        }));
-      })
-    );
+    this.commentService.getAllCommentsPaginated(this.pageSize, cursor).subscribe(page => {
+      this.enrichedComments = page.data.map(comment => ({
+        comment,
+        seminarName: this.seminars.find(s => s.id === comment.seminar_id)?.title || 'Unknown Seminar'
+      }));
+      this.hasMore = page.hasMore;
+      this.cursorStack[this.currentPage] = page.lastDoc;
+      this.loading = false;
+    });
+  }
+  onPageChange(direction: 'prev' | 'next') {
+    if (direction === 'next' && this.hasMore) {
+      // push current page's lastDoc as next cursor
+      const lastComment = this.enrichedComments[this.enrichedComments.length - 1];
+      // we need the raw DocumentSnapshot — store it from the service response
+      this.currentPage++;
+      const cursor = this.cursorStack[this.currentPage - 1] ?? null;
+      this.fetchPage(cursor);
+    } else if (direction === 'prev' && this.currentPage > 1) {
+      this.currentPage--;
+      const cursor = this.cursorStack[this.currentPage - 1];
+      this.fetchPage(cursor);
+    }
   }
 
   deleteComment(id: string) {
     if (confirm('Are you sure you want to permanently delete this comment?')) {
       this.commentService.deleteComment(id).subscribe(() => {
-        this.loadComments();
+        // reset to first page after deletion
+        this.currentPage = 1;
+        this.cursorStack = [null];
+        this.fetchPage(null);
       });
     }
   }

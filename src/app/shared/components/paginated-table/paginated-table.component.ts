@@ -1,4 +1,4 @@
-import { Component, ContentChild, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PaginationComponent } from '../pagination/pagination.component';
 
@@ -7,67 +7,67 @@ import { PaginationComponent } from '../pagination/pagination.component';
   standalone: true,
   imports: [CommonModule, PaginationComponent],
   template: `
-    <div class="overflow-hidden shadow-md sm:rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-      <div class="overflow-x-auto">
-        <table 
-          class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
-          [attr.aria-label]="ariaLabel || 'Data Table'"
-          role="grid"
-        >
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-            <!-- Loading State: Skeleton Rows -->
-            <ng-container *ngIf="loading">
-              <ng-container *ngIf="skeletonTemplate; else defaultSkeleton">
-                <ng-container *ngTemplateOutlet="skeletonTemplate"></ng-container>
-              </ng-container>
-              <ng-template #defaultSkeleton>
-                <tr *ngFor="let _ of [1,2,3,4,5]" class="animate-pulse bg-white dark:bg-gray-800">
-                  <td *ngFor="let col of columnCountArray" class="px-6 py-4">
-                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-                  </td>
-                </tr>
-              </ng-template>
-            </ng-container>
+  <div class="shadow-md sm:rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+    <div>
+      <table
+        class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+        [attr.aria-label]="ariaLabel || 'Data Table'"
+        role="grid"
+      >
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
 
-            <!-- Data State -->
-            <ng-container *ngIf="!loading && data.length > 0">
-              <tr *ngFor="let item of data; trackBy: trackByFn" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                <ng-container *ngTemplateOutlet="rowTemplate; context: { $implicit: item }"></ng-container>
+          <!-- Loading State -->
+          <ng-container *ngIf="loading">
+            <ng-container *ngIf="skeletonTemplate; else defaultSkeleton">
+              <ng-container *ngTemplateOutlet="skeletonTemplate"></ng-container>
+            </ng-container>
+            <ng-template #defaultSkeleton>
+              <tr *ngFor="let _ of [1,2,3,4,5]" class="animate-pulse bg-white dark:bg-gray-800">
+                <td *ngFor="let col of columnCountArray" class="px-6 py-4">
+                  <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                </td>
               </tr>
-            </ng-container>
+            </ng-template>
+          </ng-container>
 
-            <!-- Empty State -->
-            <tr *ngIf="!loading && data.length === 0">
-              <td [attr.colspan]="columnCount" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                <div class="flex flex-col items-center">
-                  <svg class="w-12 h-12 mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p class="text-lg font-medium">{{ emptyMessage }}</p>
-                </div>
-              </td>
+          <!-- Data State -->
+          <ng-container *ngIf="!loading && data.length > 0">
+            <tr *ngFor="let item of data; trackBy: trackByFn"
+                class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <ng-container *ngTemplateOutlet="rowTemplate; context: { $implicit: item }"></ng-container>
             </tr>
-          </tbody>
-        </table>
-      </div>
-      
-      <!-- Pagination Footer -->
-      <app-pagination
-        *ngIf="showPagination"
-        [currentPage]="currentPage"
-        [hasMore]="hasMore"
-        (pageChange)="onPageChange($event)"
-      ></app-pagination>
+          </ng-container>
+
+          <!-- Empty State -->
+          <tr *ngIf="!loading && data.length === 0">
+            <td [attr.colspan]="columnCount" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+              <div class="flex flex-col items-center">
+                <svg class="w-12 h-12 mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-lg font-medium">{{ emptyMessage }}</p>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
     </div>
+
+    <app-pagination
+      *ngIf="showPagination"
+      [currentPage]="currentPage"
+      [hasMore]="hasMore"
+      (pageChange)="pageChange.emit($event)"
+    ></app-pagination>
+  </div>
   `,
-  styles: [`
-    :host { display: block; }
-  `]
+  styles: [`:host { display: block; width: 100%; }`]
 })
 export class PaginatedTableComponent {
   @Input() data: any[] = [];
@@ -88,10 +88,6 @@ export class PaginatedTableComponent {
 
   get columnCountArray(): number[] {
     return Array(this.columnCount).fill(0);
-  }
-
-  onPageChange(direction: 'prev' | 'next'): void {
-    this.pageChange.emit(direction);
   }
 
   trackByFn(index: number, item: any): any {

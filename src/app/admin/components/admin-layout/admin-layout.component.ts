@@ -8,10 +8,10 @@ import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
   standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
   template: `
-    <div class="flex h-screen bg-slate-50">
+    <div class="flex bg-slate-50">
 
       <!-- Sidebar -->
-      <aside class="w-64 bg-slate-900 text-white flex flex-col flex-shrink-0">
+      <aside class="w-64 bg-slate-900 text-white flex flex-col flex-shrink-0 sticky top-0 h-screen">
 
         <!-- Brand -->
         <div class="px-6 py-5 border-b border-slate-800">
@@ -21,16 +21,6 @@ import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 
         <!-- Nav -->
         <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-
-          <!-- TODO: implement semester manager -->
-          <!-- <a routerLink="semesters" routerLinkActive="bg-slate-800 text-white"
-             class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-800 hover:text-white transition-colors group">
-            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-            Semester Manager
-          </a> -->
-
           <a routerLink="seminars" routerLinkActive="bg-slate-800 text-white"
              class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-800 hover:text-white transition-colors group">
             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,7 +60,6 @@ import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
             </svg>
             User Management
           </a>
-
         </nav>
 
         <!-- Footer -->
@@ -85,10 +74,10 @@ import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
       </aside>
 
       <!-- Main Content -->
-      <main class="flex-1 flex flex-col overflow-hidden">
+      <main class="flex-1 flex flex-col">
 
         <!-- Top bar -->
-        <header class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-8 flex-shrink-0">
+        <header class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-8 flex-shrink-0 sticky top-0 z-10">
           <span class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Dashboard</span>
           <div class="flex items-center gap-3">
             <span class="text-xs text-slate-400">Logged in as Admin</span>
@@ -105,9 +94,10 @@ import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
         </header>
 
         <!-- Page content -->
-        <div class="flex-1 overflow-auto p-8">
+        <div class="flex-1 p-8">
           <router-outlet></router-outlet>
         </div>
+
       </main>
     </div>
   `

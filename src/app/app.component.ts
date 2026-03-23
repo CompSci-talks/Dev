@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AUTH_SERVICE } from './core/contracts/auth.interface';
 import { ToastComponent } from './core/components/toast/toast.component';
 import { FooterComponent } from './core/components/footer/footer.component';
-import { BehaviorSubject, filter, map, switchMap, timer, tap, of, finalize, Subscription } from 'rxjs';
+import { BehaviorSubject, filter, map, switchMap, timer, tap, of, Subscription } from 'rxjs';
 import { ToastService } from './core/services/toast.service';
 import { NavbarComponent } from './core/components/header/navbar-component/navbar-component';
 
@@ -14,14 +14,14 @@ import { NavbarComponent } from './core/components/header/navbar-component/navba
   imports: [RouterOutlet, RouterModule, CommonModule, ToastComponent, FooterComponent, NavbarComponent],
   template: `
     <div class="fixed top-0 left-0 w-full h-progress z-progress bg-transparent pointer-events-none">
-      <div class="h-full bg-primary transition-all duration-300 ease-out" 
+      <div class="h-full bg-primary transition-all duration-300 ease-out"
            [style.width]="(isLoading$ | async) ? '100%' : '0%'"
            [class.animate-progress-indeterminate]="isLoading$ | async"></div>
     </div>
 
     <app-navbar></app-navbar>
 
-    <main class="min-h-screen pb-12">
+    <main class="min-h-screen">
       <router-outlet></router-outlet>
     </main>
 
@@ -38,7 +38,6 @@ export class AppComponent implements OnInit {
   private slowConnectionSub?: Subscription;
 
   ngOnInit() {
-    // Navigation Loader Logic with 10s Timeout (T002, T004)
     this.router.events.pipe(
       filter(event =>
         event instanceof NavigationStart ||
@@ -62,7 +61,6 @@ export class AppComponent implements OnInit {
       })
     ).subscribe();
 
-    // Admin Redirection Logic - Deep-link preservation (T006)
     this.auth.currentUser$.subscribe(user => {
       console.log('[AppComponent] Current user role:', user?.role);
       const currentUrl = this.router.url;

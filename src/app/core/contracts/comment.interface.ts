@@ -1,22 +1,21 @@
 import { Observable } from 'rxjs';
 import { Comment } from '../models/comment.model';
+import { InjectionToken } from '@angular/core';
+import { DocumentSnapshot } from '@angular/fire/firestore';
+import { PaginatedResult } from '../models/paginated-result.model';
 
 export interface ICommentService {
-    /** Stream of comments for a specific seminar, ordered by newest first */
     getCommentsForSeminar$(seminarId: string): Observable<Comment[]>;
-
-    /** Submit a new comment to a seminar, optionally as a reply */
     submitComment(seminarId: string, seminar_title: string, text: string, parentId?: string): Observable<Comment>;
 
-    /** Admin: Fetch all comments across all seminars */
+    /** Admin moderation: paginated, cursor-based */
+    getAllCommentsPaginated(pageSize: number, lastDoc: DocumentSnapshot | null): Observable<PaginatedResult<Comment>>;
+
+    /** Used where all comments for a user are needed at once */
     getAllComments(): Observable<Comment[]>;
 
-    /** Admin: Delete a comment */
     deleteComment(commentId: string): Observable<void>;
-
-    /** Admin: Toggle comment visibility */
     updateCommentStatus(commentId: string, isHidden: boolean): Observable<void>;
 }
 
-import { InjectionToken } from '@angular/core';
 export const COMMENT_SERVICE = new InjectionToken<ICommentService>('COMMENT_SERVICE');

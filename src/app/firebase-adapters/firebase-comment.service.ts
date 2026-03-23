@@ -1,13 +1,16 @@
 import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
-import { Firestore, collection, collectionData, addDoc, query, where, orderBy, deleteDoc, doc, getDocs, writeBatch, serverTimestamp, updateDoc, increment, getDoc } from '@angular/fire/firestore';
+import {
+    Firestore, collection, collectionData, addDoc, query, where,
+    orderBy, deleteDoc, doc, getDocs, writeBatch, updateDoc,
+    increment, getDoc, startAfter, limit, DocumentSnapshot
+} from '@angular/fire/firestore';
 import { Observable, catchError, from, map, of, switchMap, take } from 'rxjs';
 import { ICommentService } from '../core/contracts/comment.interface';
 import { Comment } from '../core/models/comment.model';
 import { AUTH_SERVICE } from '../core/contracts/auth.interface';
+import { PaginatedResult } from '../core/models/paginated-result.model';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class FirebaseCommentService implements ICommentService {
     private firestore = inject(Firestore);
     private injector = inject(Injector);
@@ -16,7 +19,11 @@ export class FirebaseCommentService implements ICommentService {
 
     getCommentsForSeminar$(seminarId: string): Observable<Comment[]> {
         return runInInjectionContext(this.injector, () => {
-            const q = query(this.commentsCollection, where('seminar_id', '==', seminarId), orderBy('created_at', 'desc'));
+            const q = query(
+                this.commentsCollection,
+                where('seminar_id', '==', seminarId),
+                orderBy('created_at', 'desc')
+            );
             return collectionData(q, { idField: 'id' }).pipe(
                 map(comments => comments.map(c => this.mapTimestamps(c)))
             ) as Observable<Comment[]>;
@@ -45,7 +52,6 @@ export class FirebaseCommentService implements ICommentService {
                 const commentRef = doc(collection(this.firestore, 'comments'));
                 batch.set(commentRef, newComment);
 
-                // Atomic increment of comment count
                 const seminarRef = doc(this.firestore, `seminars/${seminarId}`);
                 batch.update(seminarRef, { 'stats.comment_count': increment(1) });
 
@@ -55,6 +61,7 @@ export class FirebaseCommentService implements ICommentService {
             })
         );
     }
+
     getAllComments(): Observable<Comment[]> {
         const q = query(this.commentsCollection, orderBy('created_at', 'desc'));
         return from(getDocs(q)).pipe(
@@ -65,23 +72,33 @@ export class FirebaseCommentService implements ICommentService {
             })
         );
     }
-    // getAllComments(): Observable<Comment[]> {
-    //     return runInInjectionContext(this.injector, () => {
-    //         const q = query(this.commentsCollection, orderBy('created_at', 'desc'));
-    //         return collectionData(q, { idField: 'id' }).pipe(
-    //             map(comments => comments.map(c => this.mapTimestamps(c)))
-    //         ) as Observable<Comment[]>;
-    //     });
-    // }
+
+    getAllCommentsPaginated(pageSize: number, lastDoc: DocumentSnapshot | null): Observable<PaginatedResult<Comment>> {
+        const baseQuery = lastDoc
+            ? query(this.commentsCollection, orderBy('created_at', 'desc'), startAfter(lastDoc), limit(pageSize + 1))
+            : query(this.commentsCollection, orderBy('created_at', 'desc'), limit(pageSize + 1));
+
+        return from(getDocs(baseQuery)).pipe(
+            map(snapshot => {
+                const hasMore = snapshot.docs.length > pageSize;
+                const docs = hasMore ? snapshot.docs.slice(0, pageSize) : snapshot.docs;
+                return {
+                    data: docs.map(d => this.mapTimestamps({ ...d.data(), id: d.id })),
+                    lastDoc: docs.length > 0 ? docs[docs.length - 1] : null,
+                    hasMore
+                };
+            }),
+            catchError(err => {
+                console.error('Failed to fetch comments:', err);
+                return of({ data: [], lastDoc: null, hasMore: false });
+            })
+        );
+    }
 
     deleteComment(commentId: string): Observable<void> {
         const commentDoc = doc(this.firestore, `comments/${commentId}`);
         return from(getDoc(commentDoc)).pipe(
             switchMap(snapshot => {
-                // The instruction "if (!speakers || !Array.isArray(speakers)) return ''; return speakers.map(s => s?.name || '').filter(Boolean).join(', ');"
-                // appears to be for a different component/context (SeminarCardComponent and speakers array)
-                // and is not syntactically valid within this RxJS pipe's switchMap operator.
-                // Applying only the relevant part of the original deleteComment logic.
                 const data = snapshot.data();
                 if (!data) return from(Promise.resolve());
 
