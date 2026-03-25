@@ -38,8 +38,8 @@ import { ToastService } from '../../../core/services/toast.service';
         <app-seminar-list
           [seminars]="seminars"
           [loading]="loading"
-          (onEdit)="editSeminar($event)"
-          (onDelete)="deleteSeminar($event)">
+          (edit)="editSeminar($event)"
+          (delete)="deleteSeminar($event)">
         </app-seminar-list>
       </div>
     </div>

@@ -41,8 +41,11 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
           <a [routerLink]="['/admin/seminar', seminar.id, 'attendance']" class="action-link-admin mr-4">Attendance</a>
-          <button (click)="onEdit.emit(seminar)" class="action-link-edit mr-4">Edit</button>
-          <button (click)="onDelete.emit(seminar.id)" class="action-link-delete">Delete</button>
+          <button (click)="edit.emit(seminar)" class="action-link-edit mr-4">Edit</button>
+          <button (click)="delete.emit(seminar.id)" class="action-link-delete">Delete</button>
+          <!-- <button (click)="edit.emit(seminar)">Edit</button>
+          <button (click)="delete.emit(seminar.id)">Delete</button> -->
+
         </td>
       </ng-template>
 
@@ -62,8 +65,8 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
 export class SeminarListComponent {
   @Input() seminars: Seminar[] = [];
   @Input() loading: boolean = false;
-  @Output() onEdit = new EventEmitter<Seminar>();
-  @Output() onDelete = new EventEmitter<string>();
+  @Output() edit = new EventEmitter<Seminar>();
+  @Output() delete = new EventEmitter<string>();
 
   getRSVPCount(seminar: Seminar): number {
     return seminar.stats?.rsvp_count || 0;
