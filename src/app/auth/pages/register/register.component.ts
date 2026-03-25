@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
     selector: 'app-register',
@@ -13,7 +14,7 @@ import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 export class RegisterComponent {
     authService = inject(AUTH_SERVICE);
     router = inject(Router);
-
+    toastService = inject(ToastService);
     displayName = '';
     email = '';
     password = '';
@@ -23,17 +24,23 @@ export class RegisterComponent {
 
     onSubmit() {
         if (!this.email || !this.password || !this.displayName) return;
-
+        if (this.password !== this.confirmPassword) {
+            this.errorMessage = 'Passwords do not match';
+            this.toastService.error(this.errorMessage);
+            return;
+        }
         this.isLoading = true;
         this.errorMessage = '';
 
         this.authService.signUp(this.email, this.password, this.displayName).subscribe({
             next: () => {
                 // Automatically redirects to home upon successful registration 
+                this.toastService.success('Registration successful');
                 this.router.navigate(['/']);
             },
             error: (err) => {
                 this.errorMessage = err.message || 'Registration failed';
+                this.toastService.error(this.errorMessage);
                 this.isLoading = false;
             }
         });
