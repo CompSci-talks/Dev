@@ -26,6 +26,11 @@
                 <label for="password" class="block text-sm font-medium text-text-main mb-1">Password</label>
                 <input type="password" id="password" name="password" [(ngModel)]="password" required minlength="6"
                     class="input-field" placeholder="••••••••">
+                @if (password && confirmPassword && password !== confirmPassword) {
+                <div class="text-status-error text-sm mt-1">
+                    Passwords do not match
+                </div>
+                }
             </div>
             <div>
                 <label for="confirmPassword" class="block text-sm font-medium text-text-main mb-1">Confirm
