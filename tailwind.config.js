@@ -6,8 +6,8 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif'],
-                display: ['Outfit', 'Inter', 'sans-serif'],
+                sans: ['Poppins', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif'],
+                display: ['Poppins', 'sans-serif'],
             },
             colors: {
                 // ─── Brand / Action ───────────────────────────────────────────
@@ -55,9 +55,9 @@ module.exports = {
 
                 // ─── Admin / Moderator ────────────────────────────────────────
                 admin: {
-                    DEFAULT: '#7c3aed', // violet-600
-                    hover: '#6d28d9',   // violet-700
-                    light: '#f5f3ff',   // violet-50
+                    DEFAULT: '#2563eb', // blue-600 (was violet-600)
+                    hover: '#1d4ed8',   // blue-700 (was violet-700)
+                    light: '#eff6ff',   // blue-50 (was violet-50)
                 },
 
                 // ─── Admin Sidebar ────────────────────────────────────────────
@@ -129,7 +129,7 @@ module.exports = {
             boxShadow: {
                 'premium': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
                 'premium-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
-                'admin-glow': '0 0 20px -5px rgba(124, 58, 237, 0.2)',
+                'admin-glow': '0 0 20px -5px rgba(37, 99, 235, 0.2)',
             },
             borderRadius: {
                 'xl': '1rem',

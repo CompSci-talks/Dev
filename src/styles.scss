@@ -8,6 +8,7 @@
 @tailwind utilities;
 
 @layer base {
+
     /* Force light color scheme throughout — prevents OS dark mode from
        inverting browser-native UI elements (scrollbars, form controls, etc.)
        and stops any inherited `dark:` variants from firing unintentionally. */
@@ -15,12 +16,13 @@
         color-scheme: light;
     }
 
-    html, body {
+    html,
+    body {
         @apply bg-surface text-text-main;
     }
 
     html {
-        @apply font-sans antialiased;
+        @apply font-sans font-light text-text-main antialiased;
     }
 
     h1,
@@ -76,16 +78,16 @@
     }
 
     .input-field {
-        @apply w-full px-4 py-2 bg-surface-muted border border-border rounded-lg text-text-main placeholder:text-text-faint focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all;
+        @apply w-full px-4 py-2 bg-surface text-text-main placeholder:text-text-faint border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all;
     }
 
     .input-field-sm {
-        @apply w-full px-3 py-2 bg-surface-muted border border-border rounded-lg focus:ring-2 focus:ring-primary focus:bg-surface outline-none text-sm transition-all;
+        @apply w-full px-3 py-2 bg-surface text-text-main placeholder:text-text-faint border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm;
     }
 
-    /* Admin variant: slightly more elevated background, violet focus ring */
+    /* Admin variant: rounded-xl for consistency with admin components */
     .input-field-admin {
-        @apply w-full px-4 py-3 bg-surface-elevated border border-border rounded-xl text-text-main placeholder:text-text-faint focus:outline-none focus:ring-2 focus:ring-admin/20 focus:border-admin transition-all;
+        @apply w-full px-4 py-3 bg-surface text-text-main placeholder:text-text-faint border border-border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all;
     }
 
     /* ── Admin Page Header — shared across all admin pages ───────
