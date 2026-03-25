@@ -48,7 +48,7 @@
       <!-- Tag rendering with color code -->
       <span *ngFor="let tag of seminar.tags; let i = index"
         class="text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm"
-        [style.background-color]="tag.color_code || '#6366f1'">
+        [style.backgroundColor]="tag.color_code || '#6366f1'">
         {{ tag.name }}
       </span>
       <span class="text-xs text-text-muted ml-auto">{{ seminar.date_time | date:'mediumDate' }}</span>
