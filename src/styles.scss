@@ -33,6 +33,13 @@
     h6 {
         @apply font-display tracking-tight text-text-main;
     }
+
+    /* Remove Firefox's default validation styling that causes violet/red borders */
+    input:-moz-ui-invalid,
+    textarea:-moz-ui-invalid,
+    select:-moz-ui-invalid {
+        box-shadow: none;
+    }
 }
 
 @layer components {
@@ -81,16 +88,16 @@
     }
 
     .input-field {
-        @apply w-full px-4 py-2 bg-surface text-text-main placeholder:text-text-faint border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all;
+        @apply w-full px-4 py-2 bg-surface text-text-main placeholder:text-text-faint border border-border rounded-lg shadow-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 ease-in-out;
     }
 
     .input-field-sm {
-        @apply w-full px-3 py-2 bg-surface text-text-main placeholder:text-text-faint border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm;
+        @apply w-full px-3 py-2 bg-surface text-text-main placeholder:text-text-faint border border-border rounded-lg shadow-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 ease-in-out text-sm;
     }
 
     /* Admin variant: rounded-xl for consistency with admin components */
     .input-field-admin {
-        @apply w-full px-4 py-3 bg-surface text-text-main placeholder:text-text-faint border border-border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all;
+        @apply w-full px-4 py-3 bg-surface text-text-main placeholder:text-text-faint border border-border rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 ease-in-out;
     }
 
     /* ── Admin Page Header — shared across all admin pages ───────
