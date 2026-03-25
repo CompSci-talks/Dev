@@ -20,61 +20,40 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
       emptyMessage="No seminars scheduled."
     >
       <ng-template #header>
-        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date & Time</th>
-        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Seminar Title</th>
-        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Location</th>
-        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Attendees</th>
-        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-        <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+        <th class="th-cell">Date & Time</th>
+        <th class="th-cell">Seminar Title</th>
+        <th class="th-cell">Location</th>
+        <th class="th-cell text-center">Attendees</th>
+        <th class="th-cell">Status</th>
+        <th class="th-cell text-right">Actions</th>
       </ng-template>
 
       <ng-template #row let-seminar>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-          {{ seminar.date_time | date:'short' }}
-        </td>
+        <td class="td-cell text-text-muted">{{ seminar.date_time | date:'short' }}</td>
         <td class="px-6 py-4">
-          <a [routerLink]="['/seminar', seminar.id]" class="font-medium text-slate-900">{{ seminar.title }}</a>
+          <a [routerLink]="['/seminar', seminar.id]" class="font-medium text-text-main hover:text-primary transition-colors">{{ seminar.title }}</a>
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-          {{ seminar.location }}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium text-blue-600">
-          {{ getRSVPCount(seminar) }}
-        </td>
+        <td class="td-cell text-text-muted">{{ seminar.location }}</td>
+        <td class="td-cell text-center font-medium text-primary">{{ getRSVPCount(seminar) }}</td>
         <td class="px-6 py-4 whitespace-nowrap">
-          <span *ngIf="!seminar.is_hidden" 
-                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-            Visible
-          </span>
-          <span *ngIf="seminar.is_hidden" 
-                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
-            Hidden
-          </span>
+          <span *ngIf="!seminar.is_hidden" class="badge-success">Visible</span>
+          <span *ngIf="seminar.is_hidden" class="badge-warning">Hidden</span>
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-          <a [routerLink]="['/admin/seminar', seminar.id, 'attendance']"
-             class="text-admin hover:text-admin-hover font-medium mr-4">
-            Attendance
-          </a>
-          <button (click)="onEdit.emit(seminar)"
-                  class="text-blue-600 hover:text-blue-800 font-medium mr-4">
-            Edit
-          </button>
-          <button (click)="onDelete.emit(seminar.id)"
-                  class="text-red-500 hover:text-red-700 font-medium">
-            Delete
-          </button>
+          <a [routerLink]="['/admin/seminar', seminar.id, 'attendance']" class="action-link-admin mr-4">Attendance</a>
+          <button (click)="onEdit.emit(seminar)" class="action-link-edit mr-4">Edit</button>
+          <button (click)="onDelete.emit(seminar.id)" class="action-link-delete">Delete</button>
         </td>
       </ng-template>
 
       <ng-template #skeleton>
         <tr *ngFor="let i of [1,2,3,4,5]" class="animate-pulse">
-          <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32"></div></td>
-          <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48"></div></td>
-          <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32"></div></td>
-          <td class="px-6 py-4 text-center"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-8 mx-auto"></div></td>
-          <td class="px-6 py-4"><div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-16"></div></td>
-          <td class="px-6 py-4 text-right"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 ml-auto"></div></td>
+          <td class="px-6 py-4"><div class="skeleton h-4 w-32"></div></td>
+          <td class="px-6 py-4"><div class="skeleton h-4 w-48"></div></td>
+          <td class="px-6 py-4"><div class="skeleton h-4 w-32"></div></td>
+          <td class="px-6 py-4 text-center"><div class="skeleton h-4 w-8 mx-auto"></div></td>
+          <td class="px-6 py-4"><div class="skeleton h-6 w-16"></div></td>
+          <td class="px-6 py-4 text-right"><div class="skeleton h-4 w-24 ml-auto"></div></td>
         </tr>
       </ng-template>
     </app-paginated-table>

@@ -7,19 +7,19 @@ import { PaginationComponent } from '../pagination/pagination.component';
   standalone: true,
   imports: [CommonModule, PaginationComponent],
   template: `
-  <div class="shadow-md sm:rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+  <div class="shadow-sm sm:rounded-xl bg-surface-card border border-border">
     <div>
       <table
-        class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+        class="w-full text-sm text-left text-text-muted"
         [attr.aria-label]="ariaLabel || 'Data Table'"
         role="grid"
       >
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <thead class="text-xs text-text-muted uppercase bg-surface-muted">
           <tr>
             <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        <tbody class="divide-y divide-border">
 
           <!-- Loading State -->
           <ng-container *ngIf="loading">
@@ -27,9 +27,9 @@ import { PaginationComponent } from '../pagination/pagination.component';
               <ng-container *ngTemplateOutlet="skeletonTemplate"></ng-container>
             </ng-container>
             <ng-template #defaultSkeleton>
-              <tr *ngFor="let _ of [1,2,3,4,5]" class="animate-pulse bg-white dark:bg-gray-800">
+              <tr *ngFor="let _ of [1,2,3,4,5]" class="animate-pulse bg-surface-card">
                 <td *ngFor="let col of columnCountArray" class="px-6 py-4">
-                  <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                  <div class="h-4 bg-skeleton rounded w-3/4"></div>
                 </td>
               </tr>
             </ng-template>
@@ -38,16 +38,16 @@ import { PaginationComponent } from '../pagination/pagination.component';
           <!-- Data State -->
           <ng-container *ngIf="!loading && data.length > 0">
             <tr *ngFor="let item of data; trackBy: trackByFn"
-                class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                class="bg-surface-card hover:bg-surface-muted transition-colors">
               <ng-container *ngTemplateOutlet="rowTemplate; context: { $implicit: item }"></ng-container>
             </tr>
           </ng-container>
 
           <!-- Empty State -->
           <tr *ngIf="!loading && data.length === 0">
-            <td [attr.colspan]="columnCount" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+            <td [attr.colspan]="columnCount" class="px-6 py-12 text-center text-text-muted">
               <div class="flex flex-col items-center">
-                <svg class="w-12 h-12 mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 mb-4 text-text-faint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <p class="text-lg font-medium">{{ emptyMessage }}</p>

@@ -6,7 +6,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                // Easily adjustable semantic color palette
+                // ─── Brand / Action ───────────────────────────────────────────
                 primary: {
                     DEFAULT: '#2563eb', // text-primary, bg-primary
                     hover: '#1d4ed8',   // text-primary-hover
@@ -16,35 +16,84 @@ module.exports = {
                     DEFAULT: '#0ea5e9', // text-accent, bg-accent
                     hover: '#0284c7',
                 },
-                footer: {
-                    DEFAULT: '#1f2937', // bg-footer (was gray-800)
-                    border: '#374151',  // border-footer-border (was gray-700)
-                },
+
+                // ─── Surfaces ─────────────────────────────────────────────────
                 surface: {
                     DEFAULT: '#ffffff',
                     muted: '#f8fafc',
-                    card: '#ffffff'
+                    card: '#ffffff',
+                    elevated: '#f1f5f9', // admin form sections, input backgrounds
                 },
+
+                // ─── Text ─────────────────────────────────────────────────────
                 text: {
                     main: '#0f172a',
                     muted: '#64748b',
+                    faint: '#94a3b8',          // very light helper/placeholder text
                     inverse: '#ffffff',
-                    'inverse-muted': '#9ca3af', // text-text-inverse-muted (was gray-400)
-                    'inverse-heading': '#e5e7eb' // text-text-inverse-heading (was gray-200)
+                    'inverse-muted': '#9ca3af', // text-text-inverse-muted (footer)
+                    'inverse-heading': '#e5e7eb' // text-text-inverse-heading (footer)
                 },
+
+                // ─── Borders ──────────────────────────────────────────────────
                 border: {
-                    DEFAULT: '#e2e8f0'
+                    DEFAULT: '#e2e8f0',
+                    light: '#f1f5f9',
                 },
+
+                // ─── Status / Semantic ────────────────────────────────────────
                 status: {
                     error: '#ef4444',
-                    success: '#10b981'
+                    success: '#10b981',
+                    warning: '#f59e0b', // "STARTING SOON" badge, amber states
+                    info: '#3b82f6',    // edit action links, informational
                 },
+
+                // ─── Admin / Moderator ────────────────────────────────────────
                 admin: {
                     DEFAULT: '#7c3aed', // violet-600
                     hover: '#6d28d9',   // violet-700
                     light: '#f5f3ff',   // violet-50
-                }
+                },
+
+                // ─── Admin Sidebar ────────────────────────────────────────────
+                sidebar: {
+                    bg: '#0f172a',         // slate-900
+                    border: '#1e293b',     // slate-800
+                    text: '#94a3b8',       // slate-400
+                    'text-active': '#ffffff',
+                    'bg-active': '#1e293b',  // slate-800
+                    'bg-hover': '#1e293b',   // slate-800
+                    'top-bar-bg': '#ffffff',
+                    'top-bar-border': '#e2e8f0',
+                    'top-bar-text': '#94a3b8',
+                },
+
+                // ─── Role Badges ──────────────────────────────────────────────
+                // Used in navbar dropdown and user management
+                role: {
+                    'admin-bg': '#fee2e2',     // red-100
+                    'admin-text': '#b91c1c',   // red-700
+                    'moderator-bg': '#f3e8ff', // purple-100
+                    'moderator-text': '#7e22ce', // purple-700
+                    'user-bg': '#dcfce7',      // green-100
+                    'user-text': '#15803d',    // green-700
+                },
+
+                // ─── Skeleton Loading ─────────────────────────────────────────
+                skeleton: {
+                    DEFAULT: '#e2e8f0', // slate-200
+                    dark: '#cbd5e1',    // slate-300
+                },
+
+                // ─── Footer ───────────────────────────────────────────────────
+                footer: {
+                    DEFAULT: '#1f2937', // bg-footer (gray-800)
+                    border: '#374151',  // border-footer-border (gray-700)
+                },
             },
+
+            // ─── Keyframes ────────────────────────────────────────────────────
             keyframes: {
                 'progress-indeterminate': {
                     '0%': { transform: 'translateX(-100%) scaleX(0.2)' },
@@ -54,12 +103,19 @@ module.exports = {
                 'pulse-skeleton': {
                     '0%, 100%': { opacity: '1' },
                     '50%': { opacity: '0.5' },
-                }
+                },
+                'fade-in': {
+                    from: { opacity: '0', transform: 'translateY(-4px)' },
+                    to: { opacity: '1', transform: 'translateY(0)' },
+                },
             },
             animation: {
                 'progress-indeterminate': 'progress-indeterminate 2s infinite ease-in-out',
                 'pulse-skeleton': 'pulse-skeleton 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'fade-in': 'fade-in 0.2s ease-out',
             },
+
+            // ─── Misc ─────────────────────────────────────────────────────────
             height: {
                 'progress': '0.25rem', // 4px
             },

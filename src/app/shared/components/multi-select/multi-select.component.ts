@@ -21,15 +21,19 @@ interface SelectItem {
     ],
     template: `
     <div class="relative w-full" #container>
-      <div class="flex flex-wrap gap-2 p-2 min-h-[50px] bg-slate-50 border border-slate-200 rounded-xl focus-within:ring-2 focus-within:ring-blue-500 focus-within:bg-white transition-all cursor-text"
+      <div class="flex flex-wrap gap-2 p-2 min-h-[50px] bg-surface-elevated border border-border rounded-xl
+                  focus-within:ring-2 focus-within:ring-admin/20 focus-within:border-admin
+                  transition-all cursor-text"
            (click)="focusInput()">
-        
+
         <!-- Chips -->
-        <div *ngFor="let item of selectedItems" 
-             class="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium animate-fade-in">
+        <div *ngFor="let item of selectedItems"
+             class="flex items-center gap-1 px-2 py-1 bg-primary-light text-primary rounded-lg text-sm font-medium animate-fade-in">
           {{ item.name }}
-          <button type="button" (click)="removeItem(item.id, $event)" class="hover:text-blue-900">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          <button type="button" (click)="removeItem(item.id, $event)" class="hover:text-primary-hover">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
           </button>
         </div>
 
@@ -39,34 +43,31 @@ interface SelectItem {
                [(ngModel)]="searchQuery"
                (focus)="isOpen = true"
                [placeholder]="selectedItems.length ? '' : placeholder"
-               class="flex-grow bg-transparent outline-none text-sm py-1 px-1 min-w-[120px]"
-               (keydown.backspace)="handleBackspace($event)">
+               class="flex-grow bg-transparent outline-none text-sm py-1 px-1 min-w-[120px] text-text-main placeholder:text-text-faint">
       </div>
 
       <!-- Dropdown -->
-      <div *ngIf="isOpen && filteredItems.length > 0" 
-           class="absolute z-50 w-full mt-2 bg-white border border-slate-200 rounded-xl shadow-xl max-h-60 overflow-y-auto animate-fade-in">
+      <div *ngIf="isOpen && filteredItems.length > 0"
+           class="absolute z-50 w-full mt-2 bg-surface-card border border-border rounded-xl shadow-xl max-h-60 overflow-y-auto animate-fade-in">
         <div *ngFor="let item of filteredItems"
              (click)="selectItem(item)"
-             class="px-4 py-3 hover:bg-slate-50 cursor-pointer flex justify-between items-center transition-colors">
-          <span class="text-sm text-slate-700">{{ item.name }}</span>
-          <div *ngIf="isSelected(item.id)" class="text-blue-600">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+             class="px-4 py-3 hover:bg-surface-muted cursor-pointer flex justify-between items-center transition-colors">
+          <span class="text-sm text-text-main">{{ item.name }}</span>
+          <div *ngIf="isSelected(item.id)" class="text-primary">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
           </div>
         </div>
       </div>
-      
+
       <div *ngIf="isOpen && filteredItems.length === 0 && searchQuery"
-           class="absolute z-50 w-full mt-2 bg-white border border-slate-200 rounded-xl shadow-xl p-4 text-center text-slate-400 italic text-sm animate-fade-in">
+           class="absolute z-50 w-full mt-2 bg-surface-card border border-border rounded-xl shadow-xl p-4 text-center text-text-faint italic text-sm animate-fade-in">
         No results found for "{{ searchQuery }}"
       </div>
     </div>
   `,
-    styles: [`
-    :host { display: block; width: 100%; }
-    .animate-fade-in { animation: fadeIn 0.2s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-  `]
+    styles: [`:host { display: block; width: 100%; }`]
 })
 export class MultiSelectComponent implements ControlValueAccessor {
     @Input() items: SelectItem[] = [];
@@ -111,15 +112,11 @@ export class MultiSelectComponent implements ControlValueAccessor {
             this.selectedIds = [...this.selectedIds, item.id];
             this.onChange(this.selectedIds);
             this.searchQuery = '';
-            // keep open for more selections or close?
-            // typically users expect it to stay open for multi-select
         }
     }
 
     removeItem(id: string, event?: any) {
-        if (event) {
-            event.stopPropagation();
-        }
+        if (event) event.stopPropagation();
         this.selectedIds = this.selectedIds.filter(itemId => itemId !== id);
         this.onChange(this.selectedIds);
     }
@@ -135,20 +132,11 @@ export class MultiSelectComponent implements ControlValueAccessor {
         return this.selectedIds.includes(id);
     }
 
-    // ControlValueAccessor methods    
     writeValue(value: any): void {
         this.selectedIds = Array.isArray(value) ? value.filter((id: string) => !!id) : [];
     }
 
-    registerOnChange(fn: any): void {
-        this.onChange = fn;
-    }
-
-    registerOnTouched(fn: any): void {
-        this.onTouched = fn;
-    }
-
-    setDisabledState?(isDisabled: boolean): void {
-        // Handle disabled state if needed
-    }
+    registerOnChange(fn: any): void { this.onChange = fn; }
+    registerOnTouched(fn: any): void { this.onTouched = fn; }
+    setDisabledState?(isDisabled: boolean): void { }
 }
