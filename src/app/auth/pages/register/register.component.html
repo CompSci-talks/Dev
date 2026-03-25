@@ -4,11 +4,10 @@
             <h1 class="text-2xl font-bold text-text-main">Create an Account</h1>
         </div>
 
-        @if (errorMessage) {
-        <div class="bg-status-error/10 text-status-error p-3 rounded-md mb-6 text-sm border border-status-error/20">
+        <div *ngIf="errorMessage"
+            class="bg-status-error/10 text-status-error p-3 rounded-md mb-6 text-sm border border-status-error/20">
             {{ errorMessage }}
         </div>
-        }
 
         <form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="space-y-4">
             <div>
@@ -33,22 +32,12 @@
                     Password</label>
                 <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword"
                     required minlength="6" class="input-field" placeholder="••••••••">
-
-                @if (password && confirmPassword && password !== confirmPassword) {
-                <div class="text-status-error text-sm mt-1">
-                    Passwords do not match
-                </div>
-                }
-
             </div>
 
             <button type="submit" class="btn btn-primary w-full mt-6"
                 [disabled]="!registerForm.valid || isLoading || password !== confirmPassword">
-                @if (isLoading) {
-                <span>Creating account...</span>
-                } @else {
-                <span>Sign Up</span>
-                }
+                <span *ngIf="isLoading">Creating account...</span>
+                <span *ngIf="!isLoading">Sign Up</span>
             </button>
         </form>
 
