@@ -7,7 +7,31 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    html {
+        @apply font-sans text-text-main antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-display tracking-tight text-text-main;
+    }
+}
+
 @layer components {
+
+    /* ── Layout Helpers ────────────────────────────────────────── */
+    .container-main {
+        @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+    }
+
+    .section-padding {
+        @apply py-8 sm:py-12 lg:py-16;
+    }
 
     /* ── Buttons ──────────────────────────────────────────────── */
     .btn {
@@ -19,7 +43,7 @@
     }
 
     .btn-outline {
-        @apply btn border border-border text-text-muted hover:text-primary hover:border-primary hover:bg-primary-light;
+        @apply btn border border-border bg-surface text-text-muted hover:text-primary hover:border-primary hover:bg-primary-light shadow-sm;
     }
 
     .btn-danger {
@@ -30,13 +54,17 @@
         @apply btn bg-admin text-white hover:bg-admin-hover active:scale-95 shadow-lg focus:outline-none focus:ring-4 focus:ring-admin/30;
     }
 
-    /* ── Form ─────────────────────────────────────────────────── */
+    /* ── Form & Containers ────────────────────────────────────── */
     .card {
-        @apply bg-surface-card rounded-2xl border border-border p-6 shadow-sm;
+        @apply bg-surface-card rounded-2xl border border-border p-6 shadow-premium transition-all duration-200 hover:shadow-premium-hover;
     }
 
     .input-field {
         @apply w-full px-4 py-2 bg-surface-muted border border-border rounded-lg text-text-main placeholder:text-text-faint focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all;
+    }
+
+    .input-field-sm {
+        @apply w-full px-3 py-2 bg-surface-muted border border-border rounded-lg focus:ring-2 focus:ring-primary focus:bg-surface outline-none text-sm transition-all;
     }
 
     /* Admin variant: slightly more elevated background, violet focus ring */
@@ -55,7 +83,7 @@
 
     /* ── Action Links ─────────────────────────────────────────── */
     .action-link {
-        @apply font-medium transition-colors cursor-pointer;
+        @apply text-sm font-semibold transition-colors flex items-center gap-1;
     }
 
     .action-link-edit {

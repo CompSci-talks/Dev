@@ -1,9 +1,9 @@
-<div class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+<div class="container-main section-padding">
 
     <!-- Header -->
     <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
         <div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-text-main mb-1">Upcoming Talks</h1>
+            <h1 class="text-3xl font-bold mb-1">Upcoming Talks</h1>
             <p class="text-text-muted text-sm">Discover and join the latest talks from our community.</p>
         </div>
         <a routerLink="/archive" class="btn btn-outline text-sm">View Previous Talks</a>
@@ -15,17 +15,17 @@
         @for (i of [1,2,3]; track i) {
         <div class="animate-pulse">
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-1 h-5 bg-slate-300 rounded-full"></div>
-                <div class="h-4 w-48 bg-slate-200 rounded"></div>
+                <div class="w-1 h-5 bg-skeleton rounded-full"></div>
+                <div class="h-4 w-48 bg-skeleton rounded"></div>
             </div>
-            <div class="bg-slate-50 rounded-2xl p-4 sm:p-6 flex gap-4 sm:gap-6 border border-slate-200">
-                <div class="w-20 sm:w-48 bg-slate-200 rounded-xl flex-shrink-0" style="aspect-ratio:16/9"></div>
+            <div class="bg-surface-muted rounded-2xl p-4 sm:p-6 flex gap-4 sm:gap-6 border border-border">
+                <div class="w-20 sm:w-48 bg-skeleton rounded-xl flex-shrink-0" style="aspect-ratio:16/9"></div>
                 <div class="flex-1 space-y-3 py-1">
-                    <div class="h-3 bg-slate-200 rounded w-24"></div>
-                    <div class="h-5 bg-slate-200 rounded w-3/4"></div>
-                    <div class="h-3 bg-slate-200 rounded w-1/2"></div>
-                    <div class="h-3 bg-slate-200 rounded w-full"></div>
-                    <div class="h-3 bg-slate-200 rounded w-5/6"></div>
+                    <div class="h-3 bg-skeleton rounded w-24"></div>
+                    <div class="h-5 bg-skeleton rounded w-3/4"></div>
+                    <div class="h-3 bg-skeleton rounded w-1/2"></div>
+                    <div class="h-3 bg-skeleton rounded w-full"></div>
+                    <div class="h-3 bg-skeleton rounded w-5/6"></div>
                 </div>
             </div>
         </div>
@@ -49,26 +49,26 @@
             <!-- Date header -->
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-1 h-6 bg-primary rounded-full"></div>
-                <span class="text-xs font-bold text-slate-600 uppercase tracking-widest">
+                <span class="text-xs font-bold text-text-muted uppercase tracking-widest">
                     {{ group.date | date:'EEEE, MMMM d, y' }}
                 </span>
-                <div class="flex-1 h-px bg-slate-200"></div>
+                <div class="flex-1 h-px bg-border"></div>
             </div>
 
             <!-- Seminars for this day -->
-            <div class="rounded-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100">
+            <div class="rounded-2xl border border-border overflow-hidden divide-y divide-border">
                 @for (sem of group.seminars; track sem.id) {
                 <a [routerLink]="['/seminar', sem.id]"
-                    class="flex gap-4 sm:gap-6 p-4 sm:p-6 bg-white hover:bg-slate-50 transition-all group cursor-pointer border-l-4 border-l-transparent hover:border-l-primary">
+                    class="flex gap-4 sm:gap-6 p-4 sm:p-6 bg-surface hover:bg-surface-muted transition-all group cursor-pointer border-l-4 border-l-transparent hover:border-l-primary">
 
                     <!-- Thumbnail -->
-                    <div class="flex-shrink-0 w-20 sm:w-48 rounded-xl overflow-hidden bg-slate-200"
+                    <div class="flex-shrink-0 w-20 sm:w-48 rounded-xl overflow-hidden bg-surface-muted"
                         style="aspect-ratio: 16/9; align-self: flex-start;">
                         @if (sem.thumbnail_url) {
                         <img [src]="sem.thumbnail_url" [alt]="sem.title"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         } @else {
-                        <div class="w-full h-full flex items-center justify-center text-slate-300">
+                        <div class="w-full h-full flex items-center justify-center text-text-faint">
                             <svg class="w-6 h-6 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />

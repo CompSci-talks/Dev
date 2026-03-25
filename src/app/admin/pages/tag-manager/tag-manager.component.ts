@@ -15,37 +15,37 @@ import { take } from 'rxjs';
     <div class="max-w-4xl">
       <div class="flex justify-between items-center mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-slate-900">Tag Manager</h1>
-          <p class="text-slate-600">Categorize seminars with colorful tags.</p>
+          <h1 class="text-2xl font-bold text-text-main font-display">Tag Manager</h1>
+          <p class="text-text-muted">Categorize seminars with colorful tags.</p>
         </div>
         <button *ngIf="!showForm" (click)="showForm = true" 
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+                class="btn btn-primary">
           + New Tag
         </button>
       </div>
 
       <!-- Quick Form -->
-      <div *ngIf="showForm" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-8">
-        <h3 class="text-lg font-bold mb-4">{{ editingTag ? 'Edit Tag' : 'Add New Tag' }}</h3>
+      <div *ngIf="showForm" class="bg-surface-card p-6 rounded-xl border border-border shadow-premium mb-8 animate-fade-in">
+        <h3 class="text-lg font-bold text-text-main mb-4 font-display">{{ editingTag ? 'Edit Tag' : 'Add New Tag' }}</h3>
         <form [formGroup]="tagForm" (ngSubmit)="saveTag()" class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium mb-1">Tag Name</label>
+            <label class="block text-sm font-medium text-text-main mb-1">Tag Name</label>
             <input type="text" formControlName="name" 
-                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                   class="input-field w-full" placeholder="e.g. AI, Research, Web">
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1">Color Code</label>
+            <label class="block text-sm font-medium text-text-main mb-1">Color Code</label>
             <div class="flex space-x-2">
               <input type="color" formControlName="color_code" 
-                     class="h-10 w-16 p-1 border rounded-lg cursor-pointer">
+                     class="h-10 w-16 p-1 border border-border rounded-lg cursor-pointer bg-surface">
               <input type="text" formControlName="color_code" 
-                     class="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none uppercase font-mono">
+                     class="flex-1 input-field uppercase font-mono" placeholder="#000000">
             </div>
           </div>
-          <div class="md:col-span-2 flex justify-end space-x-3">
-            <button type="button" (click)="cancelEdit()" class="px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg">Cancel</button>
+          <div class="md:col-span-2 flex justify-end space-x-3 mt-2">
+            <button type="button" (click)="cancelEdit()" class="btn btn-ghost">Cancel</button>
             <button type="submit" [disabled]="tagForm.invalid" 
-                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
+                    class="btn btn-primary min-w-[120px]">
               {{ editingTag ? 'Update Tag' : 'Save Tag' }}
             </button>
           </div>

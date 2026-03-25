@@ -18,12 +18,12 @@ import { EmailSelectionService } from '../../services/email-selection.service';
     template: `
     <div class="p-6">
       <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">User Management</h1>
+        <h1 class="text-2xl font-bold text-text-main font-display">User Management</h1>
         <div class="flex items-center space-x-3">
           <button 
             [disabled]="selectedUserIds.size === 0"
             (click)="onEmailSelected()"
-            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="btn btn-primary"
           >
             Email Selected ({{ selectedUserIds.size }})
           </button>

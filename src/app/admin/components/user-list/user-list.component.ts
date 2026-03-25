@@ -24,66 +24,66 @@ import { User } from '../../../core/models/user.model';
       emptyMessage="No users found."
     >
       <ng-template #header>
-        <th scope="col" class="p-4">
+        <th scope="col" class="p-4 border-b border-border bg-surface-muted/50">
           <div class="flex items-center">
-            <input id="checkbox-all-search" type="checkbox" (change)="toggleAll($event)" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            <input id="checkbox-all-search" type="checkbox" (change)="toggleAll($event)" class="w-4 h-4 text-admin bg-surface border-border rounded focus:ring-admin focus:ring-2">
             <label for="checkbox-all-search" class="sr-only">checkbox</label>
           </div>
         </th>
-        <th scope="col" class="px-6 py-3">Name</th>
-        <th scope="col" class="px-6 py-3">Email</th>
-        <th scope="col" class="px-6 py-3">Role</th>
-        <th scope="col" class="px-6 py-3 text-center">Attendance</th>
-        <th scope="col" class="px-6 py-3">Created</th>
-        <th scope="col" class="px-6 py-3">Action</th>
+        <th scope="col" class="th-cell">Name</th>
+        <th scope="col" class="th-cell">Email</th>
+        <th scope="col" class="th-cell">Role</th>
+        <th scope="col" class="th-cell text-center">Attendance</th>
+        <th scope="col" class="th-cell">Created</th>
+        <th scope="col" class="th-cell">Action</th>
       </ng-template>
 
       <ng-template #row let-user>
-        <td class="w-4 p-4">
+        <td class="w-4 p-4 border-b border-border">
           <div class="flex items-center">
-            <input [id]="'checkbox-' + user.id" type="checkbox" [checked]="selectedUserIds.has(user.id)" (change)="toggleUser(user.id)" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            <input [id]="'checkbox-' + user.id" type="checkbox" [checked]="selectedUserIds.has(user.id)" (change)="toggleUser(user.id)" class="w-4 h-4 text-admin bg-surface border-border rounded focus:ring-admin focus:ring-2">
             <label [for]="'checkbox-' + user.id" class="sr-only">Select {{ user.display_name }}</label>
           </div>
         </td>
-        <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+        <th scope="row" class="flex items-center px-6 py-4 text-text-main whitespace-nowrap font-medium border-b border-border">
           <img class="w-10 h-10 rounded-full" [src]="user.photo_url || 'https://ui-avatars.com/api/?name=' + user.display_name" alt="{{user.display_name}} image">
           <div class="pl-3">
             <div class="text-base font-semibold">{{user.display_name}}</div>
-            <div class="font-normal text-gray-500">Last active: {{user.last_active_at | date:'short'}}</div>
+            <div class="font-normal text-text-muted">Last active: {{user.last_active_at | date:'short'}}</div>
           </div>
         </th>
-        <td class="px-6 py-4">{{user.email}}</td>
-        <td class="px-6 py-4">
+        <td class="td-cell">{{user.email}}</td>
+        <td class="td-cell">
            <app-role-toggle 
              [role]="user.role" 
              [disabled]="user.id === currentUserId"
              (roleChange)="onRoleUpdate(user.id, $event)"
            ></app-role-toggle>
         </td>
-        <td class="px-6 py-4 text-center text-sm font-medium text-gray-900 dark:text-white">
+        <td class="td-cell text-center font-medium">
           {{user.attendanceCount || 0}}
         </td>
-        <td class="px-6 py-4">{{user.createdAt | date:'mediumDate'}}</td>
-        <td class="px-6 py-4">
-          <button (click)="viewDetail.emit(user.id)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View details</button>
+        <td class="td-cell">{{user.createdAt | date:'mediumDate'}}</td>
+        <td class="td-cell">
+          <button (click)="viewDetail.emit(user.id)" class="btn-link-admin font-medium hover:underline">View details</button>
         </td>
       </ng-template>
 
       <ng-template #skeleton>
-        <tr *ngFor="let i of [1,2,3,4,5]" class="animate-pulse">
-          <td class="p-4"><div class="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div></td>
+        <tr *ngFor="let i of [1,2,3,4,5]" class="animate-pulse border-b border-border">
+          <td class="p-4"><div class="w-4 h-4 bg-skeleton rounded"></div></td>
           <td class="px-6 py-4 flex items-center">
-            <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+            <div class="w-10 h-10 rounded-full bg-skeleton"></div>
             <div class="pl-3">
-              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-2"></div>
-              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+              <div class="h-4 bg-skeleton rounded w-24 mb-2"></div>
+              <div class="h-3 bg-skeleton rounded w-32"></div>
             </div>
           </td>
-          <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-40"></div></td>
-          <td class="px-6 py-4"><div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24"></div></td>
-          <td class="px-6 py-4 text-center"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-8 mx-auto"></div></td>
-          <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div></td>
-          <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div></td>
+          <td class="px-6 py-4"><div class="h-4 bg-skeleton rounded w-40"></div></td>
+          <td class="px-6 py-4"><div class="h-8 bg-skeleton rounded w-24"></div></td>
+          <td class="px-6 py-4 text-center"><div class="h-4 bg-skeleton rounded w-8 mx-auto"></div></td>
+          <td class="px-6 py-4"><div class="h-4 bg-skeleton rounded w-20"></div></td>
+          <td class="px-6 py-4"><div class="h-4 bg-skeleton rounded w-16"></div></td>
         </tr>
       </ng-template>
     </app-paginated-table>

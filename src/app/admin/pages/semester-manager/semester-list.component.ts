@@ -36,7 +36,7 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
         <td class="td-cell text-text-muted">{{ semester.end_date | date:'longDate' }}</td>
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
           <button *ngIf="!semester.is_active" (click)="onActivate.emit(semester.id)" class="action-link-edit mr-4">Set Active</button>
-          <button (click)="onEdit.emit(semester)" class="action-link mr-4 text-text-muted hover:text-text-main">Edit</button>
+          <button (click)="onEdit.emit(semester)" class="action-link-edit mr-4">Edit</button>
           <button (click)="onDelete.emit(semester.id)" class="action-link-delete">Delete</button>
         </td>
       </ng-template>

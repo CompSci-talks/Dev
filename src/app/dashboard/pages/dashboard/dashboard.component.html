@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto px-4 py-12">
+<div class="container-main section-padding">
     <div class="mb-12">
         <h1 class="text-4xl font-bold text-text-main mb-4">My Dashboard</h1>
         <p class="text-xl text-text-muted max-w-2xl">
@@ -12,21 +12,20 @@
         </div>
 
         <ng-template #emptyState>
-            <div class="card p-12 text-center bg-surface-muted border-dashed border-2 border-border">
-                <svg class="w-16 h-16 mx-auto text-text-muted mb-4" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                    </path>
-                </svg>
-                <h3 class="text-2xl font-bold mb-2">No Upcoming Marked Talks</h3>
-                <p class="text-text-muted mb-6">You haven't marked yourself as attending any upcoming talks yet.</p>
-                <a routerLink="/" class="btn btn-primary inline-flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div
+                class="card p-16 text-center bg-surface-muted/50 border-dashed border-2 border-border flex flex-col items-center justify-center">
+                <div class="w-20 h-20 bg-surface rounded-full flex items-center justify-center shadow-premium mb-6">
+                    <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
                     </svg>
-                    Browse Schedule
+                </div>
+                <h3 class="text-2xl font-bold text-heading mb-3">Your schedule is empty</h3>
+                <p class="text-text-muted mb-8 max-w-sm mx-auto">You haven't marked yourself as attending any upcoming
+                    talks yet. Start exploring the latest seminars!</p>
+                <a routerLink="/" class="btn btn-primary">
+                    Browse Upcoming Talks
                 </a>
             </div>
         </ng-template>

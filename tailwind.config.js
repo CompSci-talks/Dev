@@ -5,6 +5,10 @@ module.exports = {
     ],
     theme: {
         extend: {
+            fontFamily: {
+                sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif'],
+                display: ['Outfit', 'Inter', 'sans-serif'],
+            },
             colors: {
                 // ─── Brand / Action ───────────────────────────────────────────
                 primary: {
@@ -121,6 +125,15 @@ module.exports = {
             },
             zIndex: {
                 'progress': '60',
+            },
+            boxShadow: {
+                'premium': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                'premium-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
+                'admin-glow': '0 0 20px -5px rgba(124, 58, 237, 0.2)',
+            },
+            borderRadius: {
+                'xl': '1rem',
+                '2xl': '1.5rem',
             }
         },
     },

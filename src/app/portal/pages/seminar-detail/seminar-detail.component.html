@@ -1,22 +1,22 @@
-<div class="max-w-4xl mx-auto px-4 py-8">
+<div class="container-main section-padding">
 
 
     @if (isLoading) {
     <!-- Skeleton -->
     <div class="animate-pulse">
         <div class="flex gap-2 mb-4">
-            <div class="h-6 w-16 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
-            <div class="h-6 w-32 bg-slate-200 dark:bg-slate-700 rounded ml-auto"></div>
+            <div class="h-6 w-16 bg-skeleton rounded-full"></div>
+            <div class="h-6 w-32 bg-skeleton rounded ml-auto"></div>
         </div>
-        <div class="h-10 w-3/4 bg-slate-200 dark:bg-slate-700 rounded mb-4"></div>
-        <div class="h-6 w-1/2 bg-slate-200 dark:bg-slate-700 rounded mb-8"></div>
-        <div class="h-20 w-full bg-slate-200 dark:bg-slate-700 rounded mb-8 border border-slate-300"></div>
+        <div class="h-10 w-3/4 bg-skeleton rounded mb-4"></div>
+        <div class="h-6 w-1/2 bg-skeleton rounded mb-8"></div>
+        <div class="h-20 w-full bg-skeleton rounded mb-8 border border-border"></div>
         <div class="space-y-4 mb-12">
-            <div class="h-4 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
-            <div class="h-4 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
-            <div class="h-4 w-5/6 bg-slate-200 dark:bg-slate-700 rounded"></div>
+            <div class="h-4 w-full bg-skeleton rounded"></div>
+            <div class="h-4 w-full bg-skeleton rounded"></div>
+            <div class="h-4 w-5/6 bg-skeleton rounded"></div>
         </div>
-        <div class="h-64 w-full bg-slate-200 dark:bg-slate-700 rounded mb-8"></div>
+        <div class="h-64 w-full bg-skeleton rounded mb-8"></div>
     </div>
 
     }
@@ -71,7 +71,7 @@
             </span>
             }
             @case ('soon') {
-            <span class="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">
+            <span class="bg-status-warning text-white text-xs font-bold px-2 py-1 rounded">
                 STARTING SOON
             </span>
             }

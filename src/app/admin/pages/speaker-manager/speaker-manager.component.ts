@@ -15,43 +15,43 @@ import { take } from 'rxjs';
     <div class="max-w-4xl">
       <div class="flex justify-between items-center mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-slate-900">Speaker Manager</h1>
-          <p class="text-slate-600">Manage seminar speakers and their profiles.</p>
+          <h1 class="text-2xl font-bold text-text-main font-display">Speaker Manager</h1>
+          <p class="text-text-muted">Manage seminar speakers and their profiles.</p>
         </div>
         <button *ngIf="!showForm" (click)="showForm = true" 
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+                class="btn btn-primary">
           + New Speaker
         </button>
       </div>
 
       <!-- Quick Form -->
-      <div *ngIf="showForm" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-8">
-        <h3 class="text-lg font-bold mb-4">{{ editingSpeaker ? 'Edit Speaker' : 'Add New Speaker' }}</h3>
+      <div *ngIf="showForm" class="bg-surface-card p-6 rounded-xl border border-border shadow-premium mb-8 animate-fade-in">
+        <h3 class="text-lg font-bold text-text-main mb-4 font-display">{{ editingSpeaker ? 'Edit Speaker' : 'Add New Speaker' }}</h3>
         <form [formGroup]="speakerForm" (ngSubmit)="saveSpeaker()" class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="md:col-span-2">
-            <label class="block text-sm font-medium mb-1">Full Name</label>
+            <label class="block text-sm font-medium text-text-main mb-1">Full Name</label>
             <input type="text" formControlName="name" 
-                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                   class="input-field w-full" placeholder="e.g. Dr. John Doe">
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1">Affiliation</label>
+            <label class="block text-sm font-medium text-text-main mb-1">Affiliation</label>
             <input type="text" formControlName="affiliation" 
-                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                   class="input-field w-full" placeholder="e.g. Ain Shams University">
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1">Email</label>
+            <label class="block text-sm font-medium text-text-main mb-1">Email</label>
             <input type="email" formControlName="email" 
-                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                   class="input-field w-full" placeholder="e.g. john.doe@example.com">
           </div>
           <div class="md:col-span-2">
-            <label class="block text-sm font-medium mb-1">Bio</label>
+            <label class="block text-sm font-medium text-text-main mb-1">Bio</label>
             <textarea formControlName="bio" rows="3"
-                      class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                      class="input-field w-full resize-none" placeholder="Brief biography..."></textarea>
           </div>
-          <div class="md:col-span-2 flex justify-end space-x-3">
-            <button type="button" (click)="cancelEdit()" class="px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg">Cancel</button>
+          <div class="md:col-span-2 flex justify-end space-x-3 mt-2">
+            <button type="button" (click)="cancelEdit()" class="btn btn-ghost">Cancel</button>
             <button type="submit" [disabled]="speakerForm.invalid" 
-                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
+                    class="btn btn-primary min-w-[120px]">
               {{ editingSpeaker ? 'Update Speaker' : 'Save Speaker' }}
             </button>
           </div>

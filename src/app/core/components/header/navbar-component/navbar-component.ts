@@ -9,7 +9,7 @@ import { AUTH_SERVICE } from '../../../contracts/auth.interface';
   imports: [CommonModule, RouterModule],
   template: `
     <header class="bg-surface-card border-b border-border shadow-sm sticky top-0 z-50">
-      <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="container-main h-16 flex items-center justify-between">
 
         <!-- Logo -->
         <a routerLink="/" class="text-xl font-bold text-primary tracking-tight flex-shrink-0">

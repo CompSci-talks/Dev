@@ -15,16 +15,16 @@ import { ToastService } from '../../../core/services/toast.service';
     <div class="max-w-4xl">
       <div class="flex justify-between items-center mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-slate-900">Semester Manager</h1>
-          <p class="text-slate-600">Define academic terms and set the active semester.</p>
+          <h1 class="text-2xl font-bold text-text-main font-display">Semester Manager</h1>
+          <p class="text-text-muted">Define academic terms and set the active semester.</p>
         </div>
         <button *ngIf="!showForm" (click)="onCreate()" 
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+                class="btn btn-primary">
           + New Semester
         </button>
       </div>
 
-      <div *ngIf="showForm" class="mb-8">
+      <div *ngIf="showForm" class="mb-8 animate-fade-in">
         <app-semester-form 
           [semester]="editingSemester" 
           (onSave)="saveSemester($event)" 
@@ -32,7 +32,7 @@ import { ToastService } from '../../../core/services/toast.service';
         </app-semester-form>
       </div>
       
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="bg-surface-card rounded-xl shadow-premium border border-border overflow-hidden">
         <app-semester-list 
           [semesters]="semesters"
           [loading]="loading"

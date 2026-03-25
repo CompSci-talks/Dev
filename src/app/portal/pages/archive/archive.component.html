@@ -1,12 +1,12 @@
-<div class="max-w-5xl mx-auto px-4 py-8">
+<div class="container-main section-padding">
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-text-main mb-2">Previous Talks & Archive</h1>
         <p class="text-text-muted">Browse past seminars and access presentation materials.</p>
     </div>
 
-    <div class="mb-8">
-        <input type="text" placeholder="Search by keyword, tag, or speaker..." class="input-field max-w-md bg-white"
-            disabled title="Search interaction to be implemented">
+    <div class="mb-12">
+        <input type="text" placeholder="Search by keyword, tag, or speaker..." class="input-field max-w-md" disabled
+            title="Search interaction to be implemented">
     </div>
 
     <app-paginated-grid [data]="seminars" [loading]="loading" [itemTemplate]="seminarTmpl"
