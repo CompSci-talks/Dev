@@ -17,6 +17,7 @@ export class RegisterComponent {
     displayName = '';
     email = '';
     password = '';
+    confirmPassword = '';
     errorMessage = '';
     isLoading = false;
 
