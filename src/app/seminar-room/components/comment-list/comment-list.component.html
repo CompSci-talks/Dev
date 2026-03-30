@@ -27,7 +27,8 @@
                         {{ isExpanded(c.id) ? 'See less' : 'See more' }}
                     </button>
                     <div class="flex-grow"></div>
-                    <button class="text-xs font-semibold text-text-muted hover:text-primary transition-colors"
+                    <button *ngIf="!isReply"
+                        class="text-xs font-semibold text-text-muted hover:text-primary transition-colors"
                         (click)="replyClicked.emit(c.id)">
                         Reply
                     </button>
