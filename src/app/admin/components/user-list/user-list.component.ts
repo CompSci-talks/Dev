@@ -50,7 +50,7 @@ import { User } from '../../../core/models/user.model';
           <div class="pl-3">
             <div class="flex items-center gap-2">
               <div class="text-base font-semibold">{{user.display_name}}</div>
-              <span *ngIf="!user.email_verified" class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded bg-status-error/10 text-status-error border border-status-error/20">Unverified</span>
+              <!-- <span *ngIf="!user.email_verified" class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded bg-status-error/10 text-status-error border border-status-error/20">Unverified</span> -->
             </div>
             <div class="font-normal text-text-muted">Last active: {{user.last_active_at | date:'short'}}</div>
           </div>

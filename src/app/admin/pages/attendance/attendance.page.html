@@ -21,14 +21,13 @@
       <div class="lg:col-span-2">
         <label for="search" class="block text-sm font-medium text-text-main mb-2">Search Attendees</label>
         <div class="relative">
-          <input type="text" id="search" [(ngModel)]="filters.searchQuery"
-              (ngModelChange)="applyFilters()" placeholder="Filter by name or email..."
-              class="input-field pl-10">
+          <input type="text" id="search" [(ngModel)]="filters.searchQuery" (ngModelChange)="applyFilters()"
+            placeholder="Filter by name or email..." class="input-field pl-10">
           <div class="absolute left-3 top-1/2 -translate-y-1/2 text-text-faint">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
             </svg>
           </div>
         </div>
@@ -37,7 +36,7 @@
       <div>
         <label for="status" class="block text-sm font-medium text-text-main mb-2">Status</label>
         <select id="status" [(ngModel)]="filters.status" (ngModelChange)="applyFilters()"
-            class="input-field appearance-none">
+          class="input-field appearance-none">
           <option [ngValue]="undefined">All Statuses</option>
           <option value="attended">Attended</option>
           <option value="confirmed">Confirmed</option>
@@ -47,8 +46,8 @@
 
       <div>
         <button [disabled]="selectedAttendeeIds.size === 0" (click)="openComposer()"
-            class="btn btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed">
-          Email {{ selectedAttendeeIds.size > 0 ? selectedAttendeeIds.size + ' Selected' : 'Selected' }}
+          class="btn btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed">
+          Send Email
         </button>
       </div>
     </div>
@@ -61,9 +60,8 @@
         <thead>
           <tr class="bg-surface-muted/50 border-b border-border">
             <th class="px-6 py-4">
-              <input type="checkbox" [checked]="isAllSelected()"
-                  (change)="toggleAll(headerCheck.checked)" #headerCheck
-                  class="rounded border-border text-admin focus:ring-admin">
+              <input type="checkbox" [checked]="isAllSelected()" (change)="toggleAll(headerCheck.checked)" #headerCheck
+                class="rounded border-border text-admin focus:ring-admin">
             </th>
             <th class="th-cell">Attendee</th>
             <th class="th-cell">Status</th>
@@ -75,7 +73,9 @@
         <!-- Loading skeleton -->
         <tbody *ngIf="isLoading" class="divide-y divide-border">
           <tr *ngFor="let i of [1,2,3,4,5]" class="animate-pulse">
-            <td class="px-6 py-4"><div class="w-4 h-4 rounded bg-skeleton mx-auto"></div></td>
+            <td class="px-6 py-4">
+              <div class="w-4 h-4 rounded bg-skeleton mx-auto"></div>
+            </td>
             <td class="px-6 py-4">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-skeleton"></div>
@@ -85,24 +85,29 @@
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4"><div class="w-20 h-6 bg-skeleton rounded-full"></div></td>
-            <td class="px-6 py-4"><div class="w-28 h-4 bg-skeleton rounded"></div></td>
-            <td class="px-6 py-4"><div class="w-8 h-8 bg-skeleton rounded-lg"></div></td>
+            <td class="px-6 py-4">
+              <div class="w-20 h-6 bg-skeleton rounded-full"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="w-28 h-4 bg-skeleton rounded"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="w-8 h-8 bg-skeleton rounded-lg"></div>
+            </td>
           </tr>
         </tbody>
 
         <!-- Data -->
         <tbody *ngIf="!isLoading" class="divide-y divide-border">
-          <tr *ngFor="let attendee of filteredAttendees"
-              class="hover:bg-surface-muted/30 transition-colors">
+          <tr *ngFor="let attendee of filteredAttendees" class="hover:bg-surface-muted/30 transition-colors">
             <td class="px-6 py-4 text-center">
-              <input type="checkbox" [checked]="isSelected(attendee.id)"
-                  (change)="toggleAttendee(attendee.id)"
-                  class="rounded border-border text-admin focus:ring-admin">
+              <input type="checkbox" [checked]="isSelected(attendee.id)" (change)="toggleAttendee(attendee.id)"
+                class="rounded border-border text-admin focus:ring-admin">
             </td>
             <td class="px-6 py-4">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-admin/10 flex items-center justify-center text-admin font-bold text-lg flex-shrink-0">
+                <div
+                  class="w-10 h-10 rounded-full bg-admin/10 flex items-center justify-center text-admin font-bold text-lg flex-shrink-0">
                   {{ attendee.display_name.charAt(0) }}
                 </div>
                 <div>
@@ -130,11 +135,10 @@
             </td>
             <td class="px-6 py-4">
               <button class="p-2 text-text-muted hover:text-admin transition-colors rounded-lg hover:bg-admin/5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                  <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-                  <path d="m15 5 4 4"/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                  <path d="m15 5 4 4" />
                 </svg>
               </button>
             </td>
@@ -144,12 +148,12 @@
           <tr *ngIf="filteredAttendees.length === 0">
             <td colspan="5" class="px-6 py-12 text-center text-text-muted">
               <div class="flex flex-col items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round" class="text-border">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="12" y1="8" x2="12" y2="12"/>
-                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                  class="text-border">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
                 <p class="font-medium">No attendees found matching your filters.</p>
               </div>

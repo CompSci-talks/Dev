@@ -131,7 +131,8 @@ export class AttendancePageComponent implements OnInit {
             created_at: new Date(),
             last_login: new Date(),
             last_active_timestamp: new Date(),
-            attendance_count: 0
+            attendance_count: 0,
+            email_verified: false
         }));
 
         this.emailSelectionService.setSelectedUsers(profiles);
