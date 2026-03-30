@@ -13,7 +13,7 @@ export interface IUserService {
     createUser(profile: User): Observable<void>;
     updateAttendanceCount(uid: string, delta: number): Observable<void>;
     updateAttendedSeminars(uid: string, seminarId: string, action: 'add' | 'remove'): Observable<void>;
-    updatePhotoURL(uid: string, photoURL: string): Observable<void>;
+    updatePhotoUrl(uid: string, photo_url: string): Observable<void>;
     updateDisplayName(uid: string, name: string): Observable<void>;
     deleteUser(uid: string): Observable<void>;
 }

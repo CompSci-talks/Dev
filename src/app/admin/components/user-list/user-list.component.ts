@@ -64,7 +64,7 @@ import { User } from '../../../core/models/user.model';
            ></app-role-toggle>
         </td>
         <td class="td-cell text-center font-medium">
-          {{user.attendanceCount || 0}}
+          {{user.attendance_count || 0}}
         </td>
         <td class="td-cell">{{user.createdAt | date:'mediumDate'}}</td>
         <td class="td-cell">

@@ -371,7 +371,7 @@ export class ProfilePageComponent implements OnInit {
     this.uploading.set(true);
     this.uploadError.set(null);
 
-    this.userService.updatePhotoURL(this.user.id, url).subscribe({
+    this.userService.updatePhotoUrl(this.user.id, url).subscribe({
       next: () => {
         this.user!.photo_url = url;
         this.uploading.set(false);

@@ -40,7 +40,7 @@ export class FirebaseCommentService implements ICommentService {
                     seminar_id: seminarId,
                     author_id: user.id,
                     author_name: user.display_name,
-                    author_photoURL: user.photo_url || null,
+                    author_photo_url: user.photo_url || null,
                     text,
                     parent_id: parentId || null,
                     created_at: new Date(),

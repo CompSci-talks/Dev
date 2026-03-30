@@ -83,14 +83,14 @@ export class FirebaseUserProfileService implements IUserService {
     updateAttendanceCount(uid: string, delta: number): Observable<void> {
         const userDoc = doc(this.firestore, `users/${uid}`);
         return from(updateDoc(userDoc, {
-            attendanceCount: increment(delta)
+            attendance_count: increment(delta)
         }));
     }
 
     updateAttendedSeminars(uid: string, seminarId: string, action: 'add' | 'remove'): Observable<void> {
         const userDoc = doc(this.firestore, `users/${uid}`);
         return from(updateDoc(userDoc, {
-            attendedSeminarIds: action === 'add' ? arrayUnion(seminarId) : arrayRemove(seminarId)
+            attended_seminar_ids: action === 'add' ? arrayUnion(seminarId) : arrayRemove(seminarId)
         }));
     }
     sendBulkEmail(uids: string[], subject: string, body: string): Observable<void> {
@@ -120,16 +120,16 @@ export class FirebaseUserProfileService implements IUserService {
     private mapToProfile(data: any): User {
         return {
             id: data.uid || data.id,
-            display_name: data.displayName || data.display_name || 'User',
+            display_name: data.display_name || data.displayName || 'User',
             email: data.email || '',
             role: data.role || 'authenticated',
-            photo_url: data.photoURL || data.photo_url,
-            created_at: this.toDate(data.createdAt || data.created_at),
-            last_active_at: this.toDate(data.lastLogin || data.last_login),
-            enrollment_date: this.toDate(data.enrollmentDate),
-            preferred_topic_areas: data.preferredTopicAreas || [],
-            attendance_count: data.attendanceCount || data.attendance_count || 0,
-            attended_seminar_ids: data.attendedSeminarIds || [],
+            photo_url: data.photo_url || data.photoURL,
+            created_at: this.toDate(data.created_at || data.createdAt),
+            last_active_at: this.toDate(data.last_active_at || data.lastLogin || data.last_login),
+            enrollment_date: this.toDate(data.enrollment_date || data.enrollmentDate),
+            preferred_topic_areas: data.preferred_topic_areas || data.preferredTopicAreas || [],
+            attendance_count: data.attendance_count || data.attendanceCount || 0,
+            attended_seminar_ids: data.attended_seminar_ids || data.attendedSeminarIds || [],
             email_verified: data.email_verified || false
         };
     }
@@ -140,10 +140,10 @@ export class FirebaseUserProfileService implements IUserService {
         if (field instanceof Date) return field;
         return new Date(field);
     }
-    updatePhotoURL(uid: string, photoURL: string): Observable<void> {
+    updatePhotoUrl(uid: string, photo_url: string): Observable<void> {
         const userDoc = doc(this.firestore, `users/${uid}`);
-        return from(updateDoc(userDoc, { photoURL })).pipe(
-            switchMap(() => from(this.cascadeUserUpdate(uid, { author_photoURL: photoURL })))
+        return from(updateDoc(userDoc, { photo_url: photo_url })).pipe(
+            switchMap(() => from(this.cascadeUserUpdate(uid, { author_photo_url: photo_url })))
         );
     }
 
