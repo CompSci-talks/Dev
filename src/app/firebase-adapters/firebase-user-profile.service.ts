@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collectionData, docData } from '@angular/fire/firestore';
-import { collection, doc, query, where, getDoc, getDocs, updateDoc, setDoc, limit, startAfter, orderBy, arrayUnion, arrayRemove, increment } from 'firebase/firestore';
-import { Observable, from, map, of, catchError } from 'rxjs';
+import { collection, doc, query, where, getDoc, getDocs, updateDoc, setDoc, limit, startAfter, orderBy, arrayUnion, arrayRemove, increment, deleteDoc, writeBatch } from 'firebase/firestore';
+import { Observable, from, map, of, catchError, switchMap } from 'rxjs';
 import { IUserService } from '../core/contracts/user.service.interface';
 import { User } from '../core/models/user.model';
 import { sanitizeForFirestore } from '../core/utils/firestore-utils';
@@ -142,6 +142,49 @@ export class FirebaseUserProfileService implements IUserService {
     }
     updatePhotoURL(uid: string, photoURL: string): Observable<void> {
         const userDoc = doc(this.firestore, `users/${uid}`);
-        return from(updateDoc(userDoc, { photoURL }));
+        return from(updateDoc(userDoc, { photoURL })).pipe(
+            switchMap(() => from(this.cascadeUserUpdate(uid, { author_photoURL: photoURL })))
+        );
+    }
+
+    updateDisplayName(uid: string, name: string): Observable<void> {
+        const userDoc = doc(this.firestore, `users/${uid}`);
+        return from(updateDoc(userDoc, { display_name: name })).pipe(
+            switchMap(() => from(this.cascadeUserUpdate(uid, { author_name: name })))
+        );
+    }
+
+    deleteUser(uid: string): Observable<void> {
+        return from(this.checkUserReferences(uid)).pipe(
+            switchMap((hasRefs: boolean) => {
+                if (hasRefs) {
+                    throw new Error('Cannot delete user: They have active RSVPs, comments, or sent emails.');
+                }
+                const userDoc = doc(this.firestore, `users/${uid}`);
+                return from(deleteDoc(userDoc));
+            })
+        );
+    }
+
+    private async checkUserReferences(uid: string): Promise<boolean> {
+        const rsvpsQ = query(collection(this.firestore, 'rsvps'), where('user_id', '==', uid), limit(1));
+        const commentsQ = query(collection(this.firestore, 'comments'), where('author_id', '==', uid), limit(1));
+        const emailsQ = query(collection(this.firestore, 'SentEmails'), where('senderUid', '==', uid), limit(1));
+
+        const [rsvps, comments, emails] = await Promise.all([
+            getDocs(rsvpsQ),
+            getDocs(commentsQ),
+            getDocs(emailsQ)
+        ]);
+
+        return !rsvps.empty || !comments.empty || !emails.empty;
+    }
+
+    private async cascadeUserUpdate(uid: string, updates: any) {
+        const commentsQuery = query(collection(this.firestore, 'comments'), where('author_id', '==', uid));
+        const snapshot = await getDocs(commentsQuery);
+        const batch = writeBatch(this.firestore);
+        snapshot.forEach(d => batch.update(d.ref, updates));
+        await batch.commit();
     }
 }

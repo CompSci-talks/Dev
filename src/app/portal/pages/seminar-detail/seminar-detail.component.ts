@@ -67,4 +67,8 @@ export class SeminarDetailComponent implements OnInit {
         if (!speakers) return '';
         return speakers.map(s => s.name).join(', ');
     }
+
+    get isUpcoming(): boolean {
+        return this.seminar ? this.seminar.date_time.getTime() > Date.now() : false;
+    }
 }

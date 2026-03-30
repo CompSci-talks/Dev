@@ -1,5 +1,5 @@
 import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, getDoc, query, orderBy, getDocs, where, writeBatch } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, getDoc, query, orderBy, getDocs, where, writeBatch, limit } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, catchError, of, take } from 'rxjs';
 import { ITagService } from '../core/contracts/tag.interface';
 import { Tag } from '../core/models/seminar.model';
@@ -69,7 +69,20 @@ export class FirebaseTagService implements ITagService {
 
     deleteTag(id: string): Observable<void> {
         const tagDoc = doc(this.firestore, `tags/${id}`);
-        return from(deleteDoc(tagDoc));
+        return from(this.checkTagReferences(id)).pipe(
+            switchMap(hasRefs => {
+                if (hasRefs) {
+                    throw new Error('Cannot delete tag: It is still assigned to one or more seminars.');
+                }
+                return from(deleteDoc(tagDoc));
+            })
+        );
+    }
+
+    private async checkTagReferences(tagId: string): Promise<boolean> {
+        const q = query(collection(this.firestore, 'seminars'), where('tag_ids', 'array-contains', tagId), limit(1));
+        const snapshot = await getDocs(q);
+        return !snapshot.empty;
     }
 
     private async cascadeTagUpdate(tagId: string, updates: Partial<Tag>) {

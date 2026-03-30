@@ -1,5 +1,5 @@
 import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, query, where, getDocs, writeBatch, orderBy, limit, deleteDoc } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, query, where, getDocs, writeBatch, orderBy, limit, deleteDoc, getDoc } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, take, catchError, of } from 'rxjs';
 import { ISemesterService } from '../core/contracts/semester.interface';
 import { Semester } from '../core/models/semester.model';
@@ -77,7 +77,15 @@ export class FirebaseSemesterService implements ISemesterService {
 
     deleteSemester(id: string): Observable<void> {
         if (!id) return of(undefined);
-        return from(deleteDoc(doc(this.firestore, `semesters/${id}`))).pipe(
+        const semesterDoc = doc(this.firestore, `semesters/${id}`);
+        return from(getDoc(semesterDoc)).pipe(
+            switchMap(snapshot => {
+                const data = snapshot.data();
+                if (data && data['is_active']) {
+                    throw new Error('Cannot delete the active semester. Set another semester as active first.');
+                }
+                return from(deleteDoc(semesterDoc));
+            }),
             catchError(err => {
                 console.error(`Error deleting semester ${id}:`, err);
                 throw err;

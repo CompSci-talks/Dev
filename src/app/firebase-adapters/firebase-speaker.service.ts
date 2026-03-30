@@ -1,5 +1,5 @@
 import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, getDoc, query, orderBy, getDocs, where, writeBatch } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData, addDoc, updateDoc, deleteDoc, getDoc, query, orderBy, getDocs, where, writeBatch, limit } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, catchError, of } from 'rxjs';
 import { ISpeakerService } from '../core/contracts/speaker.interface';
 import { Speaker } from '../core/models/seminar.model';
@@ -69,7 +69,20 @@ export class FirebaseSpeakerService implements ISpeakerService {
 
     deleteSpeaker(id: string): Observable<void> {
         const speakerDoc = doc(this.firestore, `speakers/${id}`);
-        return from(deleteDoc(speakerDoc));
+        return from(this.checkSpeakerReferences(id)).pipe(
+            switchMap(hasRefs => {
+                if (hasRefs) {
+                    throw new Error('Cannot delete speaker: They are still assigned to one or more seminars.');
+                }
+                return from(deleteDoc(speakerDoc));
+            })
+        );
+    }
+
+    private async checkSpeakerReferences(speakerId: string): Promise<boolean> {
+        const q = query(collection(this.firestore, 'seminars'), where('speaker_ids', 'array-contains', speakerId), limit(1));
+        const snapshot = await getDocs(q);
+        return !snapshot.empty;
     }
 
     private async cascadeSpeakerUpdate(speakerId: string, newName: string) {

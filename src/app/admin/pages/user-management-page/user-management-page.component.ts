@@ -11,10 +11,10 @@ import { BehaviorSubject, combineLatest, debounceTime, switchMap, tap } from 'rx
 import { EmailSelectionService } from '../../services/email-selection.service';
 
 @Component({
-    selector: 'app-user-management-page',
-    standalone: true,
-    imports: [CommonModule, UserListComponent, TextFilterComponent],
-    template: `
+  selector: 'app-user-management-page',
+  standalone: true,
+  imports: [CommonModule, UserListComponent, TextFilterComponent],
+  template: `
     <div>
 
       <!-- Page header -->
@@ -57,91 +57,91 @@ import { EmailSelectionService } from '../../services/email-selection.service';
   `
 })
 export class UserManagementPageComponent implements OnInit {
-    private userService = inject(USER_SERVICE);
-    private authService = inject(AUTH_SERVICE);
-    private toastService = inject(ToastService);
-    private router = inject(Router);
-    private emailSelectionService = inject(EmailSelectionService);
+  private userService = inject(USER_SERVICE);
+  private authService = inject(AUTH_SERVICE);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+  private emailSelectionService = inject(EmailSelectionService);
 
-    users: AppUser[] = [];
-    loading = true;
-    currentPage = 1;
-    hasMore = false;
-    selectedUserIds: Set<string> = new Set();
-    currentUserId: string | null = null;
+  users: AppUser[] = [];
+  loading = true;
+  currentPage = 1;
+  hasMore = false;
+  selectedUserIds: Set<string> = new Set();
+  currentUserId: string | null = null;
 
-    private filter$ = new BehaviorSubject<string>('');
-    private page$ = new BehaviorSubject<number>(1);
-    private pageSize = 10;
-    private lastUsers: (AppUser | undefined)[] = [undefined];
+  private filter$ = new BehaviorSubject<string>('');
+  private page$ = new BehaviorSubject<number>(1);
+  private pageSize = 10;
+  private lastUsers: (AppUser | undefined)[] = [undefined];
 
-    ngOnInit(): void {
-        this.authService.currentUser$.subscribe(user => {
-            this.currentUserId = user?.id || null;
-        });
+  ngOnInit(): void {
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUserId = user?.id || null;
+    });
 
-        combineLatest([this.filter$, this.page$]).pipe(
-            debounceTime(100),
-            tap(() => this.loading = true),
-            switchMap(([filter, page]) => {
-                const lastUser = this.lastUsers[page - 1];
-                return this.userService.getUsers(this.pageSize, lastUser, filter);
-            })
-        ).subscribe({
-            next: (users) => {
-                this.users = users;
-                this.loading = false;
-                this.hasMore = users.length === this.pageSize;
+    combineLatest([this.filter$, this.page$]).pipe(
+      debounceTime(100),
+      tap(() => this.loading = true),
+      switchMap(([filter, page]) => {
+        const lastUser = this.lastUsers[page - 1];
+        return this.userService.getUsers(this.pageSize, lastUser, filter);
+      })
+    ).subscribe({
+      next: (users) => {
+        this.users = users;
+        this.loading = false;
+        this.hasMore = users.length === this.pageSize;
 
-                if (this.hasMore) {
-                    this.lastUsers[this.currentPage] = users[users.length - 1];
-                }
-            },
-            error: (err) => {
-                console.error('Failed to load users', err);
-                this.loading = false;
-                this.users = [];
-            }
-        });
-    }
-
-    onFilterChange(filter: string): void {
-        this.filter$.next(filter);
-        this.currentPage = 1;
-        this.page$.next(1);
-        this.lastUsers = [undefined];
-        this.selectedUserIds.clear();
-    }
-
-    onPageChange(direction: 'prev' | 'next'): void {
-        if (direction === 'next' && this.hasMore) {
-            this.currentPage++;
-            this.page$.next(this.currentPage);
-        } else if (direction === 'prev' && this.currentPage > 1) {
-            this.currentPage--;
-            this.page$.next(this.currentPage);
+        if (this.hasMore) {
+          this.lastUsers[this.currentPage] = users[users.length - 1];
         }
-    }
+      },
+      error: (err) => {
+        console.error('Failed to load users', err);
+        this.loading = false;
+        this.users = [];
+      }
+    });
+  }
 
-    onViewDetail(uid: string): void {
-        this.router.navigate(['/admin/user', uid]);
-    }
+  onFilterChange(filter: string): void {
+    this.filter$.next(filter);
+    this.currentPage = 1;
+    this.page$.next(1);
+    this.lastUsers = [undefined];
+    this.selectedUserIds.clear();
+  }
 
-    onSelectionChange(selected: Set<string>): void {
-        this.selectedUserIds = new Set(selected);
+  onPageChange(direction: 'prev' | 'next'): void {
+    if (direction === 'next' && this.hasMore) {
+      this.currentPage++;
+      this.page$.next(this.currentPage);
+    } else if (direction === 'prev' && this.currentPage > 1) {
+      this.currentPage--;
+      this.page$.next(this.currentPage);
     }
+  }
 
-    onRoleChange(event: { uid: string, role: 'admin' | 'moderator' | 'authenticated' }): void {
-        this.userService.updateUserRole(event.uid, event.role).subscribe({
-            next: () => this.toastService.success(`Role updated to ${event.role}`),
-            error: () => this.toastService.error('Failed to update role')
-        });
-    }
+  onViewDetail(uid: string): void {
+    this.router.navigate(['/admin/user', uid]);
+  }
 
-    onEmailSelected(): void {
-        if (this.selectedUserIds.size === 0) return;
-        const selectedProfiles = this.users.filter(u => this.selectedUserIds.has(u.id));
-        this.emailSelectionService.setSelectedUsers(selectedProfiles);
-        this.router.navigate(['/admin/email-composer']);
-    }
+  onSelectionChange(selected: Set<string>): void {
+    this.selectedUserIds = new Set(selected);
+  }
+
+  onRoleChange(event: { uid: string, role: 'admin' | 'moderator' | 'authenticated' }): void {
+    this.userService.updateUserRole(event.uid, event.role).subscribe({
+      next: () => this.toastService.success(`Role updated to ${event.role}`),
+      error: () => this.toastService.error('Failed to update role')
+    });
+  }
+
+  onEmailSelected(): void {
+    if (this.selectedUserIds.size === 0) return;
+    const selectedProfiles = this.users.filter(u => this.selectedUserIds.has(u.id));
+    this.emailSelectionService.setSelectedUsers(selectedProfiles);
+    this.router.navigate(['/admin/email-composer']);
+  }
 }

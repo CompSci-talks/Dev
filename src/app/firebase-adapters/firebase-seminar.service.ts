@@ -2,7 +2,7 @@ import { Injectable, inject, Injector, runInInjectionContext } from '@angular/co
 import { Firestore, collectionData, docData } from '@angular/fire/firestore';
 import { collection, doc, addDoc, updateDoc, deleteDoc, query, where, getDoc, getDocs, writeBatch, limit, serverTimestamp, orderBy } from 'firebase/firestore';
 // Added catchError to the rxjs imports
-import { Observable, from, map, switchMap, combineLatest, of, catchError, take } from 'rxjs';
+import { Observable, from, map, switchMap, combineLatest, of, catchError, take, firstValueFrom } from 'rxjs';
 import { ISeminarService } from '../core/contracts/seminar.interface';
 import { Seminar } from '../core/models/seminar.model';
 import { Attendee } from '../core/models/attendance.model';
@@ -97,32 +97,46 @@ export class FirebaseSeminarService implements ISeminarService {
             }),
             map(enriched => sanitizeForFirestore(enriched)),
             switchMap(sanitized => from(updateDoc(seminarDoc, sanitized))),
-            switchMap(() => this.getSeminarById(id).pipe(take(1), map(s => s!)))
+            switchMap(async () => {
+                if (updates.title) {
+                    await this.cascadeSeminarTitleUpdate(id, updates.title);
+                }
+                return firstValueFrom(this.getSeminarById(id).pipe(map(s => s!)));
+            }),
+            map(s => s!)
         );
     }
 
-    deleteSeminar(id: string): Observable<void> {
-        return from(this.orchestrateDelete(id));
+    private async cascadeSeminarTitleUpdate(seminarId: string, newTitle: string) {
+        const commentsQuery = query(collection(this.firestore, 'comments'), where('seminar_id', '==', seminarId));
+        const snapshot = await getDocs(commentsQuery);
+        const batch = writeBatch(this.firestore);
+        snapshot.forEach(d => batch.update(d.ref, { seminar_title: newTitle }));
+        await batch.commit();
     }
 
-    private async orchestrateDelete(id: string): Promise<void> {
-        const seminarDoc = doc(this.firestore, `seminars/${id}`);
+    deleteSeminar(id: string): Observable<void> {
+        return from(this.checkSeminarReferences(id)).pipe(
+            switchMap(hasRefs => {
+                if (hasRefs) {
+                    throw new Error('Cannot delete seminar: It still has associated RSVPs or comments. Please delete those first.');
+                }
+                const seminarDoc = doc(this.firestore, `seminars/${id}`);
+                return from(deleteDoc(seminarDoc));
+            })
+        );
+    }
 
-        // Cascading deletion of comments and RSVPs
-        const commentsQuery = query(collection(this.firestore, 'comments'), where('seminar_id', '==', id));
-        const rsvpsQuery = query(collection(this.firestore, 'rsvps'), where('seminar_id', '==', id));
+    private async checkSeminarReferences(seminarId: string): Promise<boolean> {
+        const commentsQuery = query(collection(this.firestore, 'comments'), where('seminar_id', '==', seminarId), limit(1));
+        const rsvpsQuery = query(collection(this.firestore, 'rsvps'), where('seminar_id', '==', seminarId), limit(1));
 
         const [commentsSnap, rsvpsSnap] = await Promise.all([
             getDocs(commentsQuery),
             getDocs(rsvpsQuery)
         ]);
 
-        const batch = writeBatch(this.firestore);
-        batch.delete(seminarDoc);
-        commentsSnap.forEach(d => batch.delete(d.ref));
-        rsvpsSnap.forEach(d => batch.delete(d.ref));
-
-        await batch.commit();
+        return !commentsSnap.empty || !rsvpsSnap.empty;
     }
 
     getAttendees(seminarId: string): Observable<Attendee[]> {

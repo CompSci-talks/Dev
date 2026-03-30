@@ -99,7 +99,9 @@
                 </svg>
                 <span class="font-medium text-text-main">{{ seminar.location }}</span>
             </div>
+            @if (isUpcoming) {
             <app-rsvp-button [seminar]="seminar"></app-rsvp-button>
+            }
         </div>
     </div>
 
