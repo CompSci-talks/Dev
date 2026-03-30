@@ -7,6 +7,7 @@ export interface User {
     display_name: string;
     role: UserRole;
     photo_url?: string | null;
+    email_verified: boolean;
     created_at: Date;
     last_active_at?: Date;
     attendance_count?: number;

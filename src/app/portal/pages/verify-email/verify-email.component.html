@@ -1,0 +1,81 @@
+<div class="min-h-screen pt-24 pb-12 px-4 bg-background flex items-center justify-center">
+    <!-- Decorative background elements -->
+    <div class="absolute top-0 right-0 -z-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-30"></div>
+    <div class="absolute bottom-0 left-0 -z-10 w-96 h-96 bg-secondary/10 rounded-full blur-3xl opacity-30"></div>
+
+    <div class="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <!-- Glass Card -->
+        <div class="glass-card p-8 md:p-10 text-center relative overflow-hidden">
+            <!-- Icon Wrapper -->
+            <div class="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-8 relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-primary" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <div class="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full animate-ping opacity-75"></div>
+                <div class="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full"></div>
+            </div>
+
+            <h1 class="text-3xl font-bold text-text-primary mb-4">Verify your email</h1>
+
+            <p class="text-text-secondary mb-8 leading-relaxed">
+                We've sent a verification link to your email address. Please click the link to confirm your account and
+                access all features.
+            </p>
+
+            <!-- Email display if user is available -->
+            <div *ngIf="user$ | async as user"
+                class="p-3 bg-background-alt/50 rounded-lg border border-border mb-8 inline-block px-6">
+                <span class="text-primary font-medium">{{ user.email }}</span>
+            </div>
+
+            <div class="space-y-4">
+                <button (click)="checkVerificationStatus()" [disabled]="isChecking"
+                    class="btn-primary w-full group relative overflow-hidden py-4 text-base">
+                    <span class="relative z-10 flex items-center justify-center gap-2">
+                        <svg *ngIf="isChecking" class="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+                                fill="none"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        {{ isChecking ? 'Checking status...' : 'I have verified my email' }}
+                    </span>
+                </button>
+
+                <button (click)="resendVerification()" [disabled]="isResending"
+                    class="btn-secondary w-full py-4 text-base">
+                    <span class="flex items-center justify-center gap-2">
+                        <svg *ngIf="isResending" class="animate-spin h-5 w-5 text-primary" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+                                fill="none"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        {{ isResending ? 'Sending...' : 'Resend verification link' }}
+                    </span>
+                </button>
+            </div>
+
+            <div class="mt-10 pt-8 border-t border-border/50">
+                <button (click)="logout()"
+                    class="text-sm font-medium text-text-muted hover:text-primary transition-colors flex items-center justify-center gap-2 mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Sign out and use another account
+                </button>
+            </div>
+        </div>
+
+        <!-- Help text -->
+        <p class="text-center mt-8 text-text-muted text-sm">
+            Can't find the email? Check your spam folder or wait a few minutes.
+        </p>
+    </div>
+</div>

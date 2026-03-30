@@ -129,8 +129,8 @@ export class FirebaseUserProfileService implements IUserService {
             enrollment_date: this.toDate(data.enrollmentDate),
             preferred_topic_areas: data.preferredTopicAreas || [],
             attendance_count: data.attendanceCount || data.attendance_count || 0,
-            attended_seminar_ids: data.attendedSeminarIds || []
-
+            attended_seminar_ids: data.attendedSeminarIds || [],
+            email_verified: data.email_verified || false
         };
     }
 

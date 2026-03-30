@@ -1,5 +1,5 @@
 import { Injectable, inject, NgZone, signal } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, User as FirebaseUser, setPersistence, browserLocalPersistence } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, User as FirebaseUser, setPersistence, browserLocalPersistence, sendEmailVerification } from '@angular/fire/auth';
 import { BehaviorSubject, Observable, from, map, take, tap, switchMap, Subscription, throwError } from 'rxjs';
 import { IAuthService } from '../core/contracts/auth.interface';
 import { USER_SERVICE } from '../core/contracts/user.service.interface';
@@ -85,6 +85,7 @@ export class FirebaseAuthService implements IAuthService {
                     display_name: displayName || firebaseUser.displayName || 'Authenticated User',
                     email: firebaseUser.email || email,
                     role: 'authenticated',
+                    email_verified: false,
                     created_at: new Date(),
                     last_active_at: new Date(),
                     attendance_count: 0,
@@ -103,6 +104,30 @@ export class FirebaseAuthService implements IAuthService {
         return from(signOut(this.auth));
     }
 
+    sendVerificationEmail(): Observable<void> {
+        if (!this.auth.currentUser) return throwError(() => new Error('No user logged in'));
+        return from(sendEmailVerification(this.auth.currentUser));
+    }
+
+    reloadUser(): Observable<void> {
+        if (!this.auth.currentUser) return throwError(() => new Error('No user logged in'));
+        return from(this.auth.currentUser.reload()).pipe(
+            tap(() => {
+                const firebaseUser = this.auth.currentUser;
+                if (firebaseUser) {
+                    // Manually trigger a refresh of the user object to pick up emailVerified change
+                    this.userService.getUserById(firebaseUser.uid).pipe(take(1)).subscribe(profile => {
+                        this.zone.run(() => {
+                            const mappedUser = this.mapFirebaseUser(firebaseUser, profile?.role, profile?.photo_url);
+                            this.userSubject.next(mappedUser);
+                            this.currentUserSignal.set(mappedUser);
+                        });
+                    });
+                }
+            })
+        );
+    }
+
     private mapFirebaseUser(firebaseUser: FirebaseUser, role?: UserRole, photoURL?: string | null): User {
         return {
             id: firebaseUser.uid,
@@ -110,6 +135,7 @@ export class FirebaseAuthService implements IAuthService {
             display_name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
             role: role || 'authenticated',
             photo_url: photoURL || firebaseUser.photoURL || null,
+            email_verified: firebaseUser.emailVerified,
             created_at: new Date()
         };
     }

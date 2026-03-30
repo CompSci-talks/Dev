@@ -12,6 +12,8 @@ export interface IAuthService {
     signIn(email: string, password: string): Observable<User>;
     signUp(email: string, password: string, displayName: string): Observable<User>;
     signOut(): Observable<void>;
+    sendVerificationEmail(): Observable<void>;
+    reloadUser(): Observable<void>;
 }
 
 export const AUTH_SERVICE = new InjectionToken<IAuthService>('AUTH_SERVICE');
