@@ -14,9 +14,12 @@ export const authGuard: CanActivateFn = (route, state) => {
             take(1),
             map(user => {
                 if (user) {
+                    // Temporarily disabled for later implementation
+                    /*
                     if (!user.email_verified && state.url !== '/verify-email') {
                         return router.createUrlTree(['/verify-email']);
                     }
+                    */
                     return true;
                 }
 

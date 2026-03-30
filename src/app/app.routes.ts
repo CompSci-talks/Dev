@@ -27,10 +27,10 @@ export const routes: Routes = [
         path: 'register',
         loadComponent: () => import('./auth/pages/register/register.component').then(m => m.RegisterComponent)
     },
-    {
-        path: 'verify-email',
-        loadComponent: () => import('./portal/pages/verify-email/verify-email.component').then(m => m.VerifyEmailComponent)
-    },
+    // {
+    //     path: 'verify-email',
+    //     loadComponent: () => import('./portal/pages/verify-email/verify-email.component').then(m => m.VerifyEmailComponent)
+    // },
     {
         path: 'dashboard',
         loadComponent: () => import('./dashboard/pages/dashboard/dashboard.component').then(m => m.DashboardComponent),
