@@ -44,20 +44,26 @@
 
   <!-- Content -->
   <div class="p-4 flex flex-col flex-grow bg-surface">
-    <div class="flex items-center gap-2 mb-2">
-      <!-- Tag rendering with color code -->
-      <span *ngFor="let tag of seminar.tags; let i = index"
-        class="text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm"
-        [style.backgroundColor]="tag.color_code || '#6366f1'">
-        {{ tag.name }}
-      </span>
-      <span class="text-xs text-text-muted ml-auto">{{ seminar.date_time | date:'mediumDate' }}</span>
+    <div class="flex items-center gap-2 mb-2 min-w-0 overflow-hidden w-full">
+      <!-- Tag rendering with limiting and truncation -->
+      <ng-container *ngIf="seminar.tags && seminar.tags.length > 0">
+        <span class="text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm truncate max-w-[120px]"
+          [style.backgroundColor]="seminar.tags[0].color_code || '#6366f1'" [title]="seminar.tags[0].name">
+          {{ seminar.tags[0].name }}
+        </span>
+        <span *ngIf="seminar.tags.length > 1"
+          class="text-[10px] font-bold text-text-faint bg-surface-muted/50 px-1.5 py-0.5 rounded-full border border-border-light shrink-0">
+          +{{ seminar.tags.length - 1 }}
+        </span>
+      </ng-container>
+
+      <span class="text-xs text-text-hint ml-auto shrink-0">{{ seminar.date_time | date:'mediumDate' }}</span>
     </div>
 
-    <h3 class="font-bold text-lg text-text-main line-clamp-1 mb-1">{{ seminar.title }}</h3>
+    <h3 class="font-bold text-lg text-text-main truncate mb-1" [title]="seminar.title">{{ seminar.title }}</h3>
 
     <!-- Speaker Names -->
-    <p class="text-xs font-semibold text-primary mb-2">
+    <p class="text-xs font-semibold text-primary mb-2 truncate">
       {{ seminar.speakers?.length ? getSpeakerNames(seminar.speakers) : 'Multiple Speakers' }}
     </p>
 
