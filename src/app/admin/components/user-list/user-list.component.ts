@@ -45,11 +45,11 @@ import { User } from '../../../core/models/user.model';
             <label [for]="'checkbox-' + user.id" class="sr-only">Select {{ user.display_name }}</label>
           </div>
         </td>
-        <th scope="row" class="flex items-center px-6 py-4 text-text-main whitespace-nowrap font-medium border-b border-border">
-          <img class="w-10 h-10 rounded-full" [src]="user.photo_url || 'https://ui-avatars.com/api/?name=' + user.display_name" alt="{{user.display_name}} image">
+        <th scope="row" (click)="viewDetail.emit(user.id)" class="flex items-center px-6 py-4 text-text-main whitespace-nowrap font-medium border-b border-border cursor-pointer hover:bg-surface-muted/30 transition-colors group">
+          <img class="w-10 h-10 rounded-full group-hover:ring-2 group-hover:ring-admin/20 transition-all" [src]="user.photo_url || 'https://ui-avatars.com/api/?name=' + user.display_name" alt="{{user.display_name}} image">
           <div class="pl-3">
             <div class="flex items-center gap-2">
-              <div class="text-base font-semibold">{{user.display_name}}</div>
+              <div class="text-base font-semibold group-hover:text-admin transition-colors">{{user.display_name}}</div>
               <!-- <span *ngIf="!user.email_verified" class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded bg-status-error/10 text-status-error border border-status-error/20">Unverified</span> -->
             </div>
             <div class="font-normal text-text-muted">Last active: {{user.last_active_at | date:'short'}}</div>

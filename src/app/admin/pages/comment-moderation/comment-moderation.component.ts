@@ -47,8 +47,11 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
                 <img class="w-10 h-10 rounded-full mr-3"
                      [src]="item.comment.author_photo_url || 'https://ui-avatars.com/api/?name=' + item.comment.author_name"
                      alt="{{item.comment.author_name}} image">
-                <div>
-                  <div class="text-sm font-medium text-text-main">{{ item.comment.author_name }}</div>
+                <div class="flex flex-col">
+                  <a [routerLink]="['/admin/user', item.comment.author_id]"
+                     class="text-sm font-bold text-text-main hover:text-admin transition-colors cursor-pointer">
+                    {{ item.comment.author_name }}
+                  </a>
                   <div class="text-[10px] text-text-faint">ID: {{ item.comment.author_id.substring(0, 8) }}...</div>
                 </div>
               </div>

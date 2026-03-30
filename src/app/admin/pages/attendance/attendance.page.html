@@ -105,16 +105,17 @@
                 class="rounded border-border text-admin focus:ring-admin">
             </td>
             <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
+              <a [routerLink]="['/admin/user', attendee.id]" class="flex items-center gap-3 group">
                 <div
-                  class="w-10 h-10 rounded-full bg-admin/10 flex items-center justify-center text-admin font-bold text-lg flex-shrink-0">
+                  class="w-10 h-10 rounded-full bg-admin/10 flex items-center justify-center text-admin font-bold text-lg flex-shrink-0 group-hover:ring-2 group-hover:ring-admin/30 transition-all">
                   {{ attendee.display_name.charAt(0) }}
                 </div>
                 <div>
-                  <div class="text-sm font-bold text-text-main">{{ attendee.display_name }}</div>
+                  <div class="text-sm font-bold text-text-main group-hover:text-admin transition-colors">{{
+                    attendee.display_name }}</div>
                   <div class="text-xs text-text-muted">{{ attendee.email }}</div>
                 </div>
-              </div>
+              </a>
             </td>
             <td class="px-6 py-4">
               <span [ngClass]="{
