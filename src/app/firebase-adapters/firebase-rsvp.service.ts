@@ -4,6 +4,7 @@ import { Observable, from, map, switchMap, take, of, combineLatest } from 'rxjs'
 import { IRsvpService } from '../core/contracts/rsvp.interface';
 import { Seminar } from '../core/models/seminar.model';
 import { AUTH_SERVICE } from '../core/contracts/auth.interface';
+import { SEMINAR_SERVICE } from '../core/contracts/seminar.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -12,6 +13,7 @@ export class FirebaseRsvpService implements IRsvpService {
     private firestore = inject(Firestore);
     private injector = inject(Injector);
     private authService = inject(AUTH_SERVICE);
+    private seminarService = inject(SEMINAR_SERVICE);
     private rsvpsCollection = collection(this.firestore, 'rsvps');
 
     isAttending$(seminarId: string): Observable<boolean> {
@@ -33,9 +35,9 @@ export class FirebaseRsvpService implements IRsvpService {
                 return runInInjectionContext(this.injector, () => collectionData(q)).pipe(
                     switchMap(rsvps => {
                         if (rsvps.length === 0) return of([]);
-                        const seminarQueries = rsvps.map(r => runInInjectionContext(this.injector, () => docData(doc(this.firestore, `seminars/${r['seminar_id']}`), { idField: 'id' })));
+                        const seminarQueries = rsvps.map(r => this.seminarService.getSeminarById(r['seminar_id']));
                         return combineLatest(seminarQueries).pipe(
-                            map(seminars => seminars.filter(s => !!s).map(s => this.mapTimestamps(s)) as Seminar[])
+                            map(seminars => seminars.filter((s): s is Seminar => !!s))
                         );
                     })
                 );
