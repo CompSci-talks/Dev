@@ -41,7 +41,7 @@ export class AttendancePageComponent implements OnInit {
     };
 
     readonly statusOptions: { value: Attendee['status']; label: string; description: string; color: string; dot: string }[] = [
-        { value: 'pending', label: 'Pending', description: 'User has RSVP\'d and plans to join', color: 'text-amber-500 bg-amber-500/10 border-amber-500/30', dot: 'bg-amber-500' },
+        { value: 'pending', label: 'Pending', description: 'User plans to join', color: 'text-amber-500 bg-amber-500/10 border-amber-500/30', dot: 'bg-amber-500' },
         { value: 'attended', label: 'Attended', description: 'User showed up to the session', color: 'text-status-success bg-status-success/10 border-status-success/30', dot: 'bg-status-success' },
         { value: 'no_show', label: 'No Show', description: 'User registered but did not attend', color: 'text-status-error bg-status-error/10 border-status-error/30', dot: 'bg-status-error' },
     ];
