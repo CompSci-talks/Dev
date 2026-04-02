@@ -33,4 +33,13 @@ export class AttendanceService implements IAttendanceService {
 
         return filtered;
     }
+
+    async updateAttendeeStatus(seminarId: string, attendeeId: string, status: Attendee['status']): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.seminarService.updateAttendeeStatus(seminarId, attendeeId, status).subscribe({
+                next: () => resolve(),
+                error: (err) => reject(err)
+            });
+        });
+    }
 }

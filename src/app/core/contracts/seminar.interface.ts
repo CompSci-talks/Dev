@@ -21,6 +21,9 @@ export interface ISeminarService {
 
     /** Fetch attendees for a seminar (projected from User + RSVP) */
     getAttendees(seminarId: string): Observable<Attendee[]>;
+
+    /** Update the status of an attendee for a seminar */
+    updateAttendeeStatus(seminarId: string, attendeeId: string, status: Attendee['status']): Observable<void>;
 }
 
 import { InjectionToken } from '@angular/core';

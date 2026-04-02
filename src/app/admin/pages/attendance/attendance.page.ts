@@ -114,6 +114,29 @@ export class AttendancePageComponent implements OnInit {
         return this.selectedAttendeeIds.has(id);
     }
 
+    activeDropdownId: string | null = null;
+
+    toggleDropdown(id: string): void {
+        this.activeDropdownId = this.activeDropdownId === id ? null : id;
+    }
+
+    async changeAttendeeStatus(attendeeId: string, status: Attendee['status']): Promise<void> {
+        this.activeDropdownId = null;
+        if (!this.seminarId) return;
+        try {
+            await this.attendanceService.updateAttendeeStatus(this.seminarId, attendeeId, status);
+            const index = this.attendees.findIndex(a => a.id === attendeeId);
+            if (index !== -1) {
+                this.attendees[index].status = status;
+                this.applyFilters();
+            }
+            this.toastService.success(`Status updated to ${status.replace('_', ' ')}`);
+        } catch (error) {
+            console.error('Failed to update status', error);
+            this.toastService.error('Failed to update status');
+        }
+    }
+
     getEmailCount(): number {
         return this.selectedAttendeeIds.size;
     }

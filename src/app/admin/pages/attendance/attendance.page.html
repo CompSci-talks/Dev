@@ -1,4 +1,6 @@
 <div class="w-full">
+  <!-- Overlay for dropdowns -->
+  <div *ngIf="activeDropdownId" class="fixed inset-0 z-[5]" (click)="activeDropdownId = null"></div>
 
   <!-- Page header -->
   <div class="admin-page-header">
@@ -41,6 +43,7 @@
           <option value="attended">Attended</option>
           <option value="confirmed">Confirmed</option>
           <option value="pending">Pending</option>
+          <option value="no_show">No Show</option>
         </select>
       </div>
 
@@ -121,27 +124,43 @@
               <span [ngClass]="{
                 'bg-status-success/10 text-status-success': attendee.status === 'attended',
                 'bg-admin/10 text-admin': attendee.status === 'confirmed',
-                'bg-status-error/10 text-status-error': attendee.status === 'pending'
+                'bg-amber-500/10 text-amber-500': attendee.status === 'pending',
+                'bg-status-error/10 text-status-error': attendee.status === 'no_show'
               }" class="px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5">
                 <span class="w-1.5 h-1.5 rounded-full" [ngClass]="{
                   'bg-status-success': attendee.status === 'attended',
                   'bg-admin': attendee.status === 'confirmed',
-                  'bg-status-error': attendee.status === 'pending'
+                  'bg-amber-500': attendee.status === 'pending',
+                  'bg-status-error': attendee.status === 'no_show'
                 }"></span>
-                {{ attendee.status | titlecase }}
+                {{ attendee.status === 'no_show' ? 'No Show' : (attendee.status | titlecase) }}
               </span>
             </td>
             <td class="px-6 py-4 text-sm text-text-main">
               {{ attendee.marked_at | date:'MMM d, y, h:mm a' }}
             </td>
-            <td class="px-6 py-4">
-              <button class="p-2 text-text-muted hover:text-admin transition-colors rounded-lg hover:bg-admin/5">
+            <td class="px-6 py-4 relative">
+              <button (click)="toggleDropdown(attendee.id)"
+                class="p-2 text-text-muted hover:text-admin transition-colors rounded-lg hover:bg-admin/5">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                   <path d="m15 5 4 4" />
                 </svg>
               </button>
+
+              <div *ngIf="activeDropdownId === attendee.id"
+                class="absolute right-0 mt-2 w-36 bg-surface border border-border rounded-lg shadow-lg z-10 py-1 overflow-hidden">
+                <button (click)="changeAttendeeStatus(attendee.id, 'confirmed')"
+                  class="w-full text-left px-4 py-2 text-sm hover:bg-surface-muted transition-colors text-text-main font-medium">Confirmed</button>
+                <button (click)="changeAttendeeStatus(attendee.id, 'attended')"
+                  class="w-full text-left px-4 py-2 text-sm hover:bg-surface-muted transition-colors text-status-success font-medium">Attended</button>
+                <button (click)="changeAttendeeStatus(attendee.id, 'pending')"
+                  class="w-full text-left px-4 py-2 text-sm hover:bg-surface-muted transition-colors text-amber-500 font-medium">Pending</button>
+                <button (click)="changeAttendeeStatus(attendee.id, 'no_show')"
+                  class="w-full text-left px-4 py-2 text-sm hover:bg-surface-muted transition-colors text-status-error font-medium">No
+                  Show</button>
+              </div>
             </td>
           </tr>
 
