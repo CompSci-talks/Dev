@@ -12,7 +12,7 @@ import { User } from '../../../core/models/user.model';
 @Component({
   selector: 'app-user-detail-page',
   standalone: true,
-  imports: [CommonModule, UserDetailComponent, ActivityHistoryComponent, RouterModule],
+  imports: [CommonModule, UserDetailComponent, RouterModule],
   template: `
     <div>
 

@@ -1,6 +1,4 @@
 <div class="w-full">
-  <!-- Overlay for dropdowns -->
-  <div *ngIf="activeDropdownId" class="fixed inset-0 z-[5]" (click)="activeDropdownId = null"></div>
 
   <!-- Page header -->
   <div class="admin-page-header">
@@ -40,9 +38,8 @@
         <select id="status" [(ngModel)]="filters.status" (ngModelChange)="applyFilters()"
           class="input-field appearance-none">
           <option [ngValue]="undefined">All Statuses</option>
-          <option value="attended">Attended</option>
-          <option value="confirmed">Confirmed</option>
           <option value="pending">Pending</option>
+          <option value="attended">Attended</option>
           <option value="no_show">No Show</option>
         </select>
       </div>
@@ -123,24 +120,27 @@
             <td class="px-6 py-4">
               <span [ngClass]="{
                 'bg-status-success/10 text-status-success': attendee.status === 'attended',
-                'bg-admin/10 text-admin': attendee.status === 'confirmed',
-                'bg-amber-500/10 text-amber-500': attendee.status === 'pending',
+                'bg-amber-500/10 text-amber-500': attendee.status === 'pending' || attendee.status === 'confirmed',
                 'bg-status-error/10 text-status-error': attendee.status === 'no_show'
               }" class="px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5">
                 <span class="w-1.5 h-1.5 rounded-full" [ngClass]="{
                   'bg-status-success': attendee.status === 'attended',
-                  'bg-admin': attendee.status === 'confirmed',
-                  'bg-amber-500': attendee.status === 'pending',
+                  'bg-amber-500': attendee.status === 'pending' || attendee.status === 'confirmed',
                   'bg-status-error': attendee.status === 'no_show'
                 }"></span>
-                {{ attendee.status === 'no_show' ? 'No Show' : (attendee.status | titlecase) }}
+                <ng-container [ngSwitch]="attendee.status">
+                  <span *ngSwitchCase="'pending'">Pending</span>
+                  <span *ngSwitchCase="'confirmed'">Pending</span>
+                  <span *ngSwitchCase="'attended'">Attended</span>
+                  <span *ngSwitchCase="'no_show'">No Show</span>
+                </ng-container>
               </span>
             </td>
             <td class="px-6 py-4 text-sm text-text-main">
               {{ attendee.marked_at | date:'MMM d, y, h:mm a' }}
             </td>
-            <td class="px-6 py-4 relative">
-              <button (click)="toggleDropdown(attendee.id)"
+            <td class="px-6 py-4">
+              <button (click)="openStatusModal(attendee)" title="Update status"
                 class="p-2 text-text-muted hover:text-admin transition-colors rounded-lg hover:bg-admin/5">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -148,19 +148,6 @@
                   <path d="m15 5 4 4" />
                 </svg>
               </button>
-
-              <div *ngIf="activeDropdownId === attendee.id"
-                class="absolute right-0 mt-2 w-36 bg-surface border border-border rounded-lg shadow-lg z-10 py-1 overflow-hidden">
-                <button (click)="changeAttendeeStatus(attendee.id, 'confirmed')"
-                  class="w-full text-left px-4 py-2 text-sm hover:bg-surface-muted transition-colors text-text-main font-medium">Confirmed</button>
-                <button (click)="changeAttendeeStatus(attendee.id, 'attended')"
-                  class="w-full text-left px-4 py-2 text-sm hover:bg-surface-muted transition-colors text-status-success font-medium">Attended</button>
-                <button (click)="changeAttendeeStatus(attendee.id, 'pending')"
-                  class="w-full text-left px-4 py-2 text-sm hover:bg-surface-muted transition-colors text-amber-500 font-medium">Pending</button>
-                <button (click)="changeAttendeeStatus(attendee.id, 'no_show')"
-                  class="w-full text-left px-4 py-2 text-sm hover:bg-surface-muted transition-colors text-status-error font-medium">No
-                  Show</button>
-              </div>
             </td>
           </tr>
 
@@ -185,3 +172,57 @@
   </div>
 
 </div>
+
+<!-- ============================================================ -->
+<!-- Status Update Modal                                          -->
+<!-- ============================================================ -->
+<app-modal *ngIf="statusModalAttendee" [title]="'Update Attendance Status'"
+  [subtitle]="statusModalAttendee.display_name + ' · ' + statusModalAttendee.email" (close)="closeStatusModal()">
+
+  <div body class="space-y-3">
+    <p class="text-sm text-text-muted mb-4">Select a new status for this attendee:</p>
+
+    <label *ngFor="let option of statusOptions"
+      class="flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all" [ngClass]="tempStatus === option.value
+        ? 'border-admin bg-admin/5'
+        : 'border-border hover:border-border-focus hover:bg-surface-muted/40'">
+      <input type="radio" [value]="option.value" [(ngModel)]="tempStatus" class="sr-only">
+      <!-- Custom radio dot -->
+      <div class="w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all"
+        [ngClass]="tempStatus === option.value ? 'border-admin' : 'border-border'">
+        <div *ngIf="tempStatus === option.value" class="w-2.5 h-2.5 rounded-full bg-admin"></div>
+      </div>
+      <!-- Status badge + label -->
+      <div class="flex items-center gap-2 flex-1">
+        <span class="w-2 h-2 rounded-full flex-shrink-0" [ngClass]="option.dot"></span>
+        <div>
+          <div class="font-semibold text-sm text-text-main">{{ option.label }}</div>
+          <div class="text-xs text-text-muted mt-0.5">{{ option.description }}</div>
+        </div>
+      </div>
+      <!-- Current badge -->
+      <span *ngIf="statusModalAttendee.status === option.value"
+        class="text-xs font-medium px-2 py-0.5 rounded-full bg-surface-muted text-text-muted">
+        Current
+      </span>
+    </label>
+  </div>
+
+  <div footer class="flex gap-3 mt-2">
+    <button (click)="closeStatusModal()" class="btn btn-secondary flex-1">
+      Cancel
+    </button>
+    <button (click)="saveAttendeeStatus()" [disabled]="isSavingStatus || tempStatus === statusModalAttendee.status"
+      class="btn btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed">
+      <span *ngIf="!isSavingStatus">Save Changes</span>
+      <span *ngIf="isSavingStatus" class="flex items-center justify-center gap-2">
+        <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Saving...
+      </span>
+    </button>
+  </div>
+
+</app-modal>
