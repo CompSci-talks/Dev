@@ -9,7 +9,11 @@ import { take } from 'rxjs';
 @Component({
     selector: 'app-forgot-password',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule],
+    imports: [
+        CommonModule,
+        FormsModule,
+        RouterModule
+    ],
     templateUrl: './forgot-password.component.html'
 })
 export class ForgotPasswordComponent {

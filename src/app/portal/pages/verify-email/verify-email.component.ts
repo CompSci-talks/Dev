@@ -8,7 +8,10 @@ import { take, interval, Subscription, switchMap, filter } from 'rxjs';
 @Component({
     selector: 'app-verify-email',
     standalone: true,
-    imports: [CommonModule, RouterModule],
+    imports: [
+        CommonModule,
+        RouterModule
+    ],
     templateUrl: './verify-email.component.html',
     styles: [`
     :host {

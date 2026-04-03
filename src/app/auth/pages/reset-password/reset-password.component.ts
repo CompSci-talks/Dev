@@ -9,7 +9,11 @@ import { take } from 'rxjs';
 @Component({
     selector: 'app-reset-password',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule],
+    imports: [
+        CommonModule,
+        FormsModule,
+        RouterModule
+    ],
     templateUrl: './reset-password.component.html'
 })
 export class ResetPasswordComponent implements OnInit {
