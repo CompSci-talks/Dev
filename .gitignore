@@ -44,3 +44,4 @@ __screenshots__/
 Thumbs.db
 node_modules/
 dist/
+service-account.json
