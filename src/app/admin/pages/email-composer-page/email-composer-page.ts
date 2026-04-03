@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { QuillModule } from 'ngx-quill';
-// No lucide-angular import
 import { EmailSelectionService } from '../../services/email-selection.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { EMAIL_SERVICE } from '../../services/email.service';
@@ -27,10 +26,22 @@ export class EmailComposerPage implements OnInit {
   selectedRecipients: User[] = [];
   isSending = false;
 
+  quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'align': [] }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['blockquote', 'code-block'],
+      ['link'],
+      ['clean']
+    ]
+  };
+
   ngOnInit() {
     this.selectedRecipients = this.emailSelection.getSelectedUsers();
 
-    // Redirect back if no users are selected
     if (this.selectedRecipients.length === 0) {
       this.toastService.error('No users selected for emailing.');
       this.goBack();
@@ -46,40 +57,32 @@ export class EmailComposerPage implements OnInit {
   removeRecipient(uid: string) {
     this.emailSelection.removeSelectedUser(uid);
     this.selectedRecipients = this.emailSelection.getSelectedUsers();
-
-    if (this.selectedRecipients.length === 0) {
-      this.goBack();
-    }
+    if (this.selectedRecipients.length === 0) this.goBack();
   }
 
   async sendEmail() {
-    if (this.emailForm.invalid || this.selectedRecipients.length === 0) {
-      return;
-    }
+    if (this.emailForm.invalid || this.selectedRecipients.length === 0) return;
 
     this.isSending = true;
     const { subject, body } = this.emailForm.value;
 
     try {
-      const payload = {
+      await firstValueFrom(this.emailService.send({
         to: this.selectedRecipients.map(u => u.email),
-        subject: subject,
-        body: body
-      };
-
-      await firstValueFrom(this.emailService.send(payload));
+        subject,
+        body
+      }));
 
       this.toastService.success(`Email sent to ${this.selectedRecipients.length} recipients`);
       this.emailSelection.clearSelection();
       this.goBack();
     } catch (error: any) {
       console.error('Error sending email:', error);
-      this.toastService.error(error.message || 'Failed to send email. Please check your configuration.');
+      this.toastService.error(error.message || 'Failed to send email.');
     } finally {
       this.isSending = false;
     }
   }
-
 
   goBack() {
     this.router.navigate(['/admin/user-management']);

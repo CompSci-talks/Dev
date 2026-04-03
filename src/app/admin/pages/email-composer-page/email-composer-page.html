@@ -3,11 +3,10 @@
   <!-- Page header -->
   <div class="flex items-center gap-4 mb-8">
     <button (click)="goBack()"
-        class="p-2 text-text-muted hover:text-text-main hover:bg-surface-muted rounded-lg transition-colors group flex-shrink-0">
+      class="p-2 text-text-muted hover:text-text-main hover:bg-surface-muted rounded-lg transition-colors group flex-shrink-0">
       <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
       </svg>
     </button>
     <div class="admin-page-header mb-0">
@@ -26,24 +25,25 @@
         <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4">
           <span class="text-sm font-medium text-text-muted sm:w-20 flex-shrink-0">To:</span>
           <div class="flex flex-wrap gap-2 items-center w-full">
-            <span class="text-xs font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md flex items-center gap-1 flex-shrink-0">
+            <span
+              class="text-xs font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md flex items-center gap-1 flex-shrink-0">
               <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
               {{ selectedRecipients.length }} Selected
             </span>
 
             <div class="flex flex-wrap gap-2 max-h-24 overflow-y-auto w-full pt-1">
               <div *ngFor="let user of selectedRecipients"
-                   class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-surface-muted border border-border text-text-main">
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-surface-muted border border-border text-text-main">
                 <span>{{ user.display_name || user.email }}</span>
                 <button type="button" (click)="removeRecipient(user.id)"
-                    class="text-text-muted hover:text-status-error transition-colors focus:outline-none">
+                  class="text-text-muted hover:text-status-error transition-colors focus:outline-none">
                   <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd"
                       d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clip-rule="evenodd"/>
+                      clip-rule="evenodd" />
                   </svg>
                 </button>
               </div>
@@ -55,32 +55,28 @@
         <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <label for="subject" class="text-sm font-medium text-text-muted sm:w-20 flex-shrink-0">Subject:</label>
           <input id="subject" type="text" formControlName="subject"
-              class="flex-1 px-0 py-2 bg-transparent border-0 border-b border-border focus:ring-0 focus:border-primary text-text-main placeholder:text-text-faint transition-colors outline-none"
-              placeholder="E.g., Important update about the upcoming seminar...">
+            class="flex-1 px-0 py-2 bg-transparent border-0 border-b border-border focus:ring-0 focus:border-primary text-text-main placeholder:text-text-faint transition-colors outline-none"
+            placeholder="E.g., Important update about the upcoming seminar...">
         </div>
       </div>
 
       <!-- Editor -->
-      <div class="p-6 min-h-[400px] flex flex-col">
-        <quill-editor formControlName="body" class="flex-1 flex flex-col" theme="snow"
-            placeholder="Write your message here...">
+      <!-- Editor -->
+      <div class="p-6 flex-1 flex flex-col">
+        <quill-editor formControlName="body" class="flex-1 w-full flex flex-col" theme="snow" [modules]="quillModules"
+          placeholder="Write your message here...">
         </quill-editor>
       </div>
-
       <!-- Actions -->
       <div class="p-6 bg-surface-muted/30 border-t border-border flex justify-end gap-3">
-        <button type="button" (click)="goBack()"
-            class="btn btn-outline"
-            [disabled]="isSending">
+        <button type="button" (click)="goBack()" class="btn btn-outline" [disabled]="isSending">
           Cancel
         </button>
-        <button type="submit"
-            class="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-            [disabled]="emailForm.invalid || selectedRecipients.length === 0 || isSending">
-          <svg class="w-4 h-4" [class.animate-pulse]="isSending" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
+        <button type="submit" class="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          [disabled]="emailForm.invalid || selectedRecipients.length === 0 || isSending">
+          <svg class="w-4 h-4" [class.animate-pulse]="isSending" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
           </svg>
           {{ isSending ? 'Sending...' : 'Send Email' }}
         </button>

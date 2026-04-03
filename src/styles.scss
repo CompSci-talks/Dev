@@ -197,4 +197,14 @@
         @apply bg-skeleton-dark rounded animate-pulse;
     }
 
+
+
+    quill-editor .ql-container {
+        min-height: 400px;
+        font-size: 15px;
+    }
+
+    quill-editor .ql-editor {
+        min-height: 400px;
+    }
 }
