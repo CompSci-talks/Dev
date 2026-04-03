@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { QuillModule } from 'ngx-quill';
 // No lucide-angular import
 import { EmailSelectionService } from '../../services/email-selection.service';
@@ -60,25 +61,25 @@ export class EmailComposerPage implements OnInit {
     const { subject, body } = this.emailForm.value;
 
     try {
-      // TODO: T017 - Call backend/service to send email
-      // TODO: T016 - Save to SentEmails audit collection
+      const payload = {
+        to: this.selectedRecipients.map(u => u.email),
+        subject: subject,
+        body: body
+      };
 
-      console.log('Sending email to', this.selectedRecipients.map(u => u.email));
-      console.log('Subject:', subject);
-
-      // Artificial delay for now
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await firstValueFrom(this.emailService.send(payload));
 
       this.toastService.success(`Email sent to ${this.selectedRecipients.length} recipients`);
       this.emailSelection.clearSelection();
       this.goBack();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending email:', error);
-      this.toastService.error('Failed to send email. Please try again.');
+      this.toastService.error(error.message || 'Failed to send email. Please check your configuration.');
     } finally {
       this.isSending = false;
     }
   }
+
 
   goBack() {
     this.router.navigate(['/admin/user-management']);

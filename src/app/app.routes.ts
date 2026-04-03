@@ -83,8 +83,13 @@ export const routes: Routes = [
             {
                 path: 'email-composer',
                 loadComponent: () => import('./admin/pages/email-composer-page/email-composer-page').then(m => m.EmailComposerPage)
+            },
+            {
+                path: 'email-settings',
+                loadComponent: () => import('./admin/pages/email-settings/email-settings.component').then(m => m.EmailSettingsComponent)
             }
         ]
     },
+
     { path: '**', redirectTo: '' }
 ];
