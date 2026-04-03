@@ -1,38 +1,21 @@
-# Research: Auth Flow Implementation Patterns
+# Research: Auth Flow Optimization
 
-## Decision 1: Custom Password Reset URL
-- **Problem**: Default Firebase reset emails lead to a non-branded Firebase page.
-- **Decision**: Configure Firebase Action URL to point to our Angular app's route: `/auth/reset-password`.
-- **Implementation**: 
-    - Construct the reset link using `auth.generatePasswordResetLink(email, actionCodeSettings)` if we want to send it ourselves, or simply update the template in Firebase Console to point to our domain.
-    - The link will look like: `https://[domain]/auth/reset-password?oobCode=[CODE]&apiKey=[KEY]&...`
-- **Rationale**: Maintains brand consistency and provides a premium user experience.
+## Decisions
 
-## Decision 2: Handling oobCode (Action Code)
-- **Problem**: The app needs to verify and apply the reset code.
-- **Decision**: Use `AngularFire`'s `verifyPasswordResetCode` and `confirmPasswordReset` methods.
-- **Workflow**:
-    1. `ResetPasswordComponent` extracts `oobCode` from URL.
-    2. Calls `authService.verifyResetCode(code)` to validate link and get user email.
-    3. User submits new password.
-    4. Calls `authService.confirmReset(code, newPassword)`.
-- **Rationale**: Secure and standard way to handle Firebase action codes in-app.
+### 1. In-App Password Reset
+- **Decision**: Implement custom Angular components (`ForgotPassword`, `ResetPassword`) instead of using Firebase's default hosted pages.
+- **Rationale**: Maintains the platform's **glassmorphic design** and keeps the user within the application context.
+- **Alternatives**: Firebase Default Action URL (Rejected for poor branding/UX).
 
-## Decision 3: Strict Verification Guard
-- **Problem**: Redirecting from "any" route (including Home) when logged in but unverified.
-- **Decision**: Update `authGuard` to check verification status for all routes it protects.
-- **Logic**:
-    ```typescript
-    if (user && !user.email_verified && state.url !== '/verify-email') {
-        return router.createUrlTree(['/verify-email']);
-    }
-    ```
-- **Application**: Apply `authGuard` to the root route `''` in `app.routes.ts`. This will trigger for Home, Archive, etc. 
-- **Caveat**: Must ensure the guard allows the user to actually *be* on `/verify-email` and still allows unauthenticated users to see public pages.
-- **Refined Logic**:
-    - If user exists -> Check verification -> redirect if needed.
-    - If user does not exist -> Allow public routes (Home, Schedule, etc.), redirect to login for protected routes (Dashboard).
+### 2. Auto-Polling for Verification
+- **Decision**: Use a 5-second polling interval using `rxjs` `interval` and `auth.currentUser.reload()`.
+- **Rationale**: Provides a seamless "instant" transition once the user clicks the email link in another tab, without requiring a manual refresh.
+- **Alternatives**: Manual "Refresh" button only (Rejected as less intuitive).
 
-## Decision 4: Polling & Cooldown
-- **Decision**: Use RxJS `interval(5000)` for polling and a local timer for the 60s cooldown.
-- **Rationale**: Simple, effective, and fulfills UX requirements.
+### 3. Bulk Verification via Admin SDK
+- **Decision**: Create a Node.js script using `firebase-admin` to update existing users.
+- **Rationale**: Efficiently handles migration of test accounts that were created before the mandatory verification requirement.
+
+## External Documentation
+- [Firebase Auth: Manage Users](https://firebase.google.com/docs/auth/admin/manage-users)
+- [AngularFire: Authentication](https://github.com/angular/angularfire/blob/master/docs/auth/getting-started.md)

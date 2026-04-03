@@ -49,7 +49,6 @@ cd src; pytest; ruff check .
 ## Recent Changes
 - 026-auth-flow-enhancement: Added TypeScript / Angular 17+ + @angular/fire (Firebase v10+), RxJS
 - 019-admin-user-management: Added TypeScript / Angular 17+ + Firebase SDK (Auth, Firestore), Tailwind CSS, RxJS, Lucide Angular
-- 019-admin-user-management: Added TypeScript / Angular 17+ + @angular/core, @angular/fire, Firebase (Auth, Firestore), RxJS, Tailwind CSS
 
 
 <!-- MANUAL ADDITIONS START -->

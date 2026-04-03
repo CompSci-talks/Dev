@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { ToastService } from '../../../core/services/toast.service';
-import { take, interval, Subscription, switchMap, filter } from 'rxjs';
+import { take, interval, Subscription, switchMap, filter, distinctUntilChanged, shareReplay, catchError, of } from 'rxjs';
 
 @Component({
     selector: 'app-verify-email',
@@ -25,7 +25,10 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
     private toastService = inject(ToastService);
     private router = inject(Router);
 
-    user$ = this.authService.currentUser$;
+    user$ = this.authService.currentUser$.pipe(
+        distinctUntilChanged((prev, curr) => prev?.id === curr?.id && prev?.email_verified === curr?.email_verified),
+        shareReplay(1)
+    );
     isResending = false;
     isChecking = false;
     resendCooldown = 0;
@@ -35,13 +38,30 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // Auto-check status every 5 seconds
+        // Use switchMap to ensure only one reload is active at a time
         this.pollingSub = interval(5000).pipe(
-            switchMap(() => this.authService.reloadUser()),
+            switchMap(() => this.authService.reloadUser().pipe(
+                catchError(err => {
+                    console.error('[VerifyEmail] Reload error during polling:', err);
+                    return of(null);
+                })
+            )),
             switchMap(() => this.authService.currentUser$.pipe(take(1))),
+            // Only proceed if user is verified
             filter(user => !!user?.email_verified)
-        ).subscribe(() => {
-            this.toastService.success('Email verified successfully!');
-            this.router.navigate(['/']);
+        ).subscribe({
+            next: (user) => {
+                if (user?.email_verified) {
+                    this.toastService.success('Email verified successfully!');
+                    this.router.navigate(['/']);
+                }
+            },
+            error: (err) => {
+                console.error('[VerifyEmail] Polling error:', err);
+                // Don't stop polling on small errors, but maybe we should restart the interval?
+                // Actually, errors in switchMap might kill the outer observer.
+                // Better to catchError inside the switchMap.
+            }
         });
     }
 

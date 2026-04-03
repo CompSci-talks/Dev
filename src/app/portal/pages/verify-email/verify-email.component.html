@@ -26,8 +26,22 @@
 
             <!-- Email display if user is available -->
             <div *ngIf="user$ | async as user"
-                class="p-3 bg-background-alt/50 rounded-lg border border-border mb-8 inline-block px-6">
+                class="p-3 bg-background-alt/50 rounded-lg border border-border mb-6 inline-block px-6">
                 <span class="text-primary font-medium">{{ user.email }}</span>
+            </div>
+
+            <!-- Prominent Spam Alert -->
+            <div class="mb-8 p-4 bg-secondary/5 rounded-xl border border-secondary/10 flex items-start gap-3 text-left">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary mt-0.5 shrink-0" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div class="text-sm">
+                    <span class="font-bold text-text-primary block mb-1">Coudn't find the email?</span>
+                    <span class="text-text-secondary">Please check your <strong>Spam</strong> or <strong>Junk</strong>
+                        folder. Sometimes verification emails can be filtered incorrectly.</span>
+                </div>
             </div>
 
             <div class="space-y-4">

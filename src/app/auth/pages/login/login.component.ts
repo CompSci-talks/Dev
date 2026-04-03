@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { ToastService } from '../../../core/services/toast.service';
+import { getAuthErrorMessage } from '../../../core/utils/auth-error-messages';
+
 
 @Component({
     selector: 'app-login',
@@ -39,7 +41,7 @@ export class LoginComponent {
                 this.router.navigateByUrl(returnUrl);
             },
             error: (err) => {
-                this.errorMessage = err.message || 'Login failed';
+                this.errorMessage = getAuthErrorMessage(err.code || err.message || 'auth/internal-error');
                 this.isLoading = false;
                 this.toastService.error(this.errorMessage);
             }

@@ -13,6 +13,8 @@
 - Q: Clarify verification status check strategy. → A: Automatic polling every 5 seconds while on the Verification page.
 - Q: Clarify resend verification cooldown. → A: 60-second cooldown timer active after each "Resend" click.
 - Q: Clarify post-reset action. → A: Redirect to Login page with a success message after successful password reset.
+- Q: Clarify link functionality difference. → A: Verification links are strictly for identity confirmation (does not allow changing email/password). Password reset emails are for setting a new password via a dedicated UI.
+- Q: Clarify verified user behavior on verification page. → A: If a verified user manually accesses `/verify-email`, they MUST be redirected to the dashboard immediately.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -29,6 +31,7 @@ As a new user, I want to receive an email verification link after signing up so 
 1. **Given** I am on the registration page, **When** I successfully sign up, **Then** I am redirected to the `/verify-email` page and a verification email is sent automatically.
 2. **Given** I am on the `/verify-email` page, **When** I click "Resend Email", **Then** a new verification email is sent and a 60-second cooldown is enforced on the button.
 3. **Given** I have clicked the verification link in my email, **When** I wait for the next auto-polling cycle, **Then** I am automatically redirected to the home page (or dashboard) as a verified user.
+4. **Given** I am a verified user, **When** I manually navigate to `/verify-email`, **Then** I am immediately redirected back to the dashboard.
 
 ---
 
@@ -53,6 +56,7 @@ As a user who has forgotten my password, I want to request a password reset link
 - **Invalid Email on Reset**: If a user enters an email that doesn't exist, the system should still show a generic "If an account matches this email, a reset link has been sent" for security (preventing account enumeration).
 - **Expired Verification Link**: If a user clicks an old verification link, Firebase handles the error, but our app should handle the re-check gracefully.
 - **Unverified User accessing Dashboard**: The `authGuard` should catch any attempt to access `/dashboard` or `/profile` and redirect to `/verify-email`.
+- **Verified User accessing Verification Page**: Handled by immediate redirect to dashboard.
 
 ## Requirements *(mandatory)*
 

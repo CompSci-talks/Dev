@@ -1,29 +1,20 @@
-# Data Model: Authentication & Verification
+# Data Model: Authentication Enhancement
 
-## Existing Entity: User
-The feature uses the existing `User` model defined in `src/app/core/models/user.model.ts`.
+## Updated Entities
+
+### User
+The `User` entity has been extended to include fields necessary for verification states and administrative tracking.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| id | string | Unique Firebase UID |
-| email | string | User's email address |
-| email_verified | boolean | **CRITICAL**: Updated via `reloadUser()` to reflect Firebase status. |
-| role | UserRole | Permissions level (admin/moderator/authenticated). |
+| `email_verified` | boolean | Live status from Firebase Auth. |
+| `last_login` | Timestamp/Date | Last successful sign-in time. |
+| `last_active_timestamp` | Timestamp/Date | Last interaction with the platform. |
 
-## Transient UI State (Verification)
-Managed within `VerifyEmailComponent`.
+## Identity & Uniqueness
+- **UID**: The primary key is the Firebase Authentication `uid`.
+- **DisplayName**: Captured during signup and synchronized to both Auth Profile and Firestore doc.
 
-| State | Type | Description |
-|-------|------|-------------|
-| isResending | boolean | Loading state for the resend request. |
-| resendCooldown | number | Seconds remaining (0-60) before next allowed resend. |
-| isPollingActive | boolean | Whether the 5s status check is running. |
-
-## Transient UI State (Password Reset)
-Managed within `ResetPasswordComponent`.
-
-| State | Type | Description |
-|-------|------|-------------|
-| oobCode | string | The action code extracted from URL. |
-| email | string | The email associated with the reset code (verified via `verifyPasswordResetCode`). |
-| isSubmitting | boolean | Loading state for the password update. |
+## Lifecycle Transitions
+1. **Unverified**: Status immediately after registration. Access restricted by `authGuard`.
+2. **Verified**: Successfully clicked link or bulk-verified by administrator. Full access granted.

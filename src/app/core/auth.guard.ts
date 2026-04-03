@@ -18,6 +18,10 @@ export const authGuard: CanActivateFn = (route, state) => {
                         console.log('[AuthGuard] Unverified user redirected to /verify-email');
                         return router.createUrlTree(['/verify-email']);
                     }
+                    if (user.email_verified && state.url === '/verify-email') {
+                        console.log('[AuthGuard] Verified user redirected away from /verify-email');
+                        return router.createUrlTree(['/']);
+                    }
                     return true;
                 }
 

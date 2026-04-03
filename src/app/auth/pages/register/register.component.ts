@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { ToastService } from '../../../core/services/toast.service';
+import { getAuthErrorMessage } from '../../../core/utils/auth-error-messages';
+
 
 @Component({
     selector: 'app-register',
@@ -41,7 +43,7 @@ export class RegisterComponent {
                 this.router.navigate(['/verify-email']);
             },
             error: (err) => {
-                this.errorMessage = err.message || 'Registration failed';
+                this.errorMessage = getAuthErrorMessage(err.code || err.message || 'auth/internal-error');
                 this.toastService.error(this.errorMessage);
                 this.isLoading = false;
             }

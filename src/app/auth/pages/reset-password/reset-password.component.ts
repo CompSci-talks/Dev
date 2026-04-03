@@ -5,6 +5,8 @@ import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { ToastService } from '../../../core/services/toast.service';
 import { take } from 'rxjs';
+import { getAuthErrorMessage } from '../../../core/utils/auth-error-messages';
+
 
 @Component({
     selector: 'app-reset-password',
@@ -50,7 +52,8 @@ export class ResetPasswordComponent implements OnInit {
                 this.isVerifying = false;
             },
             error: (err) => {
-                this.toastService.error('Invalid or expired reset link');
+                const errorMessage = getAuthErrorMessage(err.code || err.message || 'auth/invalid-action-code');
+                this.toastService.error(errorMessage);
                 this.isVerifying = false;
                 this.router.navigate(['/login']);
             }
@@ -71,7 +74,8 @@ export class ResetPasswordComponent implements OnInit {
             },
             error: (err) => {
                 this.isLoading = false;
-                this.toastService.error(err.message || 'Failed to reset password');
+                const errorMessage = getAuthErrorMessage(err.code || err.message || 'auth/internal-error');
+                this.toastService.error(errorMessage);
             }
         });
     }

@@ -5,6 +5,8 @@ import { RouterModule, Router } from '@angular/router';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { ToastService } from '../../../core/services/toast.service';
 import { take } from 'rxjs';
+import { getAuthErrorMessage } from '../../../core/utils/auth-error-messages';
+
 
 @Component({
     selector: 'app-forgot-password',
@@ -37,7 +39,8 @@ export class ForgotPasswordComponent {
             },
             error: (err) => {
                 this.isLoading = false;
-                this.toastService.error(err.message || 'Failed to send reset email');
+                const errorMessage = getAuthErrorMessage(err.code || err.message || 'auth/internal-error');
+                this.toastService.error(errorMessage);
             }
         });
     }
