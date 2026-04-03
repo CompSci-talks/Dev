@@ -45,7 +45,7 @@
                     </span>
                 </button>
 
-                <button (click)="resendVerification()" [disabled]="isResending"
+                <button (click)="resendVerification()" [disabled]="isResending || resendCooldown > 0"
                     class="btn-secondary w-full py-4 text-base">
                     <span class="flex items-center justify-center gap-2">
                         <svg *ngIf="isResending" class="animate-spin h-5 w-5 text-primary" viewBox="0 0 24 24">
@@ -55,7 +55,10 @@
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                             </path>
                         </svg>
-                        {{ isResending ? 'Sending...' : 'Resend verification link' }}
+                        <ng-container *ngIf="!isResending">
+                            {{ resendCooldown > 0 ? 'Resend in ' + resendCooldown + 's' : 'Resend verification link' }}
+                        </ng-container>
+                        <ng-container *ngIf="isResending">Sending...</ng-container>
                     </span>
                 </button>
             </div>

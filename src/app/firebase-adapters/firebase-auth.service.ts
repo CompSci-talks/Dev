@@ -1,5 +1,5 @@
 import { Injectable, inject, NgZone, signal } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, User as FirebaseUser, setPersistence, browserLocalPersistence, sendEmailVerification } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, User as FirebaseUser, setPersistence, browserLocalPersistence, sendEmailVerification, sendPasswordResetEmail, verifyPasswordResetCode, confirmPasswordReset } from '@angular/fire/auth';
 import { BehaviorSubject, Observable, from, map, take, tap, switchMap, Subscription, throwError } from 'rxjs';
 import { IAuthService } from '../core/contracts/auth.interface';
 import { USER_SERVICE } from '../core/contracts/user.service.interface';
@@ -107,6 +107,22 @@ export class FirebaseAuthService implements IAuthService {
     sendVerificationEmail(): Observable<void> {
         if (!this.auth.currentUser) return throwError(() => new Error('No user logged in'));
         return from(sendEmailVerification(this.auth.currentUser));
+    }
+
+    sendPasswordResetEmail(email: string): Observable<void> {
+        // Construct the continueUrl to point to our reset-password route
+        // In a real production app, this would be the actual domain.
+        // For now, we'll rely on the Firebase Console configuration for the Action URL,
+        // or we can pass ActionCodeSettings here.
+        return from(sendPasswordResetEmail(this.auth, email));
+    }
+
+    verifyPasswordResetCode(code: string): Observable<string> {
+        return from(verifyPasswordResetCode(this.auth, code));
+    }
+
+    confirmPasswordReset(code: string, newPassword: string): Observable<void> {
+        return from(confirmPasswordReset(this.auth, code, newPassword));
     }
 
     reloadUser(): Observable<void> {

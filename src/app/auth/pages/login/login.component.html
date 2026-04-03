@@ -17,7 +17,10 @@
             </div>
 
             <div>
-                <label for="password" class="block text-sm font-medium text-text-main mb-1">Password</label>
+                <div class="flex items-center justify-between mb-1">
+                    <label for="password" class="block text-sm font-medium text-text-main">Password</label>
+                    <a routerLink="/forgot-password" class="text-xs text-primary hover:underline">Forgot password?</a>
+                </div>
                 <input type="password" id="password" name="password" [(ngModel)]="password" required class="input-field"
                     placeholder="••••••••">
             </div>

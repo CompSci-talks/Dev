@@ -14,6 +14,15 @@ export interface IAuthService {
     signOut(): Observable<void>;
     sendVerificationEmail(): Observable<void>;
     reloadUser(): Observable<void>;
+
+    /** Requests a password reset email */
+    sendPasswordResetEmail(email: string): Observable<void>;
+
+    /** Verifies the reset code from the email */
+    verifyPasswordResetCode(code: string): Observable<string>;
+
+    /** Completes the password reset */
+    confirmPasswordReset(code: string, newPassword: string): Observable<void>;
 }
 
 export const AUTH_SERVICE = new InjectionToken<IAuthService>('AUTH_SERVICE');

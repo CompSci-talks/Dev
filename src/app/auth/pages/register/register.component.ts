@@ -34,9 +34,11 @@ export class RegisterComponent {
 
         this.authService.signUp(this.email, this.password, this.displayName).subscribe({
             next: () => {
-                // Automatically redirects to home upon successful registration 
-                this.toastService.success('Registration successful');
-                this.router.navigate(['/']);
+                // Trigger verification email immediately
+                this.authService.sendVerificationEmail().subscribe();
+
+                this.toastService.success('Registration successful. Please verify your email.');
+                this.router.navigate(['/verify-email']);
             },
             error: (err) => {
                 this.errorMessage = err.message || 'Registration failed';

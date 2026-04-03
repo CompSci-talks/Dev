@@ -27,10 +27,18 @@ export const routes: Routes = [
         path: 'register',
         loadComponent: () => import('./auth/pages/register/register.component').then(m => m.RegisterComponent)
     },
-    // {
-    //     path: 'verify-email',
-    //     loadComponent: () => import('./portal/pages/verify-email/verify-email.component').then(m => m.VerifyEmailComponent)
-    // },
+    {
+        path: 'verify-email',
+        loadComponent: () => import('./portal/pages/verify-email/verify-email.component').then(m => m.VerifyEmailComponent)
+    },
+    {
+        path: 'forgot-password',
+        loadComponent: () => import('./auth/pages/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
+    },
+    {
+        path: 'reset-password',
+        loadComponent: () => import('./auth/pages/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
+    },
     {
         path: 'dashboard',
         loadComponent: () => import('./dashboard/pages/dashboard/dashboard.component').then(m => m.DashboardComponent),
