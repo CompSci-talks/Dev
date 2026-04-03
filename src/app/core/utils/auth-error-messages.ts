@@ -35,6 +35,9 @@ export function getAuthErrorMessage(errorCode: string): string {
             return 'A network error occurred. Please check your internet connection.';
         case 'auth/internal-error':
             return 'An internal error occurred. Please try again later.';
+        case 'custom/display-name-already-taken':
+            return 'This display name is already taken. Please choose another one.';
+
         default:
             // Log unhandled codes to console for debugging
             console.warn(`[AuthErrorMapper] Unhandled error code: ${errorCode}`);

@@ -73,7 +73,7 @@ export class FirebaseAuthService implements IAuthService {
     signUp(email: string, password: string, displayName: string): Observable<User> {
         return from(isNameUnique(this.firestore, 'users', 'display_name', displayName)).pipe(
             switchMap(isUnique => {
-                if (!isUnique) return throwError(() => new Error('This display name is already taken.'));
+                if (!isUnique) return throwError(() => new Error('custom/display-name-already-taken'));
                 return from(createUserWithEmailAndPassword(this.auth, email, password));
             }),
             switchMap(credential => {
