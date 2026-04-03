@@ -36,7 +36,7 @@ export class FirebaseEmailService implements IEmailService {
                     subject: payload.subject,
                     message: payload.body, // Rich text HTML
                     to_email: payload.to.join(', '),
-                    from_name: currentUser.displayName || 'Admin',
+                    from_name: 'CompsciTalks',
                     ...payload.metadata
                 };
 
@@ -44,7 +44,9 @@ export class FirebaseEmailService implements IEmailService {
                     config.serviceId,
                     config.templateId,
                     templateParams,
-                    config.publicKey
+                    {
+                        publicKey: config.publicKey
+                    }
                 ));
             }),
             switchMap(() => {
@@ -65,8 +67,10 @@ export class FirebaseEmailService implements IEmailService {
             }),
             switchMap(() => from(Promise.resolve())),
             catchError(error => {
-                console.error('Failed to send email or save record:', error);
-                return throwError(() => new Error(error.message || 'Failed to send email'));
+                console.error('Full Error Object:', error);
+                const errorMsg = error?.message || error?.text || (typeof error === 'string' ? error : 'Failed to send email');
+                console.error('Failed to send email or save record:', errorMsg);
+                return throwError(() => new Error(errorMsg));
             })
         );
     }
