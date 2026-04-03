@@ -109,8 +109,7 @@ export class FirebaseAuthService implements IAuthService {
 
         // Use ActionCodeSettings to point back to our verify-email page
         const actionCodeSettings = {
-            url: window.location.origin + '/verify-email',
-            handleCodeInApp: true
+            url: window.location.origin + '/verify-email'
         };
 
         return from(sendEmailVerification(this.auth.currentUser, actionCodeSettings));
@@ -119,8 +118,7 @@ export class FirebaseAuthService implements IAuthService {
     sendPasswordResetEmail(email: string): Observable<void> {
         // Use ActionCodeSettings to point back to our reset-password page
         const actionCodeSettings = {
-            url: window.location.origin + '/reset-password',
-            handleCodeInApp: true
+            url: window.location.origin + '/reset-password'
         };
 
         return from(sendPasswordResetEmail(this.auth, email, actionCodeSettings));
