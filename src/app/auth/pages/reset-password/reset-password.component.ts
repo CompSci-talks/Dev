@@ -31,43 +31,16 @@ export class ResetPasswordComponent implements OnInit {
     isLoading = false;
     isValidCode = false;
     isVerifying = true;
-    mode = '';
 
     ngOnInit() {
         this.oobCode = this.route.snapshot.queryParams['oobCode'];
-        this.mode = this.route.snapshot.queryParams['mode'] || 'resetPassword';
 
         if (!this.oobCode) {
             this.toastService.error('Invalid or missing action code');
             this.router.navigate(['/login']);
             return;
         }
-
-        if (this.mode === 'verifyEmail') {
-            this.handleVerifyEmail();
-        } else {
-            this.verifyResetCode();
-        }
-    }
-
-    handleVerifyEmail() {
-        this.isVerifying = true;
-        this.authService.applyActionCode(this.oobCode).pipe(take(1)).subscribe({
-            next: () => {
-                this.toastService.success('Email verified successfully! You can now access the portal.');
-                this.isVerifying = false;
-                // Redirect to login or home. Since the user might be logged in already but needs to reload:
-                this.authService.reloadUser().subscribe(() => {
-                    this.router.navigate(['/']);
-                });
-            },
-            error: (err) => {
-                const errorMessage = getAuthErrorMessage(err.code || err.message || 'auth/invalid-action-code');
-                this.toastService.error(errorMessage);
-                this.isVerifying = false;
-                this.router.navigate(['/login']);
-            }
-        });
+        this.verifyResetCode();
     }
 
     verifyResetCode() {

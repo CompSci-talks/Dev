@@ -42,9 +42,8 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         const oobCode = this.route.snapshot.queryParams['oobCode'];
-        const mode = this.route.snapshot.queryParams['mode'];
 
-        if (oobCode && mode === 'verifyEmail') {
+        if (oobCode) {
             this.handleDirectVerification(oobCode);
         }
 

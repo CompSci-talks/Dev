@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth.guard';
 import { AdminGuard } from './core/admin.guard';
+import { verifiedOrGuestGuard } from './core/verifiedOrGuest.guard';
 
 export const routes: Routes = [
     {
@@ -9,15 +10,18 @@ export const routes: Routes = [
     },
     {
         path: 'archive',
-        loadComponent: () => import('./portal/pages/archive/archive.component').then(m => m.ArchiveComponent)
+        loadComponent: () => import('./portal/pages/archive/archive.component').then(m => m.ArchiveComponent),
+        canActivate: [verifiedOrGuestGuard]
     },
     {
         path: 'schedule',
-        loadComponent: () => import('./portal/pages/schedule/schedule.component').then(m => m.ScheduleComponent)
+        loadComponent: () => import('./portal/pages/schedule/schedule.component').then(m => m.ScheduleComponent),
+        canActivate: [verifiedOrGuestGuard]
     },
     {
         path: 'seminar/:id',
-        loadComponent: () => import('./portal/pages/seminar-detail/seminar-detail.component').then(m => m.SeminarDetailComponent)
+        loadComponent: () => import('./portal/pages/seminar-detail/seminar-detail.component').then(m => m.SeminarDetailComponent),
+        canActivate: [verifiedOrGuestGuard]
     },
     {
         path: 'login',
@@ -38,6 +42,10 @@ export const routes: Routes = [
     {
         path: 'reset-password',
         loadComponent: () => import('./auth/pages/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
+    },
+    {
+        path: 'fire-redirect',
+        loadComponent: () => import('./core/fire-redirect').then(m => m.FireRedirect)
     },
     {
         path: 'dashboard',
