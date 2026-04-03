@@ -3,13 +3,13 @@ import { Observable, from, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Firestore, collection, addDoc, serverTimestamp, query, orderBy, getDocs, doc } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
-import { sanitizeForFirestore } from '../core/utils/firestore-utils';
-import { IEmailService, EmailPayload, SentEmail } from '../admin/services/email.service';
+import { sanitizeForFirestore } from '../utils/firestore-utils';
+import { IEmailService, EmailPayload, SentEmail } from '../../admin/services/email.service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class FirebaseEmailService implements IEmailService {
+export class VercelMailService implements IEmailService {
     private firestore = inject(Firestore);
     private auth = inject(Auth);
 
@@ -38,7 +38,6 @@ export class FirebaseEmailService implements IEmailService {
 
         return from(sendRequest).pipe(
             switchMap(() => {
-                // Audit log after successful send
                 const textSnippet = payload.body.replace(/<[^>]*>?/gm, '').substring(0, 150);
                 const emailRecord = {
                     senderUid: currentUser.uid,
@@ -66,10 +65,10 @@ export class FirebaseEmailService implements IEmailService {
         const q = query(emailsRef, orderBy('sentAt', 'desc'));
 
         return from(getDocs(q).then(snapshot => {
-            return snapshot.docs.map(doc => {
-                const data = doc.data();
+            return snapshot.docs.map(d => {
+                const data = d.data();
                 return {
-                    id: doc.id,
+                    id: d.id,
                     senderUid: data['senderUid'],
                     recipientUids: data['recipientUids'],
                     subject: data['subject'],

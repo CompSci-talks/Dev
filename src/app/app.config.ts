@@ -23,9 +23,7 @@ import { SEMINAR_SERVICE } from './core/contracts/seminar.interface';
 import { COMMENT_SERVICE } from './core/contracts/comment.interface';
 import { EMAIL_SERVICE } from './admin/services/email.service';
 import { ATTENDANCE_SERVICE } from './admin/services/attendance.service';
-import { MockEmailAdapter } from './core/adapters/email/mock-email.adapter';
 import { FirebaseAttendanceService } from './firebase-adapters/firebase-attendance.service';
-import { FirebaseEmailService } from './firebase-adapters/firebase-email.service';
 import { USER_SERVICE } from './core/contracts/user.service.interface';
 import { USER_ACTIVITY_SERVICE } from './core/contracts/user-activity.service.interface';
 import { FirebaseUserProfileService } from './firebase-adapters/firebase-user-profile.service';
@@ -33,6 +31,7 @@ import { FirebaseUserActivityService } from './firebase-adapters/firebase-user-a
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { STORAGE_SERVICE } from './core/contracts/storage.interface';
 import { FirebaseStorageService } from './firebase-adapters/firebase-storage.service';
+import { VercelMailService } from './core/services/vercel-mail-service';
 
 // No activity service yet, but let's assume we'll use a mock or similar soon, 
 // for now let's only provide USER_SERVICE if we haven't created the other implementation.
@@ -58,7 +57,7 @@ export const appConfig: ApplicationConfig = {
     { provide: TAG_SERVICE, useClass: FirebaseTagService },
     { provide: COMMENT_SERVICE, useClass: FirebaseCommentService },
     { provide: RSVP_SERVICE, useClass: FirebaseRsvpService },
-    { provide: EMAIL_SERVICE, useClass: FirebaseEmailService },
+    { provide: EMAIL_SERVICE, useClass: VercelMailService },
     { provide: ATTENDANCE_SERVICE, useClass: FirebaseAttendanceService },
     { provide: USER_SERVICE, useClass: FirebaseUserProfileService },
     { provide: USER_ACTIVITY_SERVICE, useClass: FirebaseUserActivityService },
