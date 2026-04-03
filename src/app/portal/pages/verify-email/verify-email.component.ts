@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { ToastService } from '../../../core/services/toast.service';
 import { take, interval, Subscription, switchMap, filter, distinctUntilChanged, shareReplay, catchError, of } from 'rxjs';
@@ -36,18 +36,24 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
     private pollingSub?: Subscription;
     private cooldownInterval?: any;
 
+    private route = inject(ActivatedRoute);
+
+    isVerifyingDirectly = false;
+
     ngOnInit() {
-        // Auto-check status every 5 seconds
-        // Use switchMap to ensure only one reload is active at a time
+        const oobCode = this.route.snapshot.queryParams['oobCode'];
+        const mode = this.route.snapshot.queryParams['mode'];
+
+        if (oobCode && mode === 'verifyEmail') {
+            this.handleDirectVerification(oobCode);
+        }
+
+        // Auto-check status every 5 seconds for polling
         this.pollingSub = interval(5000).pipe(
             switchMap(() => this.authService.reloadUser().pipe(
-                catchError(err => {
-                    console.error('[VerifyEmail] Reload error during polling:', err);
-                    return of(null);
-                })
+                catchError(() => of(null))
             )),
             switchMap(() => this.authService.currentUser$.pipe(take(1))),
-            // Only proceed if user is verified
             filter(user => !!user?.email_verified)
         ).subscribe({
             next: (user) => {
@@ -55,12 +61,23 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
                     this.toastService.success('Email verified successfully!');
                     this.router.navigate(['/']);
                 }
+            }
+        });
+    }
+
+    private handleDirectVerification(code: string) {
+        this.isVerifyingDirectly = true;
+        this.authService.applyActionCode(code).pipe(take(1)).subscribe({
+            next: () => {
+                this.toastService.success('Email verified successfully!');
+                this.authService.reloadUser().subscribe(() => {
+                    this.router.navigate(['/']);
+                });
             },
             error: (err) => {
-                console.error('[VerifyEmail] Polling error:', err);
-                // Don't stop polling on small errors, but maybe we should restart the interval?
-                // Actually, errors in switchMap might kill the outer observer.
-                // Better to catchError inside the switchMap.
+                const errorMessage = 'Invalid or expired verification link.';
+                this.toastService.error(errorMessage);
+                this.isVerifyingDirectly = false;
             }
         });
     }

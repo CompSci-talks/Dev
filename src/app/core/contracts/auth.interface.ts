@@ -23,6 +23,9 @@ export interface IAuthService {
 
     /** Completes the password reset */
     confirmPasswordReset(code: string, newPassword: string): Observable<void>;
+
+    /** Applies an auth action code (e.g. for email verification) */
+    applyActionCode(code: string): Observable<void>;
 }
 
 export const AUTH_SERVICE = new InjectionToken<IAuthService>('AUTH_SERVICE');

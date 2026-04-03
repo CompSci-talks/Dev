@@ -17,11 +17,13 @@
                 <div class="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full"></div>
             </div>
 
-            <h1 class="text-3xl font-bold text-text-primary mb-4">Verify your email</h1>
+            <h1 class="text-3xl font-bold text-text-primary mb-4">
+                {{ isVerifyingDirectly ? 'Verifying your email' : 'Verify your email' }}
+            </h1>
 
             <p class="text-text-secondary mb-8 leading-relaxed">
-                We've sent a verification link to your email address. Please click the link to confirm your account and
-                access all features.
+                {{ isVerifyingDirectly ? 'Please wait while we confirm your account...' : "We've sent a verification
+                link to your email address. Please click the link to confirm your account and access all features." }}
             </p>
 
             <!-- Email display if user is available -->
