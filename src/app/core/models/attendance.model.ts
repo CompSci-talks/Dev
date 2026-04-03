@@ -3,7 +3,7 @@ export interface Attendee {
     email: string;
     display_name: string;
     marked_at: Date;
-    status: 'confirmed' | 'pending' | 'attended';
+    status: 'confirmed' | 'pending' | 'attended' | 'no_show';
 }
 
 export interface AttendanceRecord {
@@ -11,10 +11,10 @@ export interface AttendanceRecord {
     user_id: string;
     seminar_id: string;
     marked_at: Date;
-    status: 'confirmed' | 'pending' | 'attended';
+    status: 'confirmed' | 'pending' | 'attended' | 'no_show';
 }
 
 export interface AttendanceFilter {
-    status?: 'confirmed' | 'pending' | 'attended';
+    status?: 'confirmed' | 'pending' | 'attended' | 'no_show';
     searchQuery?: string;
 }

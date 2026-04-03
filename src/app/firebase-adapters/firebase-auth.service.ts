@@ -35,7 +35,7 @@ export class FirebaseAuthService implements IAuthService {
                 this.profileSub = this.userService.getUserById$(firebaseUser.uid).subscribe(profile => {
                     console.log('[FirebaseAuthService] Received profile update:', profile);
                     this.zone.run(() => {
-                        const mappedUser = this.mapFirebaseUser(firebaseUser, profile?.role, profile?.photo_url);
+                        const mappedUser = this.mapFirebaseUser(firebaseUser, profile?.role, profile?.photo_url, profile?.display_name);
                         console.log('[FirebaseAuthService] Emitting user with role:', mappedUser.role);
                         this.userSubject.next(mappedUser);
                         this.currentUserSignal.set(mappedUser);
@@ -64,7 +64,7 @@ export class FirebaseAuthService implements IAuthService {
     signIn(email: string, password: string): Observable<User> {
         return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
             switchMap(credential => this.userService.getUserById(credential.user.uid).pipe(
-                map(profile => this.mapFirebaseUser(credential.user, profile?.role, profile?.photo_url))
+                map(profile => this.mapFirebaseUser(credential.user, profile?.role, profile?.photo_url, profile?.display_name))
             )),
             tap(user => this.userSubject.next(user))
         );
@@ -78,7 +78,7 @@ export class FirebaseAuthService implements IAuthService {
             }),
             switchMap(credential => {
                 const firebaseUser = credential.user;
-                const user = this.mapFirebaseUser(firebaseUser);
+                const user = this.mapFirebaseUser(firebaseUser, undefined, undefined, displayName);
 
                 const profile: User = {
                     id: firebaseUser.uid,
@@ -118,7 +118,7 @@ export class FirebaseAuthService implements IAuthService {
                     // Manually trigger a refresh of the user object to pick up emailVerified change
                     this.userService.getUserById(firebaseUser.uid).pipe(take(1)).subscribe(profile => {
                         this.zone.run(() => {
-                            const mappedUser = this.mapFirebaseUser(firebaseUser, profile?.role, profile?.photo_url);
+                            const mappedUser = this.mapFirebaseUser(firebaseUser, profile?.role, profile?.photo_url, profile?.display_name);
                             this.userSubject.next(mappedUser);
                             this.currentUserSignal.set(mappedUser);
                         });
@@ -128,11 +128,11 @@ export class FirebaseAuthService implements IAuthService {
         );
     }
 
-    private mapFirebaseUser(firebaseUser: FirebaseUser, role?: UserRole, photoURL?: string | null): User {
+    private mapFirebaseUser(firebaseUser: FirebaseUser, role?: UserRole, photoURL?: string | null, displayName?: string): User {
         return {
             id: firebaseUser.uid,
             email: firebaseUser.email || '',
-            display_name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+            display_name: displayName || firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
             role: role || 'authenticated',
             photo_url: photoURL || firebaseUser.photoURL || null,
             email_verified: firebaseUser.emailVerified,

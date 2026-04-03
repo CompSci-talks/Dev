@@ -6,12 +6,11 @@ import { SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
 import { SeminarCardComponent } from '../../components/seminar-card/seminar-card.component';
 import { SkeletonCardComponent } from '../../components/skeleton-card/skeleton-card.component';
 import { RouterModule } from '@angular/router';
-import { PaginatedGridComponent } from '../../../shared/components/paginated-grid/paginated-grid.component';
 
 @Component({
     selector: 'app-schedule',
     standalone: true,
-    imports: [CommonModule, SeminarCardComponent, SkeletonCardComponent, RouterModule, PaginatedGridComponent],
+    imports: [CommonModule, RouterModule],
     templateUrl: './schedule.component.html'
 })
 export class ScheduleComponent implements OnInit {

@@ -49,4 +49,22 @@ export class FirebaseAttendanceService implements IAttendanceService {
 
         return filtered;
     }
+
+    async updateAttendeeStatus(seminarId: string, attendeeId: string, status: Attendee['status']): Promise<void> {
+        const { getDocs, updateDoc, limit } = await import('@angular/fire/firestore');
+
+        const rsvpsQuery = query(
+            collection(this.firestore, 'rsvps'),
+            where('seminar_id', '==', seminarId),
+            where('user_id', '==', attendeeId),
+            limit(1)
+        );
+        const snapshot = await getDocs(rsvpsQuery);
+        if (!snapshot.empty) {
+            const docRef = snapshot.docs[0].ref;
+            await updateDoc(docRef, { status });
+        } else {
+            throw new Error('RSVP record not found');
+        }
+    }
 }

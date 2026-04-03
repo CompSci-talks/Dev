@@ -7,14 +7,16 @@ import { SEMINAR_SERVICE, ISeminarService } from '../../../core/contracts/semina
 import { ToastService } from '../../../core/services/toast.service';
 import { Attendee, AttendanceFilter } from '../../../core/models/attendance.model';
 import { Seminar } from '../../../core/models/seminar.model';
-import { Observable, combineLatest } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { Router } from '@angular/router';
 import { EmailSelectionService } from '../../services/email-selection.service';
 import { User } from '../../../core/models/user.model';
+import { ModalComponent } from '../../../core/components/modal/modal.component';
+
 @Component({
     selector: 'app-attendance-page',
     standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule],
+    imports: [CommonModule, RouterModule, FormsModule, ModalComponent],
     templateUrl: './attendance.page.html',
     styleUrl: './attendance.page.css'
 })
@@ -28,10 +30,21 @@ export class AttendancePageComponent implements OnInit {
     isLoading = true;
     showComposer = false;
 
+    /** State for the status-change modal */
+    statusModalAttendee: Attendee | null = null;
+    tempStatus: Attendee['status'] = 'pending';
+    isSavingStatus = false;
+
     filters: AttendanceFilter = {
         searchQuery: '',
         status: undefined
     };
+
+    readonly statusOptions: { value: Attendee['status']; label: string; description: string; color: string; dot: string }[] = [
+        { value: 'pending', label: 'Pending', description: 'User plans to join', color: 'text-amber-500 bg-amber-500/10 border-amber-500/30', dot: 'bg-amber-500' },
+        { value: 'attended', label: 'Attended', description: 'User showed up to the session', color: 'text-status-success bg-status-success/10 border-status-success/30', dot: 'bg-status-success' },
+        { value: 'no_show', label: 'No Show', description: 'User registered but did not attend', color: 'text-status-error bg-status-error/10 border-status-error/30', dot: 'bg-status-error' },
+    ];
 
     constructor(
         private route: ActivatedRoute,
@@ -52,7 +65,6 @@ export class AttendancePageComponent implements OnInit {
     loadData(id: string): void {
         this.isLoading = true;
 
-        // Safety timeout for Firestore index issues
         const timeoutId = setTimeout(() => {
             if (this.isLoading) {
                 this.isLoading = false;
@@ -82,7 +94,6 @@ export class AttendancePageComponent implements OnInit {
 
     applyFilters(): void {
         this.filteredAttendees = this.attendanceService.filterAttendees(this.attendees, this.filters);
-        // Clean up selection if filtered out (optional but good practice)
         const visibleIds = new Set(this.filteredAttendees.map(a => a.id));
         this.selectedAttendeeIds.forEach(id => {
             if (!visibleIds.has(id)) this.selectedAttendeeIds.delete(id);
@@ -114,6 +125,40 @@ export class AttendancePageComponent implements OnInit {
         return this.selectedAttendeeIds.has(id);
     }
 
+    openStatusModal(attendee: Attendee): void {
+        this.statusModalAttendee = attendee;
+        this.tempStatus = attendee.status;
+    }
+
+    closeStatusModal(): void {
+        this.statusModalAttendee = null;
+        this.isSavingStatus = false;
+    }
+
+    async saveAttendeeStatus(): Promise<void> {
+        if (!this.seminarId || !this.statusModalAttendee) return;
+        this.isSavingStatus = true;
+        try {
+            await this.attendanceService.updateAttendeeStatus(
+                this.seminarId,
+                this.statusModalAttendee.id,
+                this.tempStatus
+            );
+            const index = this.attendees.findIndex(a => a.id === this.statusModalAttendee!.id);
+            if (index !== -1) {
+                this.attendees[index].status = this.tempStatus;
+                this.applyFilters();
+            }
+            const label = this.statusOptions.find(o => o.value === this.tempStatus)?.label ?? this.tempStatus;
+            this.toastService.success(`Status updated to ${label}`);
+            this.closeStatusModal();
+        } catch (error) {
+            console.error('Failed to update status', error);
+            this.toastService.error('Failed to update status. Please try again.');
+            this.isSavingStatus = false;
+        }
+    }
+
     getEmailCount(): number {
         return this.selectedAttendeeIds.size;
     }
@@ -122,7 +167,6 @@ export class AttendancePageComponent implements OnInit {
         const selected = this.attendees.filter(a => this.selectedAttendeeIds.has(a.id));
         if (selected.length === 0) return;
 
-        // Map attendees to UserProfile shape expected by EmailSelectionService
         const profiles: User[] = selected.map(a => ({
             id: a.id,
             display_name: a.display_name,
@@ -131,7 +175,8 @@ export class AttendancePageComponent implements OnInit {
             created_at: new Date(),
             last_login: new Date(),
             last_active_timestamp: new Date(),
-            attendance_count: 0
+            attendance_count: 0,
+            email_verified: false
         }));
 
         this.emailSelectionService.setSelectedUsers(profiles);

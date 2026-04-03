@@ -14,6 +14,7 @@ export class CommentListComponent {
     @Input() isLoading = false;
     @Input() activeReplyId: string | null = null;
     @Input() isReply = false;
+    @Input() isAuthenticated = false;
 
     @Output() replyClicked = new EventEmitter<string | null>();
     @Output() replySubmitted = new EventEmitter<{ text: string; parentId?: string }>();

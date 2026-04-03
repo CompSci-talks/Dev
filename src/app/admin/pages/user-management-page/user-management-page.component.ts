@@ -29,7 +29,7 @@ import { EmailSelectionService } from '../../services/email-selection.service';
             (click)="onEmailSelected()"
             class="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Email Selected ({{ selectedUserIds.size }})
+            Send Email ({{ selectedUserIds.size }})
           </button>
           <app-text-filter
             class="w-64"

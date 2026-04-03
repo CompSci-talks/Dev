@@ -164,6 +164,8 @@ export class FirebaseSeminarService implements ISeminarService {
         );
     }
 
+
+
     /** Attendee emailing function stub (mailto logic) - T024 */
     sendAttendeeEmail(seminarId: string, subject: string, body: string): Observable<void> {
         return this.getAttendees(seminarId).pipe(

@@ -13,8 +13,8 @@
     <!-- Scrollable List Area -->
     <div class="p-4 h-96 overflow-y-auto">
         <app-comment-list [comments]="(comments$ | async) || []" [isLoading]="isLoadingComments"
-            [activeReplyId]="activeReplyId" (replyClicked)="onReplyInitiated($event)"
-            (replySubmitted)="onCommentSubmitted($event)">
+            [activeReplyId]="activeReplyId" [isAuthenticated]="(isAuthenticated$ | async) || false"
+            (replyClicked)="onReplyInitiated($event)" (replySubmitted)="onCommentSubmitted($event)">
         </app-comment-list>
     </div>
 

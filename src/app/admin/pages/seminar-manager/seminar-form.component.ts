@@ -144,13 +144,13 @@ function driveUrlValidator(control: AbstractControl): ValidationErrors | null {
             </div>
           </div>
 
-          <div class="flex items-center space-x-3">
+          <!-- <div class="flex items-center space-x-3">
             <input type="checkbox" formControlName="is_hidden" id="is_hidden"
                    class="w-4 h-4 text-admin border-border rounded focus:ring-admin">
-            <!-- <label for="is_hidden" class="text-sm text-text-main font-medium">
+               <label for="is_hidden" class="text-sm text-text-main font-medium">
               Hide from public feed (Draft/Moderation)
-            </label> -->
-          </div>
+            </label>
+          </div> -->
         </div>
 
         <div class="flex justify-end items-center gap-4 pt-6 border-t border-border mt-4">
