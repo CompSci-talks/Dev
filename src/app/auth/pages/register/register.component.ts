@@ -38,8 +38,8 @@ export class RegisterComponent {
         this.authService.signUp(this.email, this.password, this.displayName).subscribe({
             next: () => {
                 // Trigger verification email immediately
+                this.isLoading = false;
                 this.authService.sendVerificationEmail().subscribe();
-
                 this.toastService.success('Registration successful. Please verify your email.');
                 this.router.navigate(['/verify-email']);
             },

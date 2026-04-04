@@ -14,9 +14,9 @@ export class ToastService {
     private readonly toasts = new BehaviorSubject<Toast[]>([]);
 
     // Default durations in milliseconds
-    public static readonly DEFAULT_DURATION = 1000;
-    public static readonly ERROR_DURATION = 2000;
-
+    public static readonly DEFAULT_DURATION = 3000;   // success, info
+    public static readonly WARNING_DURATION = 4000;   // warning
+    public static readonly ERROR_DURATION = 5000;     // error
     /**
      * Observable stream of all active toast notifications.
      */
@@ -30,7 +30,10 @@ export class ToastService {
      */
     show(type: Toast['type'], message: string, duration?: number) {
         const id = Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
-        const defaultDuration = type === 'error' ? ToastService.ERROR_DURATION : ToastService.DEFAULT_DURATION;
+        const defaultDuration =
+            type === 'error' ? ToastService.ERROR_DURATION :
+                type === 'warning' ? ToastService.WARNING_DURATION :
+                    ToastService.DEFAULT_DURATION;
         const toast: Toast = {
             id,
             type,
