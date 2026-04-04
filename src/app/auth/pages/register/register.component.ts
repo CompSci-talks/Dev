@@ -5,12 +5,13 @@ import { Router, RouterModule } from '@angular/router';
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { ToastService } from '../../../core/services/toast.service';
 import { getAuthErrorMessage } from '../../../core/utils/auth-error-messages';
+import { PasswordInputComponent } from '../../../core/components/password-input-component';
 
 
 @Component({
     selector: 'app-register',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule],
+    imports: [CommonModule, FormsModule, RouterModule, PasswordInputComponent],
     templateUrl: './register.component.html'
 })
 export class RegisterComponent {

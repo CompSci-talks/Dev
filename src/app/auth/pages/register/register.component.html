@@ -24,8 +24,8 @@
 
             <div>
                 <label for="password" class="block text-sm font-medium text-text-main mb-1">Password</label>
-                <input type="password" id="password" name="password" [(ngModel)]="password" required minlength="6"
-                    class="input-field" placeholder="••••••••">
+                <app-password-input inputId="password" [(ngModel)]="password" name="password" required minlength="6">
+                </app-password-input>
                 @if (password && confirmPassword && password !== confirmPassword) {
                 <div class="text-status-error text-sm mt-1">
                     Passwords do not match
@@ -35,8 +35,9 @@
             <div>
                 <label for="confirmPassword" class="block text-sm font-medium text-text-main mb-1">Confirm
                     Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword"
-                    required minlength="6" class="input-field" placeholder="••••••••">
+                <app-password-input inputId="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword"
+                    required minlength="6">
+                </app-password-input>
             </div>
 
             <button type="submit" class="btn btn-primary w-full mt-6"

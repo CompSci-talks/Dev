@@ -207,4 +207,11 @@
     quill-editor .ql-editor {
         min-height: 400px;
     }
+
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear,
+    input[type="password"]::-webkit-contacts-auto-fill-button,
+    input[type="password"]::-webkit-credentials-auto-fill-button {
+        display: none;
+    }
 }
