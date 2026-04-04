@@ -114,6 +114,7 @@ import { AUTH_SERVICE } from '../../../contracts/auth.interface';
 
           } @else {
             <a routerLink="/login" class="btn btn-primary py-1.5 px-4 text-sm">Login</a>
+            <a routerLink="/register" class="btn btn-outline py-1.5 px-4 text-sm">Register</a>
           }
         </nav>
 
@@ -205,6 +206,10 @@ import { AUTH_SERVICE } from '../../../contracts/auth.interface';
             <a routerLink="/login" (click)="closeMobile()"
                class="block w-full text-center btn btn-primary py-2 text-sm mt-2">
               Login
+            </a>
+            <a routerLink="/register" (click)="closeMobile()"
+               class="block w-full text-center btn btn-outline py-2 text-sm mt-2">
+              Register
             </a>
           }
         </div>

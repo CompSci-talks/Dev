@@ -21,13 +21,12 @@
                     <label for="password" class="block text-sm font-medium text-text-main">Password</label>
                     <a routerLink="/forgot-password" class="text-xs text-primary hover:underline">Forgot password?</a>
                 </div>
-                <input type="password" id="password" name="password" [(ngModel)]="password" required class="input-field"
-                    placeholder="••••••••">
+                <app-password-input inputId="password" [(ngModel)]="password" name="password" required>
+                </app-password-input>
             </div>
 
-            <button type="submit" class="btn btn-primary w-full mt-6" [disabled]="!loginForm.valid || isLoading">
-                <span *ngIf="isLoading">Signing in...</span>
-                <span *ngIf="!isLoading">Sign In</span>
+            <button type="submit" class="btn btn-primary w-full mt-6" [disabled]="!loginForm.valid || isDisabled">
+                {{ buttonLabel }}
             </button>
         </form>
 

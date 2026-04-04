@@ -5,11 +5,12 @@ import { IRsvpService, RSVP_SERVICE } from '../../../core/contracts/rsvp.interfa
 import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
 import { Observable, map, switchMap, of, take } from 'rxjs';
 import { IUserService, USER_SERVICE } from '../../../core/contracts/user.service.interface';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-rsvp-button',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, RouterModule],
     templateUrl: './rsvp-button.component.html'
 })
 export class RsvpButtonComponent implements OnInit {
@@ -18,7 +19,7 @@ export class RsvpButtonComponent implements OnInit {
     private rsvpService = inject(RSVP_SERVICE);
     private authService = inject(AUTH_SERVICE);
     private userService = inject<IUserService>(USER_SERVICE);
-
+    private router = inject(Router);
     isAttending$!: Observable<boolean>;
     isAuthenticated$!: Observable<boolean>;
     isLoading = false;
@@ -62,5 +63,10 @@ export class RsvpButtonComponent implements OnInit {
 
     get calendarLink(): string {
         return this.rsvpService.getCalendarLink(this.seminar);
+    }
+    redirectToLogin() {
+        this.router.navigate(['/login'], {
+            queryParams: { returnUrl: this.router.url }
+        });
     }
 }

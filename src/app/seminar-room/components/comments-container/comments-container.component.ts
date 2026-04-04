@@ -7,11 +7,12 @@ import { COMMENT_SERVICE } from '../../../core/contracts/comment.interface';
 import { Observable, map } from 'rxjs';
 import { Comment } from '../../../core/models/comment.model';
 import { ToastService } from '../../../core/services/toast.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-comments-container',
     standalone: true,
-    imports: [CommonModule, CommentListComponent, CommentFormComponent],
+    imports: [CommonModule, CommentListComponent, CommentFormComponent, RouterLink],
     templateUrl: './comments-container.component.html'
 })
 export class CommentsContainerComponent implements OnInit {

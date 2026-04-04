@@ -30,7 +30,8 @@
 </ng-container>
 
 <ng-template #guestLayout>
-    <button class="btn btn-primary opacity-50 cursor-not-allowed hidden md:inline-flex" title="Login Required">
+    <button (click)="redirectToLogin()" class="btn btn-primary opacity-50 cursor-not-allowed hidden md:inline-flex"
+        title="Login Required">
         Mark as Attending (Login Required)
     </button>
 </ng-template>
