@@ -45,7 +45,7 @@ export class RegisterComponent {
             },
             error: (err) => {
                 this.errorMessage = getAuthErrorMessage(err.code || err.message || 'auth/internal-error');
-                this.toastService.error(this.errorMessage);
+                // this.toastService.error(this.errorMessage);
                 this.isLoading = false;
             }
         });
