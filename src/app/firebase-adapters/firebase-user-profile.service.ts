@@ -153,6 +153,22 @@ export class FirebaseUserProfileService implements IUserService {
             switchMap(() => from(this.cascadeUserUpdate(uid, { author_name: name })))
         );
     }
+    updateProfile(uid: string, updates: { display_name?: string; photo_url?: string }): Observable<void> {
+        const userDoc = doc(this.firestore, `users/${uid}`);
+        const cleanUpdates = sanitizeForFirestore(updates);
+        const cascadeUpdates: any = {};
+        if (updates.display_name) cascadeUpdates.author_name = updates.display_name;
+        if (updates.photo_url) cascadeUpdates.author_photo_url = updates.photo_url;
+
+        return from(updateDoc(userDoc, cleanUpdates)).pipe(
+            switchMap(() => {
+                if (Object.keys(cascadeUpdates).length > 0) {
+                    return from(this.cascadeUserUpdate(uid, cascadeUpdates));
+                }
+                return of(undefined);
+            })
+        );
+    }
 
     deleteUser(uid: string): Observable<void> {
         return from(this.checkUserReferences(uid)).pipe(

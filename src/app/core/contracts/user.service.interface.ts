@@ -15,5 +15,6 @@ export interface IUserService {
     updateAttendedSeminars(uid: string, seminarId: string, action: 'add' | 'remove'): Observable<void>;
     updatePhotoUrl(uid: string, photo_url: string): Observable<void>;
     updateDisplayName(uid: string, name: string): Observable<void>;
+    updateProfile(uid: string, updates: { display_name?: string; photo_url?: string }): Observable<void>;
     deleteUser(uid: string): Observable<void>;
 }

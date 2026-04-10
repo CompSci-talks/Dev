@@ -234,17 +234,35 @@ import { of, catchError, finalize, take, combineLatest } from 'rxjs';
             }
           </div>
  
-          <!-- URL input -->
-          <div class="mb-6">
+          <!-- Display Name input -->
+          <div class="mb-4">
             <label class="block text-sm font-bold text-text-muted mb-2">
-              Direct Image URL
+              Display Name
             </label>
+            <input type="text"
+                   [value]="displayNameInput()"
+                   (input)="onDisplayNameInput($event)"
+                   placeholder="Your public name"
+                   class="input-field">
+          </div>
+
+          <!-- Photo upload -->
+          <div class="mb-6">
+            <div class="flex justify-between items-center mb-2">
+              <label class="block text-sm font-bold text-text-muted">
+                Profile Photo
+              </label>
+              <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)" accept="image/*">
+              <button (click)="fileInput.click()" class="text-xs font-bold text-primary hover:underline">
+                Upload Local File
+              </button>
+            </div>
             <input type="url"
                    [value]="photoUrlInput()"
                    (input)="onUrlInput($event)"
                    placeholder="https://example.com/avatar.jpg"
                    class="input-field">
-            <p class="text-xs text-text-faint mt-2 font-medium">Use direct links to JPG, PNG, or WebP files.</p>
+            <p class="text-xs text-text-faint mt-2 font-medium">Use local files or direct image links.</p>
           </div>
  
           <!-- Error -->
@@ -258,8 +276,8 @@ import { of, catchError, finalize, take, combineLatest } from 'rxjs';
                     class="btn btn-outline flex-1">
               Cancel
             </button>
-            <button (click)="savePhotoUrl()"
-                    [disabled]="!photoUrlInput() || uploading()"
+            <button (click)="saveProfileChanges()"
+                    [disabled]="uploading() || (!photoUrlInput() && !displayNameInput())"
                     class="btn btn-primary flex-1">
               @if (uploading()) {
                 <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -294,6 +312,7 @@ export class ProfilePageComponent implements OnInit {
   modalOpen = signal(false);
   previewUrl = signal<string | null>(null);
   photoUrlInput = signal<string>('');
+  displayNameInput = signal<string>('');
   uploading = signal(false);
   uploadError = signal<string | null>(null);
 
@@ -343,6 +362,7 @@ export class ProfilePageComponent implements OnInit {
 
   openModal() {
     this.photoUrlInput.set(this.user?.photo_url || '');
+    this.displayNameInput.set(this.user?.display_name || '');
     this.previewUrl.set(this.user?.photo_url || null);
     this.uploadError.set(null);
     this.modalOpen.set(true);
@@ -359,30 +379,83 @@ export class ProfilePageComponent implements OnInit {
     this.previewUrl.set(value || null);
   }
 
+  onDisplayNameInput(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.displayNameInput.set(value);
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 1024 * 1024) { // 1MB limit for Base64 in Firestore
+        this.uploadError.set('Image is too large. Please select a file under 1MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        this.photoUrlInput.set(result);
+        this.previewUrl.set(result);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   onPreviewError() {
     this.uploadError.set('Could not load image from this URL. Please check the link.');
     this.previewUrl.set(null);
   }
 
-  savePhotoUrl() {
-    const url = this.photoUrlInput().trim();
-    if (!url || !this.user) return;
+  saveProfileChanges() {
+    const photo_url = this.transformThumbnailUrl(this.photoUrlInput().trim());
+    const display_name = this.displayNameInput().trim();
+    if (!this.user) return;
 
     this.uploading.set(true);
     this.uploadError.set(null);
 
-    this.userService.updatePhotoUrl(this.user.id, url).subscribe({
+    const updates: any = {};
+    if (photo_url !== this.user.photo_url) updates.photo_url = photo_url;
+    if (display_name !== this.user.display_name && display_name) updates.display_name = display_name;
+
+    if (Object.keys(updates).length === 0) {
+      this.modalOpen.set(false);
+      this.uploading.set(false);
+      return;
+    }
+
+    this.userService.updateProfile(this.user.id, updates).subscribe({
       next: () => {
-        this.user!.photo_url = url;
+        if (updates.photo_url) this.user!.photo_url = updates.photo_url;
+        if (updates.display_name) this.user!.display_name = updates.display_name;
         this.uploading.set(false);
         this.modalOpen.set(false);
       },
       error: (err) => {
-        console.error('Failed to save photo URL:', err);
+        console.error('Failed to save profile changes:', err);
         this.uploadError.set('Failed to save. Please try again.');
         this.uploading.set(false);
       }
     });
+  }
+
+  private transformThumbnailUrl(url: string | null | undefined): string | null {
+    if (!url) return null;
+    const driveId = this.extractDriveId(url);
+    if (driveId && (url.includes('drive.google.com') || url.includes('drive.usercontent.google.com'))) {
+      return `https://drive.google.com/thumbnail?id=${driveId}&sz=w800`;
+    }
+    return url;
+  }
+
+  private extractDriveId(input: string | null | undefined): string | null {
+    if (!input || !input.trim()) return null;
+    if (/^[a-zA-Z0-9_-]{25,}$/.test(input.trim())) return input.trim();
+    const fileMatch = input.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (fileMatch) return fileMatch[1];
+    const openMatch = input.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (openMatch) return openMatch[1];
+    return input;
   }
 
   getSpeakerNames(speakers: any[] | undefined): string {
