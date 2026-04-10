@@ -73,31 +73,32 @@
                     </div>
 
                     <!-- Info -->
-                    <div class="flex-1 min-w-0 p-4 flex flex-col justify-between">
-                        <div>
-                            <!-- Tags -->
-                            <div class="flex items-center gap-2 mb-2 whitespace-nowrap overflow-hidden text-ellipsis">
-                                @for (tag of sem.tags; track tag.id) {
-                                <span
-                                    class="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md text-white flex-shrink-0"
-                                    [style.backgroundColor]="tag.color_code">
-                                    {{ tag.name }}
-                                </span>
-                                }
-                            </div>
+                    <div class="flex-1 min-w-0 p-4 flex flex-col">
+                        <!-- Tags Row -->
+                        <div class="h-6 flex items-center gap-2 mb-1 overflow-hidden">
+                            @for (tag of sem.tags; track tag.id) {
+                            <span
+                                class="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md text-white flex-shrink-0"
+                                [style.backgroundColor]="tag.color_code">
+                                {{ tag.name }}
+                            </span>
+                            }
+                        </div>
 
-                            <!-- Title + time -->
-                            <div class="flex justify-between items-start gap-4 mb-1">
+                        <!-- Title Row - Fixed Height for 1 line -->
+                        <div class="h-7 mb-2">
+                            <div class="flex justify-between items-center gap-4">
                                 <h3
-                                    class="text-base sm:text-lg font-bold text-text-main group-hover:text-primary transition-colors line-clamp-2 leading-tight flex-1">
+                                    class="text-base sm:text-lg font-bold text-text-main group-hover:text-primary transition-colors truncate flex-1">
                                     {{ sem.title }}
                                 </h3>
-                                <span class="text-xs text-text-muted font-bold whitespace-nowrap mt-1">
+                                <span class="text-xs text-text-muted font-bold whitespace-nowrap">
                                     {{ sem.date_time | date:'shortTime' }}
                                 </span>
                             </div>
                         </div>
 
+                        <!-- Details Cluster - Compact & Aligned -->
                         <div class="space-y-1">
                             <!-- Speaker -->
                             @if (sem.speakers?.length) {
@@ -111,11 +112,13 @@
                             </p>
                             }
 
-                            <!-- Abstract preview -->
+                            <!-- Abstract preview - Strictly 2 lines or empty -->
                             @if (sem.abstract) {
-                            <p class="text-[13px] text-text-muted line-clamp-2 leading-snug">
+                            <p class="text-[13px] text-text-muted line-clamp-2 leading-snug h-[2.5rem] mb-1">
                                 {{ stripMarkdown(sem.abstract) }}
                             </p>
+                            } @else {
+                            <div class="h-[2.5rem] mb-1"></div>
                             }
 
                             <!-- Location -->
@@ -131,7 +134,6 @@
                             </div>
                         </div>
                     </div>
-
                 </a>
                 }
             </div>
