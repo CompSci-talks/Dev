@@ -25,7 +25,7 @@
     <!-- Hero Thumbnail -->
     @if (seminar.thumbnail_url) {
     <div
-        class="relative h-64 md:h-80 w-full mb-8 rounded-2xl overflow-hidden shadow-lg border border-border bg-surface-muted">
+        class="relative h-48 sm:h-80 w-full mb-8 rounded-2xl overflow-hidden shadow-lg border border-border bg-surface-muted">
         <img [src]="seminar.thumbnail_url" [alt]="seminar.title"
             class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
             (load)="imageLoaded = true" [class.opacity-0]="!imageLoaded" [class.opacity-100]="imageLoaded">
@@ -46,40 +46,51 @@
     }
 
     <div class="mb-6">
-        <div class="flex items-center gap-3 mb-4">
+        <div class="flex flex-col gap-4 mb-4">
+            <!-- Tags Row -->
+            <div class="flex flex-wrap gap-2">
+                @for (tag of seminar.tags; track tag.id) {
+                <span class="text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-full whitespace-nowrap"
+                    [style.backgroundColor]="tag.color_code">
+                    {{ tag.name }}
+                </span>
+                } @empty {
+                @for (tagId of seminar.tag_ids; track tagId) {
+                <span
+                    class="bg-primary-light text-primary text-xs sm:text-sm font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+                    {{ tagId }}
+                </span>
+                }
+                }
+            </div>
 
-            @for (tag of seminar.tags; track tag.id) {
-            <span class="text-white text-sm font-semibold px-3 py-1 rounded-full"
-                [style.backgroundColor]="tag.color_code">
-                {{ tag.name }}
-            </span>
-            } @empty {
-            @for (tagId of seminar.tag_ids; track tagId) {
-            <span class="bg-primary-light text-primary text-sm font-semibold px-3 py-1 rounded-full">
-                {{ tagId }}
-            </span>
-            }
-            }
+            <!-- Date & Status Row -->
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="text-text-muted text-sm sm:text-base flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {{ seminar.date_time | date:'fullDate' }} at {{ seminar.date_time | date:'shortTime' }}
+                </span>
 
-            <span class="text-text-muted">
-                {{ seminar.date_time | date:'fullDate' }} at {{ seminar.date_time | date:'shortTime' }}
-            </span>
-
-            @switch (seminar.date_time | seminarStatus) {
-            @case ('live') {
-            <span class="bg-status-error text-white text-xs font-bold px-2 py-1 rounded animate-pulse">
-                LIVE NOW
-            </span>
-            }
-            @case ('soon') {
-            <span class="bg-status-warning text-white text-xs font-bold px-2 py-1 rounded">
-                STARTING SOON
-            </span>
-            }
-            }
+                @switch (seminar.date_time | seminarStatus) {
+                @case ('live') {
+                <span
+                    class="bg-status-error text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded animate-pulse">
+                    LIVE NOW
+                </span>
+                }
+                @case ('soon') {
+                <span class="bg-status-warning text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded">
+                    STARTING SOON
+                </span>
+                }
+                }
+            </div>
         </div>
 
-        <h1 class="text-4xl font-bold text-text-main mb-2">{{ seminar.title }}</h1>
+        <h1 class="text-2xl sm:text-4xl font-bold text-text-main mb-2">{{ seminar.title }}</h1>
         <p class="text-lg text-text-muted mb-6">
             Presented by:
             @if (seminar.speakers?.length) {
