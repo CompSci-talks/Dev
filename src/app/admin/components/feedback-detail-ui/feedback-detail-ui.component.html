@@ -51,7 +51,8 @@
                                 <span class="text-[8px] font-bold uppercase tracking-tighter">Guest</span>
                             </div>
                         </div>
-                        <div class="text-xs text-gallery-primary font-medium mt-1 opacity-60">{{ data.email }}</div>
+                        <div class="text-xs text-gallery-primary font-medium mt-1 opacity-60">{{ data.email || 'Not
+                            provided' }}</div>
                     </div>
                 </div>
                 <div class="text-right">
@@ -100,8 +101,9 @@
                 </button>
             </div>
 
-            <button (click)="reply.emit(data)"
-                class="flex items-center gap-2 bg-gallery-primary text-white px-6 py-2.5 rounded-xl text-[12px] font-black shadow-lg shadow-gallery-primary/10 active:scale-95 hover:bg-gallery-primary/90 transition-all">
+            <button (click)="reply.emit(data)" [disabled]="!data.email"
+                [title]="!data.email ? 'Cannot reply without an email address' : ''"
+                class="flex items-center gap-2 bg-gallery-primary text-white px-6 py-2.5 rounded-xl text-[12px] font-black shadow-lg shadow-gallery-primary/10 active:scale-95 border border-transparent hover:bg-gallery-primary/90 transition-all disabled:opacity-50 disabled:grayscale">
                 <span class="material-symbols-outlined text-sm font-bold">reply</span>
                 Reply
             </button>

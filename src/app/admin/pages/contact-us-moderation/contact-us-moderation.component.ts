@@ -138,7 +138,7 @@ export class ContactUsModerationComponent implements OnInit {
     }
 
     onReply(submission: ContactSubmission): void {
-        if (!submission.id) return;
+        if (!submission.id || !submission.email) return;
 
         // Map to pseudo-User for EmailSelectionService
         const pseudoUser: any = {

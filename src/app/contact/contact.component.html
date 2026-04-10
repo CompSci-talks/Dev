@@ -37,12 +37,12 @@
 
             <!-- Email -->
             <div>
-                <label for="email" class="block text-sm font-medium text-text-main mb-1">Email</label>
+                <label for="email" class="block text-sm font-medium text-text-main mb-1">Email <span
+                        class="text-xs font-normal text-text-muted ml-1">(Optional)</span></label>
                 <input type="email" id="email" formControlName="email" class="input-field w-full"
                     placeholder="you@example.com">
                 <div *ngIf="contactForm.get('email')?.touched && contactForm.get('email')?.invalid"
                     class="text-status-error text-sm mt-1">
-                    <span *ngIf="contactForm.get('email')?.errors?.['required']">Email is required.</span>
                     <span *ngIf="contactForm.get('email')?.errors?.['email']">Please enter a valid email address.</span>
                 </div>
             </div>

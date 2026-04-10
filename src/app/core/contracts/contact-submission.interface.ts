@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 export interface ContactSubmission {
     id?: string;
     name: string;
-    email: string;
+    email?: string;
     subject: 'General Feedback' | 'Bug Report' | 'Speaker Suggestion' | 'Other';
     message: string;
     submitterUid?: string | null;
