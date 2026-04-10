@@ -60,4 +60,17 @@ export class ScheduleComponent implements OnInit {
         if (!text) return '';
         return text.replace(/[#*_`>\[\]!]/g, '').replace(/\n+/g, ' ').trim();
     }
+    getPlaceholderImage(id: string): string {
+        const images = [
+            'assets/placeholders/abstract_1.png',
+            'assets/placeholders/abstract_2.png',
+            'assets/placeholders/abstract_3.png'
+        ];
+        let hash = 0;
+        for (let i = 0; i < id.length; i++) {
+            hash = id.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const index = Math.abs(hash) % images.length;
+        return images[index];
+    }
 }

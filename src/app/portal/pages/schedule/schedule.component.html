@@ -56,29 +56,19 @@
             </div>
 
             <!-- Seminars for this day -->
-            <div class="rounded-2xl border border-border overflow-hidden divide-y divide-border">
+            <div class="rounded-2xl border border-border overflow-hidden divide-y divide-border bg-surface">
                 @for (sem of group.seminars; track sem.id) {
                 <a [routerLink]="['/seminar', sem.id]"
-                    class="flex gap-4 sm:gap-6 p-4 sm:p-6 bg-surface hover:bg-surface-muted transition-all group cursor-pointer border-l-4 border-l-transparent hover:border-l-primary">
+                    class="flex gap-6 hover:bg-surface-muted transition-all group cursor-pointer border-l-4 border-l-transparent hover:border-l-primary relative">
 
-                    <!-- Thumbnail -->
-                    <div class="flex-shrink-0 w-20 sm:w-48 rounded-xl overflow-hidden bg-surface-muted"
-                        style="aspect-ratio: 16/9; align-self: flex-start;">
-                        @if (sem.thumbnail_url) {
-                        <img [src]="sem.thumbnail_url" [alt]="sem.title"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        } @else {
-                        <div class="w-full h-full flex items-center justify-center text-text-faint">
-                            <svg class="w-6 h-6 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        }
+                    <!-- Thumbnail / Placeholder - Full Span -->
+                    <div class="flex-shrink-0 w-32 sm:w-56 overflow-hidden bg-surface-muted border-r border-border">
+                        <img [src]="sem.thumbnail_url || getPlaceholderImage(sem.id)" [alt]="sem.title"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     </div>
 
                     <!-- Info -->
-                    <div class="flex-1 min-w-0">
+                    <div class="flex-1 min-w-0 py-6 pr-6">
 
                         <!-- Tags -->
                         <div class="flex items-center gap-2 mb-2 flex-wrap">
