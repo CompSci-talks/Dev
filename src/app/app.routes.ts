@@ -44,6 +44,10 @@ export const routes: Routes = [
         loadComponent: () => import('./auth/pages/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
     },
     {
+        path: 'contact',
+        loadComponent: () => import('./contact/contact.component').then(m => m.ContactComponent)
+    },
+    {
         path: 'fire-redirect',
         loadComponent: () => import('./core/fire-redirect').then(m => m.FireRedirect)
     },

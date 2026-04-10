@@ -32,6 +32,8 @@ import { provideStorage, getStorage } from '@angular/fire/storage';
 import { STORAGE_SERVICE } from './core/contracts/storage.interface';
 import { FirebaseStorageService } from './firebase-adapters/firebase-storage.service';
 import { VercelMailService } from './core/services/vercel-mail-service';
+import { CONTACT_SUBMISSION_SERVICE } from './core/contracts/contact-submission.interface';
+import { FirebaseContactSubmissionService } from './firebase-adapters/firebase-contact-submission.service';
 
 // No activity service yet, but let's assume we'll use a mock or similar soon, 
 // for now let's only provide USER_SERVICE if we haven't created the other implementation.
@@ -61,6 +63,7 @@ export const appConfig: ApplicationConfig = {
     { provide: ATTENDANCE_SERVICE, useClass: FirebaseAttendanceService },
     { provide: USER_SERVICE, useClass: FirebaseUserProfileService },
     { provide: USER_ACTIVITY_SERVICE, useClass: FirebaseUserActivityService },
+    { provide: CONTACT_SUBMISSION_SERVICE, useClass: FirebaseContactSubmissionService },
     provideQuillConfig({
       modules: {
         toolbar: [
