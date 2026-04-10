@@ -27,7 +27,10 @@ export class ScheduleComponent implements OnInit {
         this.loading = true;
         const now = new Date();
         this.seminarService.getSeminars().pipe(
-            map(seminars => seminars.filter(s => new Date(s.date_time) > now))
+            map(seminars => seminars
+                .filter(s => new Date(s.date_time) > now)
+                .sort((a, b) => new Date(a.date_time).getTime() - new Date(b.date_time).getTime())
+            )
         ).subscribe({
             next: (data) => {
                 this.seminars = data;
