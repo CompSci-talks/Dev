@@ -131,15 +131,39 @@ function driveUrlValidator(control: AbstractControl): ValidationErrors | null {
 
             <div class="md:col-span-2">
               <label class="block text-xs font-semibold text-text-muted mb-1">Thumbnail URL</label>
-              <input type="text" formControlName="thumbnail_url"
-                     placeholder="e.g. https://assets.example.com/thumb.jpg"
-                     class="input-field-sm"
-                     [class.border-status-error]="isInvalid('thumbnail_url')">
+              <div class="flex gap-2">
+                <input type="text" formControlName="thumbnail_url"
+                       placeholder="e.g. https://assets.example.com/thumb.jpg"
+                       class="input-field-sm flex-1"
+                       [class.border-status-error]="isInvalid('thumbnail_url')">
+                
+                <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)" accept="image/*">
+                <button type="button" (click)="fileInput.click()" 
+                        class="btn btn-outline btn-sm px-3 whitespace-nowrap">
+                  Pick Image
+                </button>
+              </div>
+
+              <!-- Preview -->
+              <div *ngIf="seminarForm.get('thumbnail_url')?.value" class="mt-3 flex items-start gap-4 p-3 bg-surface border border-border rounded-xl">
+                <div class="w-24 aspect-video rounded-lg overflow-hidden bg-surface-muted flex-shrink-0">
+                  <img [src]="seminarForm.get('thumbnail_url')?.value" alt="Preview" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-[10px] text-text-faint truncate mb-1">
+                    {{ seminarForm.get('thumbnail_url')?.value }}
+                  </p>
+                  <button type="button" (click)="clearThumbnail()" class="text-xs font-bold text-status-error hover:underline">
+                    Remove Thumbnail
+                  </button>
+                </div>
+              </div>
+
               <p *ngIf="isInvalid('thumbnail_url')" class="text-xs text-status-error mt-1">
-                Must be a valid URL starting with http:// or https://
+                Must be a valid URL (http/https) or a Data image.
               </p>
               <p *ngIf="!isInvalid('thumbnail_url')" class="text-xs text-text-faint mt-1">
-                Direct image link or leave empty.
+                Direct image link, Data URL, or select a local file.
               </p>
             </div>
           </div>
@@ -198,7 +222,7 @@ export class SeminarFormComponent implements OnInit {
       video_material_id: ['', driveUrlValidator],
       presentation_material_id: ['', driveUrlValidator],
       is_hidden: [false],
-      thumbnail_url: ['', Validators.pattern(/^(https?:\/\/.+)?$/)]
+      thumbnail_url: ['', Validators.pattern(/^(https?:\/\/|data:image\/).+/)]
     });
   }
 
@@ -234,11 +258,35 @@ export class SeminarFormComponent implements OnInit {
       tag_ids: val.tag_ids.filter((id: string) => !!id),
       video_material_id: this.extractDriveId(val.video_material_id),
       presentation_material_id: this.extractDriveId(val.presentation_material_id),
-      thumbnail_url: val.thumbnail_url?.trim() || null
+      thumbnail_url: this.transformThumbnailUrl(val.thumbnail_url?.trim())
     });
   }
 
-  private extractDriveId(input: string): string | null {
+  onFileSelected(event: any) {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.seminarForm.patchValue({ thumbnail_url: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  clearThumbnail() {
+    this.seminarForm.patchValue({ thumbnail_url: '' });
+  }
+
+  private transformThumbnailUrl(url: string | null | undefined): string | null {
+    if (!url) return null;
+    const driveId = this.extractDriveId(url);
+    if (driveId && (url.includes('drive.google.com') || url.includes('drive.usercontent.google.com'))) {
+      return `https://drive.google.com/thumbnail?id=${driveId}&sz=w800`;
+    }
+    return url;
+  }
+
+  private extractDriveId(input: string | null | undefined): string | null {
     if (!input || !input.trim()) return null;
     if (/^[a-zA-Z0-9_-]{25,}$/.test(input.trim())) return input.trim();
     const fileMatch = input.match(/\/d\/([a-zA-Z0-9_-]+)/);
