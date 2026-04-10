@@ -1,10 +1,19 @@
-# Feature Specification: Admin Contact Moderation Dashboard
+# Feature Specification: ContactUsModeration Dashboard
 
 **Feature Branch**: `029-admin-contact-dashboard`  
 **Created**: 2026-04-10
 **Status**: Draft  
 **Input**: User description: "Create a new feature specification for an Admin Contact Moderation dashboard. Goal: Build a secure admin page to read, manage, and follow up on messages submitted through the 'Contact Us' public form. Requirements: 1. Routing & Access 2. Data Consumption 3. Data Grid/List UI 4. Detail View 5. Admin Actions 6. Architecture Guidelines"
 
+## Clarifications
+
+### Session 2026-04-10
+
+- Q: Which UI pattern should be used for the submission detail view? → A: Slide-over side panel
+- Q: How many items should load in the list without pagination? → A: Hard limit to fetch only the 50 most recent items
+- Q: How should soft-deleted items be handled in the UI? → A: Hide from UI completely (retained in DB for audit only)
+- Q: Which term should be used for the dashboard and moderation logic? → A: `ContactUsModeration` (more general and preferred)
+- Q: Should the submission status be updated automatically based on admin actions? → A: Yes. Opening the detail view sets status to `read`. Clicking "Reply" sets status to `resolved`.
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Secure Access to Feedback Dashboard (Priority: P1)
@@ -34,7 +43,7 @@ As an administrator, I want to view a table of recent contact submissions sorted
 
 1. **Given** the dashboard is loaded, **When** the list is displayed, **Then** I see columns for Date, Name, Subject, and Status.
 2. **Given** there are deleted and non-deleted submissions in the database, **When** the dashboard fetches data, **Then** only non-deleted entries (`isDeleted == false`) are displayed by default.
-3. **Given** multiple submissions exist, **When** they are displayed, **Then** they are ordered descending by date (newest first).
+3. **Given** more than 50 submissions exist, **When** they are displayed, **Then** only the 50 most recent items are loaded and they are ordered descending by date (newest first).
 
 ---
 
@@ -44,11 +53,11 @@ As an administrator, I want to click on a submission to read the full message te
 
 **Why this priority**: Necessary to actually read the content, beyond just the subject.
 
-**Independent Test**: Clicking a row opens a modal or expandable row displaying the full `message` and `email` properties.
+**Independent Test**: Clicking a row opens a slide-over side panel displaying the full `message` and `email` properties.
 
 **Acceptance Scenarios**:
 
-1. **Given** I am on the submissions list, **When** I trigger the detail view for a specific row, **Then** a detail view opens showing the sender's email address and the full text of their message.
+1. **Given** I am on the submissions list, **When** I trigger the detail view for a specific row, **Then** a slide-over side panel opens showing the sender's email address and the full text of their message.
 
 ---
 
@@ -63,7 +72,7 @@ As an administrator, I want to change the status of a message (`new`, `read`, `r
 **Acceptance Scenarios**:
 
 1. **Given** I have a submission with status `new`, **When** I change its status to `read` or `resolved`, **Then** the new status is saved and visually reflected in the table.
-2. **Given** I am viewing a submission, **When** I choose to delete it, **Then** it performs a soft-delete (setting `isDeleted: true`) and the row is removed from the default list view.
+2. **Given** I am viewing a submission, **When** I choose to delete it, **Then** it performs a soft-delete (setting `isDeleted: true`) and the row is permanently hidden from the admin UI.
 
 ---
 
@@ -95,12 +104,12 @@ As an administrator, I want to click a "Reply" button on a submission to quickly
 
 - **FR-001**: System MUST provide a new route at `/admin/feedback` restricted to authenticated administrators.
 - **FR-002**: System MUST add `/admin/feedback` to the existing admin sidebar navigation.
-- **FR-003**: System MUST fetch contact submissions from the database, defaulting to only non-deleted entries.
+- **FR-003**: System MUST fetch contact submissions from the database, defaulting to only non-deleted entries, and limited to the 50 most recent items.
 - **FR-004**: System MUST display submissions in a grid/list featuring Date, Name, Subject, and Status columns, sorted descending by newest first.
-- **FR-005**: System MUST provide a detail view (modal or expandable row) to expose the full `message` string and sender's `email`.
+- **FR-005**: System MUST provide a detail view via a slide-over side panel to expose the full `message` string and sender's `email`, and automatically set the status to 'read' if it was previously 'new'.
 - **FR-006**: System MUST allow admins to cycle/set the `status` field between "new", "read", and "resolved".
-- **FR-007**: System MUST allow admins to soft-delete a submission by setting a deleted flag to true.
-- **FR-008**: System MUST provide a "Reply" action that routes to the internal email composer, pre-filling necessary user details.
+- **FR-007**: System MUST allow admins to soft-delete a submission by setting a deleted flag to true, permanently hiding it from the admin UI.
+- **FR-008**: System MUST provide a "Reply" action that routes to the internal email composer, pre-filling details and ensuring the user is returned to `/admin/feedback` after sending. Status MUST auto-set to 'resolved'.
 - **FR-009**: System MUST present a UI that is visually consistent with existing admin interfaces (e.g., maintaining the established modern design language).
 
 ### Key Entities *(include if feature involves data)*
@@ -111,6 +120,6 @@ As an administrator, I want to click a "Reply" button on a submission to quickly
 
 ### Measurable Outcomes
 
-- **SC-001**: Detail view for any submission opens instantly (under 500ms) upon interaction.
+- **SC-001**: Perceived performance goal: Detail view for any submission opens under 500ms upon interaction.
 - **SC-002**: Status change operations or soft deletes optimistic update the UI and save to the backend, displaying feedback in under 1 second.
 - **SC-003**: Clicking "Reply" successfully bridges the admin to the email composer pre-seeded with the target user's email address, saving typical manual input repetition.

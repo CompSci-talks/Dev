@@ -95,6 +95,31 @@ module.exports = {
                     DEFAULT: '#1f2937', // bg-footer (gray-800)
                     border: '#374151',  // border-footer-border (gray-700)
                 },
+
+                // ─── Gallery Admin / Inquiry Theme ────────────────────────────
+                gallery: {
+                    primary: "#0053da",
+                    "primary-container": "#346df5",
+                    "on-primary-container": "#ffffff",
+                    secondary: "#565e74",
+                    "secondary-container": "#dae2fd",
+                    "on-secondary-container": "#5c647a",
+                    tertiary: "#006c49",
+                    "tertiary-container": "#00885d",
+                    surface: "#f7f9fb",
+                    "surface-container": "#eceef0",
+                    "surface-container-low": "#f2f4f6",
+                    "surface-container-high": "#e6e8ea",
+                    "surface-container-highest": "#e0e3e5",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface": "#191c1e",
+                    "on-surface-variant": "#414754",
+                    outline: "#727785",
+                    "outline-variant": "#c1c6d6",
+                    error: "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "on-error-container": "#93000a",
+                }
             },
 
             // ─── Keyframes ────────────────────────────────────────────────────

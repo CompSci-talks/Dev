@@ -77,6 +77,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./admin/pages/seminar-manager/seminar-manager.component').then(m => m.SeminarManagerComponent)
             },
             {
+                path: 'feedback',
+                loadComponent: () => import('./admin/pages/contact-us-moderation/contact-us-moderation.component').then(m => m.ContactUsModerationComponent)
+            },
+            {
                 path: 'moderation',
                 loadComponent: () => import('./admin/pages/comment-moderation/comment-moderation.component').then(m => m.CommentModerationComponent)
             },

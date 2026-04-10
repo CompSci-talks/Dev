@@ -53,6 +53,14 @@ import { AUTH_SERVICE } from '../../../core/contracts/auth.interface';
             Comment Moderation
           </a>
 
+          <a routerLink="feedback" routerLinkActive="bg-sidebar-bg-active text-sidebar-text-active"
+             class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-sidebar-text rounded-lg hover:bg-sidebar-bg-hover hover:text-sidebar-text-active transition-colors group">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            Contact Admission
+          </a>
+
           <a routerLink="user-management" routerLinkActive="bg-sidebar-bg-active text-sidebar-text-active"
              class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-sidebar-text rounded-lg hover:bg-sidebar-bg-hover hover:text-sidebar-text-active transition-colors group">
             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

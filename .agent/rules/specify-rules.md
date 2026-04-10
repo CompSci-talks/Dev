@@ -1,4 +1,4 @@
-﻿# compsci-talks Development Guidelines
+# compsci-talks Development Guidelines
 
 Auto-generated from all feature plans. Last updated: 2026-03-11
 
@@ -48,8 +48,8 @@ cd src; pytest; ruff check .
 
 ## Recent Changes
 - 028-contact-us-page: Added [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]
+- 028-contact-us-page: Added [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]
 - 026-auth-flow-enhancement: Added TypeScript / Angular 17+ + @angular/fire (Firebase v10+), RxJS
-- 019-admin-user-management: Added TypeScript / Angular 17+ + Firebase SDK (Auth, Firestore), Tailwind CSS, RxJS, Lucide Angular
 
 
 <!-- MANUAL ADDITIONS START -->
