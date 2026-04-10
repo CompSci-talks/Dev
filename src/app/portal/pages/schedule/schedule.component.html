@@ -18,14 +18,19 @@
                 <div class="w-1 h-5 bg-skeleton rounded-full"></div>
                 <div class="h-4 w-48 bg-skeleton rounded"></div>
             </div>
-            <div class="bg-surface-muted rounded-2xl p-4 sm:p-6 flex gap-4 sm:gap-6 border border-border">
-                <div class="w-20 sm:w-48 bg-skeleton rounded-xl flex-shrink-0" style="aspect-ratio:16/9"></div>
-                <div class="flex-1 space-y-3 py-1">
+            <div class="bg-surface-card rounded-2xl flex flex-col sm:flex-row border border-border overflow-hidden">
+                <!-- Image skeleton -->
+                <div class="w-full sm:w-56 h-48 sm:h-36 bg-skeleton flex-shrink-0"></div>
+
+                <!-- Info skeleton -->
+                <div class="flex-1 space-y-4 p-4 sm:p-6">
                     <div class="h-3 bg-skeleton rounded w-24"></div>
-                    <div class="h-5 bg-skeleton rounded w-3/4"></div>
+                    <div class="h-6 bg-skeleton rounded w-3/4"></div>
                     <div class="h-3 bg-skeleton rounded w-1/2"></div>
-                    <div class="h-3 bg-skeleton rounded w-full"></div>
-                    <div class="h-3 bg-skeleton rounded w-5/6"></div>
+                    <div class="space-y-2">
+                        <div class="h-3 bg-skeleton rounded w-full"></div>
+                        <div class="h-3 bg-skeleton rounded w-5/6"></div>
+                    </div>
                 </div>
             </div>
         </div>
