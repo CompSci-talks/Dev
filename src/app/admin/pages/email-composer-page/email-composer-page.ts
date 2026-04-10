@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { QuillModule } from 'ngx-quill';
@@ -14,10 +14,12 @@ import { User } from '../../../core/models/user.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, QuillModule],
   templateUrl: './email-composer-page.html',
+  styleUrl: './email-composer-page.scss',
 })
 export class EmailComposerPage implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private emailSelection = inject(EmailSelectionService);
   private toastService = inject(ToastService);
   private emailService = inject(EMAIL_SERVICE);
@@ -25,6 +27,7 @@ export class EmailComposerPage implements OnInit {
   emailForm!: FormGroup;
   selectedRecipients: User[] = [];
   isSending = false;
+  returnUrl = '';
 
   quillModules = {
     toolbar: [
@@ -41,6 +44,7 @@ export class EmailComposerPage implements OnInit {
 
   ngOnInit() {
     this.selectedRecipients = this.emailSelection.getSelectedUsers();
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/user-management';
 
     if (this.selectedRecipients.length === 0) {
       this.toastService.error('No users selected for emailing.');
@@ -85,6 +89,6 @@ export class EmailComposerPage implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/admin/user-management']);
+    this.router.navigateByUrl(this.returnUrl);
   }
 }

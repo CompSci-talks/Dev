@@ -108,7 +108,6 @@ export class ContactUsModerationComponent implements OnInit {
         this.selectedSubmission = submission;
         this.isSlideOverOpen = true;
 
-        // Automated Transition: new -> read
         if (submission.status === 'new' && submission.id) {
             this.contactService.updateStatus(submission.id, 'read')
                 .catch(err => console.error('Failed to update status to read:', err));
@@ -154,14 +153,9 @@ export class ContactUsModerationComponent implements OnInit {
         this.emailSelection.clearSelection();
         this.emailSelection.addSelectedUser(pseudoUser);
 
-        // Automated Transition: -> resolved
-        this.contactService.updateStatus(submission.id, 'resolved')
-            .then(() => {
-                this.router.navigate(['/admin/email-composer'], {
-                    queryParams: { returnUrl: '/admin/feedback' }
-                });
-            })
-            .catch(() => this.toastService.error('Failed to initiate reply'));
+        this.router.navigate(['/admin/email-composer'], {
+            queryParams: { returnUrl: '/admin/feedback' }
+        });
     }
 
     closeDetail(): void {

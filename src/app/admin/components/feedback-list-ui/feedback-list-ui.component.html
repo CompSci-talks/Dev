@@ -1,7 +1,10 @@
 <div class="space-y-4">
     <div *ngFor="let s of submissions"
-        class="group relative flex items-start gap-6 p-6 bg-gallery-surface-container-lowest rounded-xl hover:bg-gallery-surface-container-low transition-all duration-300 border border-transparent hover:border-gallery-outline-variant/30 shadow-sm cursor-pointer"
-        (click)="view.emit(s)">
+        class="group relative flex items-start gap-6 p-6 rounded-xl transition-all duration-300 border border-transparent hover:border-gallery-outline-variant/30 shadow-sm cursor-pointer"
+        [ngClass]="{
+            'bg-gallery-primary/[0.05]': s.status === 'new',
+            'bg-gallery-surface-container-lowest hover:bg-gallery-surface-container-low': s.status !== 'new'
+        }" (click)="view.emit(s)">
 
         <!-- Status Indicator -->
         <div class="flex items-center gap-4 mt-1 shrink-0">
