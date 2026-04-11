@@ -17,6 +17,7 @@ export interface Seminar {
     title: string;
     date_time: Date;
     location: string;
+    duration?: number; // In minutes
     abstract: string; // Markdown / Rich Text
     thumbnail_url?: string;
     speaker_ids: string[];

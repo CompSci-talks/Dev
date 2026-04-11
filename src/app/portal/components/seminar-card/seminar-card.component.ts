@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Seminar } from '../../../core/models/seminar.model';
 import { SeminarStatusPipe } from '../../../core/pipes/seminar-status.pipe';
+import { DurationPipe } from '../../../shared/pipes/duration.pipe';
 
 @Component({
     selector: 'app-seminar-card',
     standalone: true,
-    imports: [CommonModule, RouterModule, SeminarStatusPipe],
+    imports: [CommonModule, RouterModule, SeminarStatusPipe, DurationPipe],
     templateUrl: './seminar-card.component.html',
     host: {
         'class': 'block h-full w-full'

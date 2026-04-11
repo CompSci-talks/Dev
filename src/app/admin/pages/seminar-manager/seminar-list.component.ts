@@ -3,16 +3,17 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Seminar } from '../../../core/models/seminar.model';
 import { PaginatedTableComponent } from '../../../shared/components/paginated-table/paginated-table.component';
+import { DurationPipe } from '../../../shared/pipes/duration.pipe';
 
 @Component({
   selector: 'app-seminar-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, PaginatedTableComponent],
+  imports: [CommonModule, RouterModule, PaginatedTableComponent, DurationPipe],
   template: `
     <app-paginated-table
       [data]="seminars"
       [loading]="loading"
-      [columnCount]="6"
+      [columnCount]="7"
       [headerTemplate]="header"
       [rowTemplate]="row"
       [skeletonTemplate]="skeleton"
@@ -23,6 +24,7 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
         <th class="th-cell">Date & Time</th>
         <th class="th-cell">Seminar Title</th>
         <th class="th-cell">Location</th>
+        <th class="th-cell text-center">Duration</th>
         <th class="th-cell text-center">Attendees</th>
         <th class="th-cell">Status</th>
         <th class="th-cell text-right">Actions</th>
@@ -34,6 +36,7 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
           <a [routerLink]="['/seminar', seminar.id]" class="font-medium text-text-main hover:text-primary transition-colors">{{ seminar.title }}</a>
         </td>
         <td class="td-cell text-text-muted">{{ seminar.location }}</td>
+        <td class="td-cell text-center font-medium">{{ seminar.duration | duration }}</td>
         <td class="td-cell text-center font-medium text-primary">{{ getRSVPCount(seminar) }}</td>
         <td class="px-6 py-4 whitespace-nowrap">
           <span *ngIf="!seminar.is_hidden" class="badge-success">Visible</span>
@@ -54,6 +57,7 @@ import { PaginatedTableComponent } from '../../../shared/components/paginated-ta
           <td class="px-6 py-4"><div class="skeleton h-4 w-32"></div></td>
           <td class="px-6 py-4"><div class="skeleton h-4 w-48"></div></td>
           <td class="px-6 py-4"><div class="skeleton h-4 w-32"></div></td>
+          <td class="px-6 py-4 text-center"><div class="skeleton h-4 w-12 mx-auto"></div></td>
           <td class="px-6 py-4 text-center"><div class="skeleton h-4 w-8 mx-auto"></div></td>
           <td class="px-6 py-4"><div class="skeleton h-6 w-16"></div></td>
           <td class="px-6 py-4 text-right"><div class="skeleton h-4 w-24 ml-auto"></div></td>

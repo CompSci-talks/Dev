@@ -100,6 +100,8 @@
                                 </h3>
                                 <span class="text-xs text-text-muted font-bold whitespace-nowrap">
                                     {{ sem.date_time | date:'shortTime' }}
+                                    <span class="mx-1 text-text-faint">•</span>
+                                    {{ sem.duration | duration }}
                                 </span>
                             </div>
                         </div>

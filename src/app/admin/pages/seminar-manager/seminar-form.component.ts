@@ -63,6 +63,14 @@ function driveUrlValidator(control: AbstractControl): ValidationErrors | null {
                    [class.border-status-error]="isInvalid('location')">
             <p *ngIf="isInvalid('location')" class="text-xs text-status-error mt-1">Location is required.</p>
           </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-text-main mb-2">Duration (minutes)</label>
+            <input type="number" formControlName="duration" placeholder="e.g. 60"
+                   class="input-field"
+                   [class.border-status-error]="isInvalid('duration')">
+            <p *ngIf="isInvalid('duration')" class="text-xs text-status-error mt-1">Duration must be a positive number.</p>
+          </div>
         </div>
 
         <div>
@@ -216,6 +224,7 @@ export class SeminarFormComponent implements OnInit {
       title: ['', Validators.required],
       date_time: ['', Validators.required],
       location: ['', Validators.required],
+      duration: [60, [Validators.required, Validators.min(1)]],
       abstract: ['', Validators.required],
       speaker_ids: [[], Validators.required],
       tag_ids: [[], Validators.required],

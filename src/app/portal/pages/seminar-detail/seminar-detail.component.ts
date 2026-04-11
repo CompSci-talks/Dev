@@ -11,11 +11,12 @@ import { SlideViewerComponent } from '../../../seminar-room/components/slide-vie
 import { RsvpButtonComponent } from '../../components/rsvp-button/rsvp-button.component';
 import { CommentsContainerComponent } from '../../../seminar-room/components/comments-container/comments-container.component';
 import { MarkdownPipe } from "../../../shared/pipes/markdown-pipe";
+import { DurationPipe } from '../../../shared/pipes/duration.pipe';
 
 @Component({
     selector: 'app-seminar-detail',
     standalone: true,
-    imports: [CommonModule, RouterModule, SeminarStatusPipe, VideoPlayerComponent, SlideViewerComponent, RsvpButtonComponent, CommentsContainerComponent, MarkdownPipe],
+    imports: [CommonModule, RouterModule, SeminarStatusPipe, VideoPlayerComponent, SlideViewerComponent, RsvpButtonComponent, CommentsContainerComponent, MarkdownPipe, DurationPipe],
     templateUrl: './seminar-detail.component.html',
     styleUrl: './seminar-detail.component.css'
 })

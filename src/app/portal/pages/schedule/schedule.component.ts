@@ -6,11 +6,12 @@ import { SEMINAR_SERVICE } from '../../../core/contracts/seminar.interface';
 import { SeminarCardComponent } from '../../components/seminar-card/seminar-card.component';
 import { SkeletonCardComponent } from '../../components/skeleton-card/skeleton-card.component';
 import { RouterModule } from '@angular/router';
+import { DurationPipe } from '../../../shared/pipes/duration.pipe';
 
 @Component({
     selector: 'app-schedule',
     standalone: true,
-    imports: [CommonModule, RouterModule],
+    imports: [CommonModule, RouterModule, DurationPipe],
     templateUrl: './schedule.component.html'
 })
 export class ScheduleComponent implements OnInit {
