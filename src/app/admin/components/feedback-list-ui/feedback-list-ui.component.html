@@ -20,7 +20,7 @@
         <div class="grid grid-cols-12 gap-4 flex-1 items-center">
             <!-- Sender Info -->
             <div class="col-span-3">
-                <h4 class="font-bold text-gallery-on-surface truncate">{{ s.name }}</h4>
+                <h4 class="font-bold text-gallery-on-surface truncate">{{ s.name || '(Anonymous)' }}</h4>
                 <p class="text-xs text-gallery-on-surface-variant font-medium mt-0.5 truncate">{{ s.email || '(No email
                     provided)' }}</p>
             </div>

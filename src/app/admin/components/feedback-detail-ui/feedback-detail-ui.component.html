@@ -31,12 +31,12 @@
                 <div class="flex items-center gap-3">
                     <div
                         class="h-10 w-10 rounded-full bg-gradient-to-br from-gallery-secondary-container to-gallery-surface-container text-gallery-on-secondary-container flex items-center justify-center font-black text-base shadow-inner">
-                        {{ data.name.charAt(0) }}
+                        {{ (data.name?.charAt(0)) || '?' }}
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
                             <div class="text-gallery-on-surface font-bold text-lg tracking-tight leading-none">{{
-                                data.name }}</div>
+                                data.name || 'Anonymous' }}</div>
                             <!-- Auth Indicator -->
                             <div *ngIf="data.submitterUid"
                                 class="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-gallery-primary/5 text-gallery-primary border border-gallery-primary/10"

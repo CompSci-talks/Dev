@@ -27,12 +27,9 @@
         <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-4">
             <!-- Name -->
             <div>
-                <label for="name" class="block text-sm font-medium text-text-main mb-1">Name</label>
+                <label for="name" class="block text-sm font-medium text-text-main mb-1">Name <span
+                        class="text-xs font-normal text-text-muted ml-1">(Optional)</span></label>
                 <input type="text" id="name" formControlName="name" class="input-field w-full" placeholder="Your Name">
-                <div *ngIf="contactForm.get('name')?.touched && contactForm.get('name')?.invalid"
-                    class="text-status-error text-sm mt-1">
-                    Name is required.
-                </div>
             </div>
 
             <!-- Email -->

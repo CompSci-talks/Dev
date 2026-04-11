@@ -24,10 +24,10 @@ export class ContactComponent implements OnInit {
 
     ngOnInit(): void {
         this.contactForm = this.fb.group({
-            name: ['', [Validators.required]],
+            name: [''],
             email: ['', [Validators.email]],
             subject: ['General Feedback', [Validators.required]],
-            message: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(1000)]]
+            message: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]]
         });
 
         // Observe auth state (T011)
